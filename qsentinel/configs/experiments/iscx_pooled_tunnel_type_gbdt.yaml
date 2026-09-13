@@ -1,0 +1,13 @@
+# Coarse sanity check, not a headline. is_tor is ~1% of pooled flows (697 of 70,523), an
+# artefact of Tor multiplexing every stream over a few guard connections rather than
+# evidence of rarity -- treat tor as a flag, not a balanced class.
+dataset: iscx_pooled
+target: tunnel_type
+model: flow_gbdt
+features: flow_stats
+grouped: true
+test_size: 0.2
+val_size: 0.1
+notes: >
+  In the deployed pipeline this is given for free by the Stage-1 l7_hint; the model exists
+  to quantify how much the flow statistics alone carry.

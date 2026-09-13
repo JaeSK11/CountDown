@@ -1,0 +1,52 @@
+# ---------------------------------------------------------------------------
+# Datasets -- 72 GB of third-party captures, none of it ours to redistribute,
+# and some of it gated behind registration. Every folder keeps its README.md,
+# which records the source, licence and exact download steps. See data/README.md
+# for the index.
+# ---------------------------------------------------------------------------
+/data/*
+!/data/README.md
+!/data/*/
+/data/*/*
+!/data/*/README.md
+
+# ---------------------------------------------------------------------------
+# Reference material -- copyrighted papers, upstream repos that carry their own
+# licences (ET-BERT, encrypted-traffic-classifier), and 683 MB of pretrained
+# weights. reference/README.md indexes what to fetch and from where.
+# ---------------------------------------------------------------------------
+/reference/*
+!/reference/README.md
+
+# --- Python environment ----------------------------------------------------
+.venv/
+venv/
+__pycache__/
+*.py[cod]
+*.egg-info/
+build/
+dist/
+.pytest_cache/
+
+# --- Run artefacts ---------------------------------------------------------
+runs/
+cache/
+models_store/
+*.ckpt
+*.ckpt.resume
+*.npz
+
+# --- Editor and local tooling ----------------------------------------------
+.vscode/
+.idea/
+.DS_Store
+CLAUDE.md
+CLAUDE-TABS.md
+
+# --- Local only, not for publication ---------------------------------------
+*.docx
+.powerguard-backup-*/
+
+# The full Phase-0 golden snapshot pins five-tuples and timestamps from corpora we do
+# not redistribute. Only the synthetic-only phase0_flows.json is published.
+phase0_flows.full.json

@@ -1,0 +1,13 @@
+# Phase-3 exit criterion.  Pooled ISCXVPN+ISCXTor is mandatory here: ISCXVPN alone realises
+# 7 of 8 traffic types and its whole p2p class is one capture, so a group-aware split
+# cannot place p2p on both sides.  Pooled: 70,523 flows / 235 captures / 8 classes.
+dataset: iscx_pooled
+target: traffic_type
+model: flow_gbdt
+features: flow_stats
+grouped: true            # group_key comes from configs/datasets.yaml -> source_file
+test_size: 0.2
+val_size: 0.1
+notes: >
+  Headline behavioural head (E1). Macro-F1 is the reported metric; accuracy is not, because
+  the pooled target runs ~30:1 between browsing (25,997) and audio_streaming (840).

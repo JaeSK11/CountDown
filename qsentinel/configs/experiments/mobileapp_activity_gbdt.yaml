@@ -1,0 +1,15 @@
+# Few-shot by construction: 92 activities over 368 captures is ~4 samples per class, and
+# one CSV is one sample, so there is no grouping to be had (allow_vacuous_groups covers it
+# in configs/datasets.yaml). GBDT is a weak baseline here on purpose -- the real member is
+# the Phase-4 few-shot / App(8)->Activity cascade.
+dataset: mobileapp
+target: activity
+model: flow_gbdt
+features: flow_stats
+grouped: true
+test_size: 0.25
+val_size: 0.0
+tail_min_support: 2
+notes: >
+  Expect a low absolute macro-F1. The number that matters is whether it clears the
+  majority-class baseline at all, which sets the floor for the Phase-4 few-shot member.

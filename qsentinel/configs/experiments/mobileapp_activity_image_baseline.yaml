@@ -1,0 +1,30 @@
+# The image member on its actual primary target: MobileApp in-app activity, 92 classes.
+#
+# Note what windowing buys here beyond augmentation. MobileApp is one CSV per sample, so
+# `source_file` groups nothing and `allow_vacuous_groups` has to wave the split through.
+# Cutting each capture into windows gives several samples per source_file, so the
+# group-aware split becomes well-defined -- correlated windows can no longer straddle it.
+#
+# Window size is set from the data, not copied from Okonkwo: MobileApp captures have a
+# median duration of 11.1 s (mean 13.2, p90 22.6). At 15 s, 256 of 368 captures yield a
+# single window and most of the x-axis is empty -- the arrival-time disparity artifact the
+# Sensors paper warns about. 5 s and 10 s give 1144 / 685 windows and a populated axis.
+#
+# It does NOT create independent data: there are still exactly 4 captures per class, so
+# read this as a few-shot result.
+dataset: mobileapp
+target: activity
+model: flow_image_cnn_baseline
+features: flow_image
+windows: [5, 10]
+grouped: true
+test_size: 0.25
+val_size: 0.1
+params:
+  epochs: 60
+  batch_size: 32
+  class_weight: balanced
+  early_stop_patience: 10
+notes: >-
+  Image member on in-app activity. 92 classes from 368 captures (4 each), so treat this
+  as a few-shot result, not a normal supervised one.

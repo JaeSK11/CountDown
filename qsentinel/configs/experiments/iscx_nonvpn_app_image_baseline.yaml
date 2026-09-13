@@ -1,0 +1,22 @@
+# Okonkwo's non-VPN application task (Fig. 5a) as a first-class experiment.
+#
+# The paper reports 93% accuracy for this task under a random 80/10/10 split over pooled
+# window images.  `grouped: true` here splits by source_file instead, so every window cut
+# from one capture stays on one side.  Run `scripts/replicate_okonkwo.py` to get both
+# numbers side by side; this config is the honest one.
+dataset: iscxvpn
+target: app_activity          # the normalised label -- raw `app` is capture stems
+model: flow_image_cnn_baseline
+features: flow_image
+windows: [15, 30, 60]         # capture-level windows, the paper's sample unit
+grouped: true
+test_size: 0.2
+val_size: 0.1
+min_samples_per_class: 50
+params:
+  epochs: 60
+  batch_size: 10              # the paper's; raise it if you are not reproducing
+  lr: 0.0001
+notes: >-
+  Okonkwo et al., AISC 2022, experiment 1. Baseline for the image member. The paper's
+  own protocol is reproduced separately in scripts/replicate_okonkwo.py.

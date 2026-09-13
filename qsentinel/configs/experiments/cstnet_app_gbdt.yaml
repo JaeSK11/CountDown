@@ -1,0 +1,19 @@
+# The primary dataset (deployment-distribution match) and the baseline floor that the
+# Phase-4 byte-transformer / GNN members must beat.
+#
+# group_key is capture_day, NOT source_file: CSTNET is one flow per pcap, so grouping by
+# source_file would be 46,372 groups for 46,372 samples -- a random split. Every one of the
+# 120 apps spans at least 7 distinct capture days (median 95), so day-grouping is feasible
+# for every class.
+dataset: cstnet
+target: app
+model: flow_gbdt
+features: flow_stats
+grouped: true
+test_size: 0.2
+val_size: 0.1
+tail_min_support: 50
+notes: >
+  Report macro-F1 twice: over all 120 classes and over classes with >=50 test samples.
+  The tail is severe (chia.net has 16 flows in total) and the all-class figure is dominated
+  by classes with a handful of samples.

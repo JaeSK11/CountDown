@@ -1,0 +1,315 @@
+{
+ "synthetic/fin_teardown.pcap": {
+  "flows": [
+   {
+    "arrays_sha1": "e764b18643262e8d4bfdb6c1d2c7c22a019354c4",
+    "end": 4.1,
+    "five_tuple": [
+     "10.0.0.5",
+     57000,
+     "6.6.6.6",
+     443,
+     "tcp"
+    ],
+    "flow_id": "fin_teardown#0",
+    "meta_keys": [
+     "source_file"
+    ],
+    "n": 12,
+    "start": 0.1
+   }
+  ],
+  "stats": {
+   "flows_built": 1,
+   "flows_dropped_short": 0,
+   "malformed": 0,
+   "non_ip": 0,
+   "non_tcp_udp": 0,
+   "packets_read": 12,
+   "packets_used": 12,
+   "truncated_at_max_flows": false
+  }
+ },
+ "synthetic/garbage.pcap": {
+  "flows": [
+   {
+    "arrays_sha1": "9b5b243dac9d2b03500dff21f5deba5b3fe24bca",
+    "end": 0.6,
+    "five_tuple": [
+     "10.0.0.5",
+     58000,
+     "7.7.7.7",
+     443,
+     "tcp"
+    ],
+    "flow_id": "garbage#0",
+    "meta_keys": [
+     "source_file"
+    ],
+    "n": 6,
+    "start": 0.1
+   }
+  ],
+  "stats": {
+   "flows_built": 1,
+   "flows_dropped_short": 0,
+   "malformed": 1,
+   "non_ip": 1,
+   "non_tcp_udp": 0,
+   "packets_read": 8,
+   "packets_used": 6,
+   "truncated_at_max_flows": false
+  }
+ },
+ "synthetic/idle_split.pcap": {
+  "flows": [
+   {
+    "arrays_sha1": "b22706b7b197acbeab7f5c2504ba9f58cb0baaf4",
+    "end": 0.4,
+    "five_tuple": [
+     "10.0.0.5",
+     52000,
+     "2.2.2.2",
+     443,
+     "tcp"
+    ],
+    "flow_id": "idle_split#0",
+    "meta_keys": [
+     "source_file"
+    ],
+    "n": 5,
+    "start": 0.0
+   },
+   {
+    "arrays_sha1": "17a1bceb4f74c7d025439cb5ef47ad5fe13e3b7f",
+    "end": 500.4,
+    "five_tuple": [
+     "10.0.0.5",
+     52000,
+     "2.2.2.2",
+     443,
+     "tcp"
+    ],
+    "flow_id": "idle_split#1",
+    "meta_keys": [
+     "source_file"
+    ],
+    "n": 5,
+    "start": 500.0
+   }
+  ],
+  "stats": {
+   "flows_built": 2,
+   "flows_dropped_short": 0,
+   "malformed": 0,
+   "non_ip": 0,
+   "non_tcp_udp": 0,
+   "packets_read": 10,
+   "packets_used": 10,
+   "truncated_at_max_flows": false
+  }
+ },
+ "synthetic/ipv6.pcap": {
+  "flows": [
+   {
+    "arrays_sha1": "fec54fe66bd2ddb690bafa533db3ef85ed6bfc78",
+    "end": 0.55,
+    "five_tuple": [
+     "2001:db8::1",
+     56000,
+     "2001:db8::2",
+     443,
+     "tcp"
+    ],
+    "flow_id": "ipv6#0",
+    "meta_keys": [
+     "source_file"
+    ],
+    "n": 12,
+    "start": 0.0
+   }
+  ],
+  "stats": {
+   "flows_built": 1,
+   "flows_dropped_short": 0,
+   "malformed": 0,
+   "non_ip": 0,
+   "non_tcp_udp": 0,
+   "packets_read": 12,
+   "packets_used": 12,
+   "truncated_at_max_flows": false
+  }
+ },
+ "synthetic/quic.pcap": {
+  "flows": [
+   {
+    "arrays_sha1": "98e66c830ed7de4ae8835a06dc977f1acad5c137",
+    "end": 0.55,
+    "five_tuple": [
+     "10.0.0.5",
+     55000,
+     "5.5.5.5",
+     443,
+     "udp"
+    ],
+    "flow_id": "quic#0",
+    "meta_keys": [
+     "source_file"
+    ],
+    "n": 12,
+    "start": 0.0
+   }
+  ],
+  "stats": {
+   "flows_built": 1,
+   "flows_dropped_short": 0,
+   "malformed": 0,
+   "non_ip": 0,
+   "non_tcp_udp": 0,
+   "packets_read": 12,
+   "packets_used": 12,
+   "truncated_at_max_flows": false
+  }
+ },
+ "synthetic/server_first.pcap": {
+  "flows": [
+   {
+    "arrays_sha1": "d31283225f9a4abc94fa5bb126e5b50bc2130ef4",
+    "end": 0.55,
+    "five_tuple": [
+     "10.0.0.5",
+     53000,
+     "3.3.3.3",
+     443,
+     "tcp"
+    ],
+    "flow_id": "server_first#0",
+    "meta_keys": [
+     "source_file"
+    ],
+    "n": 12,
+    "start": 0.0
+   }
+  ],
+  "stats": {
+   "flows_built": 1,
+   "flows_dropped_short": 0,
+   "malformed": 0,
+   "non_ip": 0,
+   "non_tcp_udp": 0,
+   "packets_read": 12,
+   "packets_used": 12,
+   "truncated_at_max_flows": false
+  }
+ },
+ "synthetic/simple.pcap": {
+  "flows": [
+   {
+    "arrays_sha1": "1bd65547e5b48f7c7e117a4df2c3896a5d97008b",
+    "end": 1.0,
+    "five_tuple": [
+     "10.0.0.5",
+     51000,
+     "93.184.216.34",
+     443,
+     "tcp"
+    ],
+    "flow_id": "simple#0",
+    "meta_keys": [
+     "source_file"
+    ],
+    "n": 11,
+    "start": 0.0
+   }
+  ],
+  "stats": {
+   "flows_built": 1,
+   "flows_dropped_short": 0,
+   "malformed": 0,
+   "non_ip": 0,
+   "non_tcp_udp": 0,
+   "packets_read": 11,
+   "packets_used": 11,
+   "truncated_at_max_flows": false
+  }
+ },
+ "synthetic/tls_split.pcap": {
+  "flows": [
+   {
+    "arrays_sha1": "e0d1eda841d588ab5eac813e81fba0d409506d67",
+    "end": 0.09,
+    "five_tuple": [
+     "10.0.0.5",
+     54000,
+     "4.4.4.4",
+     443,
+     "tcp"
+    ],
+    "flow_id": "tls_split#0",
+    "meta_keys": [
+     "source_file"
+    ],
+    "n": 9,
+    "start": 0.0
+   }
+  ],
+  "stats": {
+   "flows_built": 1,
+   "flows_dropped_short": 0,
+   "malformed": 0,
+   "non_ip": 0,
+   "non_tcp_udp": 0,
+   "packets_read": 9,
+   "packets_used": 9,
+   "truncated_at_max_flows": false
+  }
+ },
+ "synthetic/two_flow.pcap": {
+  "flows": [
+   {
+    "arrays_sha1": "7edea5d9b0fb0f9d2a54936270a44a9d8da99c57",
+    "end": 0.85,
+    "five_tuple": [
+     "10.0.0.5",
+     51000,
+     "1.1.1.1",
+     443,
+     "tcp"
+    ],
+    "flow_id": "two_flow#0",
+    "meta_keys": [
+     "source_file"
+    ],
+    "n": 12,
+    "start": 0.05
+   },
+   {
+    "arrays_sha1": "82e786ec3f703f46c5250cab63946c6bc57c7ac9",
+    "end": 0.9,
+    "five_tuple": [
+     "10.0.0.5",
+     51001,
+     "1.1.1.1",
+     443,
+     "tcp"
+    ],
+    "flow_id": "two_flow#1",
+    "meta_keys": [
+     "source_file"
+    ],
+    "n": 6,
+    "start": 0.15
+   }
+  ],
+  "stats": {
+   "flows_built": 2,
+   "flows_dropped_short": 0,
+   "malformed": 0,
+   "non_ip": 0,
+   "non_tcp_udp": 0,
+   "packets_read": 18,
+   "packets_used": 18,
+   "truncated_at_max_flows": false
+  }
+ }
+}

@@ -1,0 +1,41 @@
+# Feature-extraction and flow-assembly parameters.  Everything reproducible lives here.
+seed: 42
+cache_dir: cache
+
+# --- flow assembly (qsentinel/flows/extract.py) ---------------------------------------
+flow:
+  flow_timeout: 64.0        # seconds of idleness that closes a flow
+  min_packets: 4            # flows shorter than this are dropped
+  max_flows_per_pcap: 200000
+  mtu_cap: 1500             # packet sizes are capped here for features
+  include_pcapng: true
+
+# --- feature extractors ----------------------------------------------------------------
+features:
+  flow_stats:
+    first_n_packets: 20     # signed sizes of the first N packets appended as columns
+    mtu_cap: 1500
+  packet_seq:
+    n: 32                   # sequence length (pad/truncate)
+    mtu_cap: 1500
+    channels: 2             # 1 = signed sizes only; 2 = signed sizes + IATs
+  flow_image:
+    size: 224               # 224 reproduces Okonkwo; 64 is enough for a histogram
+    construction: scatter   # scatter (Okonkwo, binary) | flowpic (histogram density)
+    window: auto            # each window scales the x-axis to its own length (paper 4.2)
+    channels: 1             # 1 = presence/density; 3 = + direction + byte volume
+    marker: 3               # pixels per packet -- approximates matplotlib's scatter blob
+    drop_oversize: true     # the paper discards packets above the MTU rather than capping
+    log_density: true       # flowpic only: log1p before peak-normalising
+
+# --- flow reassembly (qsentinel/flows/reassembly.py, Phase 1) --------------------------
+# Deliberately a separate section from `flow:` above.  `flow:` is hashed into the
+# parsed-flow cache key (config.flow_key), so adding keys there would invalidate every
+# dataset cache and force a re-parse of the full 90 GB corpus for no change in (X, y).
+reassembly:
+  handshake_window: 8192    # bytes of each direction's opening to reassemble
+  capture_handshake: true   # set false to skip head reassembly (sizes/timings only)
+  max_duration: 3600.0      # hard cap on flow lifetime, seconds of packet clock
+  close_on_fin: true        # emit on RST / both-FIN (streaming mode only)
+  fin_grace: 2.0            # let the final ACK land in the same flow
+  sweep_interval: 8.0       # expiry sweep cadence, seconds of packet clock

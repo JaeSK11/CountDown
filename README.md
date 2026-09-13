@@ -1,6 +1,6 @@
 # CountDown
 
-Research code for **QSentinel**: detect the cryptography in use on a network flow, decide
+Research code for **CountDown**: detect the cryptography in use on a network flow, decide
 whether it is quantum-resistant, and — for flows whose crypto is not observable — classify
 the encrypted traffic with an ensemble of ML models.
 
@@ -12,14 +12,14 @@ Stages 2–3 are deterministic parsing, no ML: quantum-resistance is read from a
 observable TLS/QUIC handshake. Tunnelled traffic (VPN/Tor) gets the verdict *"crypto not
 observable"* and routes straight to stage 4.
 
-The full write-up lives in [`qsentinel/README.md`](qsentinel/README.md); the roadmap is in
-[`qsentinel/PLAN.md`](qsentinel/PLAN.md) with per-phase specs under `qsentinel/phases/`.
+The full write-up lives in [`countdown/README.md`](countdown/README.md); the roadmap is in
+[`countdown/PLAN.md`](countdown/PLAN.md) with per-phase specs under `countdown/phases/`.
 
 ## Layout
 
 | Path | Contents |
 | --- | --- |
-| `qsentinel/` | The package, scripts, configs and tests — everything in this repo |
+| `countdown/` | The package, scripts, configs and tests — everything in this repo |
 | `data/` | **Not included.** One folder per dataset, each with a `README.md` giving the source, licence and download steps |
 | `reference/` | **Not included.** Index only — see `reference/README.md` |
 
@@ -27,12 +27,12 @@ The full write-up lives in [`qsentinel/README.md`](qsentinel/README.md); the roa
 
 ```bash
 python -m venv .venv && . .venv/bin/activate
-pip install -e qsentinel
-pytest qsentinel/tests -q
+pip install -e countdown
+pytest countdown/tests -q
 ```
 
 The test suite runs on small synthetic fixtures checked into
-`qsentinel/tests/golden/`, so it passes without downloading anything.
+`countdown/tests/golden/`, so it passes without downloading anything.
 
 ## Data
 

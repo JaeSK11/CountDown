@@ -102,7 +102,13 @@ def main() -> int:
     args = ap.parse_args()
 
     X, names, sources, header_len = load_cache(Path(args.cache), args.split)
-    space = LabelSpace.taxonomy("traffic_type")
+    taxonomy = LabelSpace.taxonomy("traffic_type")
+    if set(names.tolist()) <= set(taxonomy.names):
+        space = taxonomy
+    else:
+        # The VPN / non-VPN caches carry the paper's six-class set (audio + video merged into
+        # "streaming"), which is what Table 2 is scored on; the taxonomy cannot express it.
+        space = LabelSpace.from_names("traffic_type_tfegnn", sorted(set(names.tolist())))
     y = space.encode(names)
     print(f"{args.split}: X={X.shape} from {len(set(sources.tolist()))} captures, "
           f"{len(np.unique(y))}/{len(space)} classes realised")
@@ -144,7 +150,7 @@ def main() -> int:
 
     config = {
         "model": "graph_gnn_baseline", "dataset": f"iscx-{args.split} (tfegnn cache)",
-        "target": "traffic_type", "features": "byte_matrix", "protocol": args.protocol,
+        "target": space.target, "features": "byte_matrix", "protocol": args.protocol,
         "cache": args.cache, "fold": args.fold, "n_folds": args.n_folds, "val_size": args.val_size,
         "seed": args.seed, "params": params, "n_samples": int(X.shape[0]),
         "feature_shape": [int(d) for d in X.shape[1:]], "label_space": space.to_dict(),

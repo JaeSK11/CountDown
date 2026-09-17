@@ -199,8 +199,9 @@ Run dirs: `runs/tfegnn`, `runs/tfegnn-refbytes`, `runs/tfegnn-random-tfegnn`,
    **Left:** pick the recommended construction (D1), register `flow_image_cnn` (needs per-experiment
    `flow_image` params — the harness has none today), FlowPic on MobileApp, latency column.
 5. **Graph:** ✅ registered as `graph_gnn_baseline` and scored on Tor (grouped 5-fold) 2026-09-17.
-   **Left:** train the VPN / non-VPN / non-Tor caches; a CSTNET graph cache (`byte_prep.py` is
-   ISCX-only today); seeds; then GraphSAGE/GIN as `graph_gnn`.
+   VPN split done later that day (authors' split 0.62 vs 0.95; grouped cannot score p2p/email).
+   **Left:** non-VPN / non-Tor caches (≈ 30 h / 9 h GPU — ask); a CSTNET graph cache
+   (`byte_prep.py` is ISCX-only today); seeds; then GraphSAGE/GIN as `graph_gnn`.
 6. **Bytes:** ✅ `--no-pretrained` ablation done 2026-09-17. **Left:** optionally the flow
    `--seq-length 512` run; then the recommended model (after D1).
 
@@ -250,6 +251,10 @@ Run dirs: `runs/tfegnn`, `runs/tfegnn-refbytes`, `runs/tfegnn-random-tfegnn`,
     is degenerate and a val carve-out is unusable there. `REPLICATION-TFEGNN.md`.
   - Bytes: ET-BERT packet **no-pretrain 0.688 vs 0.908** pretrained, 1.4 h on the 5090.
     `MODEL-bytes.md`.
+  - Graph, later: ISCX-VPN through the member — authors' split **0.62** vs 0.95 published;
+    grouped 5-fold 0.55 over the six paper classes, with `p2p` (one capture) and `email` (two)
+    unscoreable under any grouped protocol on VPN alone. `scripts/train_graph_gnn.py` now falls
+    back to the cache's class set when it is not the taxonomy.
   - Harness gaps found: `ExperimentConfig` has no per-experiment feature params (blocks a FlowPic
     config through `scripts/train.py`); `group_split` always returns fold 0 of the
     `StratifiedGroupKFold` regardless of seed (fine on 235 captures, degenerate on 51).

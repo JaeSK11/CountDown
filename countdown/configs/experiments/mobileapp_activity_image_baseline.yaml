@@ -24,7 +24,10 @@ params:
   epochs: 60
   batch_size: 32
   class_weight: balanced
-  early_stop_patience: 10
+  # 0 = the paper's fixed 60-epoch schedule. Measured 2026-09-17: with patience 10 on val
+  # accuracy the run stops at epoch 18 while still at chance (macro-F1 0.004); val accuracy
+  # only starts moving after ~epoch 15 on 92 classes. The full schedule reaches 0.165.
+  early_stop_patience: 0
 notes: >-
   Image member on in-app activity. 92 classes from 368 captures (4 each), so treat this
   as a few-shot result, not a normal supervised one.

@@ -1,6 +1,7 @@
 # Model: Graph (traffic-graph GNN)
 
-**input_type:** `graph` · **feature:** `features/graph.py`
+**input_type:** `graph` · **feature:** `features/traffic_graph.py` (byte graphs) over
+`features/byte_prep.py` (byte-retaining pcap pass) — the plan's `features/graph.py` name was not used
 **Primary target:** app-ID (CSTNET 120) / relational fingerprinting
 **Datasets:** CSTNET-TLS1.3 ✅ local (46,372 flows, 120 classes); MAppGraph 🔒 not obtained
 **Ensemble role:** the relational member — captures structure a sequence/byte model misses.
@@ -17,7 +18,40 @@ edges = temporal adjacency + data-driven dependencies (mutual information / PMI)
 - **Architecture:** byte-level traffic graph with **dual embedding** (header + payload), GraphSAGE-
   style message passing + cross-gated feature fusion, then **temporal fusion** across packets. GCN
   backbone.
-- **Register:** `@register("graph_gnn_baseline")`.
+- **Register:** `@register("graph_gnn_baseline")` in `models/graph_gnn.py` — ✅ since 2026-09-17.
+  `input_type = "byte_matrix"` (rank 3, `(N, 50, 40 + 150)` int16 rows from the byte_prep cache);
+  no extractor of that name exists yet, so it is driven by `scripts/train_graph_gnn.py`, not
+  `scripts/train.py`, until byte retention lands in the flow layer (task 4.2).
+
+### Status — built, registered, replicated on ISCX-Tor; not on CSTNET
+Full write-up: [`REPLICATION-TFEGNN.md`](REPLICATION-TFEGNN.md).
+
+| Component | Where | State |
+| --- | --- | --- |
+| byte-retaining pcap pass | `features/byte_prep.py` | ✅ paper §4.1.2 preprocessing; ISCX loaders only |
+| PMI byte graphs | `features/traffic_graph.py` | ✅ verified against the authors' `construct_graph` (`tests/test_tfe_gnn.py`, 12 tests) |
+| `TFEGNNNet` | `models/tfe_gnn.py` | ✅ PyG `SAGEConv` towers + cross-gated fusion + BiLSTM; 44.3M params with the 8-class head |
+| `graph_gnn_baseline` | `models/graph_gnn.py`, `tests/test_graph_gnn.py` (7 tests) | ✅ `BaseModel` wrapper: authors' schedule by default, optional `class_weight="balanced"` and early stop on val macro-F1, `LabelSpace`-ordered `predict_proba`, save/load |
+| caches | `cache/tfegnn/{vpn,nonvpn,tor,nontor}` | ✅ 31 / 109 / 51 / 44 shards (one per capture) = 18,233 / 290,198 / 3,003 / 88,600 samples |
+| training | `scripts/replicate_tfegnn.py` (authors' split), `scripts/train_graph_gnn.py` (member through the Phase-3 harness, `--fold k` of a grouped 5-fold) | ✅ **only `tor` has been trained**, single seed per cell |
+
+ISCX-Tor, macro-F1, published **0.9855** (Table 2):
+
+| Split | addressing stripped (ours) | addressing kept (authors' byte layout) |
+| --- | --- | --- |
+| `sequential` (authors' split, ~capture-disjoint) | **0.387** (acc 0.623) | 0.564 (acc 0.702) |
+| `random` (stratified shuffle — leaks) | 0.800 (acc 0.920) | 0.938 (acc 0.960) |
+
+The published number is approached only with both leaks present — the same pattern as the
+flow-stats and image replications. Through the registered member (seed 42, 2026-09-17) the
+authors' split gives **0.526** and a grouped 5-fold split **0.442 ± 0.136** under the paper's
+no-validation protocol (`runs/graph-gnn-noval/`; 0.400 ± 0.138 with a 10 % val carve-out,
+`runs/graph-gnn/`) — see `REPLICATION-TFEGNN.md` for why the fold spread is that wide: one p2p
+capture is 36 % of ISCX-Tor. Every cell is a single seed over
+300–450 test samples with three classes at ≤ 10 samples; read the Tor numbers as ~0.4–0.5.
+
+**Left for this member:** train the three cached ISCX splits; a CSTNET
+graph cache (`byte_prep.py` is ISCX-only today) for the scorecard below; seeds; then GraphSAGE/GIN.
 
 ## Recommended (our chat) — GraphSAGE / GIN
 - **Model:** a cleaner **GraphSAGE** (inductive, scales) or **GIN** (max expressive power, WL-test
@@ -41,7 +75,7 @@ edges = temporal adjacency + data-driven dependencies (mutual information / PMI)
 ## Scorecard (to produce)
 | Variant | macro-F1 (CSTNET app) | #params | graph-build ms | infer ms/flow |
 | --- | --- | --- | --- | --- |
-| graph_gnn_baseline (TFE-GNN) | … | … | … | … |
+| graph_gnn_baseline (TFE-GNN) | … *(ISCX-Tor grouped 5-fold: 0.44 ± 0.14, see status)* | 44.3M (8-class head) | ~0.09 per graph (build on access) | … |
 | graph_gnn (SAGE/GIN) | … | … | … | … |
 
 ## DoD

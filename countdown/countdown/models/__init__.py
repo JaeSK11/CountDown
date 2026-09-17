@@ -10,6 +10,7 @@ from countdown.models.flow_gbdt import FlowStatsGBDT
 from countdown.models.flow_image_cnn import FlowImageCNN
 from countdown.models.flow_image_resnet import FlowImageResNet18
 from countdown.models.byte_net import ETBertBaseline
+from countdown.models.graph_gnn import TFEGNNBaseline
 from countdown.models.paper_baselines import PaperC45, PaperKNN
 
 __all__ = [
@@ -19,6 +20,7 @@ __all__ = [
     "FlowStatsGBDT",
     "PaperC45",
     "PaperKNN",
+    "TFEGNNBaseline",
     "ModelRegistry",
     "load_model",
     "register",

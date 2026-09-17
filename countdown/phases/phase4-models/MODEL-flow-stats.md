@@ -99,10 +99,27 @@ On the 6-class task this is the **single largest lever measured** — bigger tha
 bigger than the model. It also cuts against the reason the setting was adopted: `PHASE-3.md` §5.2
 pairs balanced weights with a macro-F1 headline, but macro-F1 is one of the metrics it hurts.
 
-**Not yet a config change.** This was measured on ISCXVPN alone at ftm 15 s with 200 rounds and no
-early stopping; the Phase-3 headline (`iscx_pooled`, 600 rounds, early stopping) is a different
-configuration. Re-run there before flipping the default — but treat `balanced` as **suspect, not
-settled**, and do not add it to new members by default.
+**Re-tested on the Phase-3 config (2026-09-17)** — `iscx_pooled` / traffic_type, grouped
+`source_file` split with a val fold, 600 rounds, early stopping, three seeds (the seed moves both
+the split and the model). `runs/classweight-retest/`:
+
+| seed | balanced | unweighted | Δ macro-F1 | accuracy bal → unw |
+| --- | --- | --- | --- | --- |
+| 42 | 0.6317 | 0.6474 | +0.016 | 0.884 → 0.891 |
+| 1 | 0.6273 | 0.6417 | +0.014 | 0.884 → 0.890 |
+| 2 | 0.6325 | 0.6451 | +0.013 | 0.885 → 0.891 |
+| mean ± sd | 0.630 ± 0.003 | **0.645 ± 0.003** | **+0.014** | |
+
+The direction holds on the headline config, but the size does not: +0.014 here against +0.14 on
+the 6-class ISCXVPN task above. With 235 captures the split is stable (sd 0.003), so the gap is
+real; it comes from `chat`, `audio_streaming` and `voip` (+0.04 to +0.05 F1 each) against small
+losses on `email` and `video_streaming`. Balanced weights are not rescuing the thin classes they
+were adopted for.
+
+**Still not a config change.** `PHASE-5.md` §1 requires one class-weight convention across every
+member, so flipping `flow_gbdt` alone is a cross-member decision — recorded for the user in
+`../PHASE-4-HANDOFF.md` §5. Until then: `balanced` stays the shipped default, is **suspect, not
+settled**, and is not added to new members by default.
 
 Whatever is chosen, the Phase-5 convention still applies (`PHASE-5.md` §1): calibration fitted on a
 split carrying the **true** class distribution largely corrects a reweighted posterior, and **every
@@ -159,8 +176,8 @@ unweighting does it lead. A default can cost more than an architecture.
 1. ✅ Paper baseline built, replicated, documented (`REPLICATION-DRAPERGIL.md`).
 2. ✅ **Feature effect separated from model effect** (`scripts/ablate_features_vs_model.py`,
    `runs/ablate_features_vs_model.json`). Answer above; it is task-dependent.
-3. ⬜ Re-test `class_weight` on the Phase-3 config (`iscx_pooled`, 600 rounds, early stopping)
-   before changing the default. **Highest-value open run.**
+3. ✅ `class_weight` re-tested on the Phase-3 config (2026-09-17): unweighted +0.014 macro-F1,
+   consistent over three seeds. Default unchanged pending the cross-member convention (above).
 4. ⬜ CatBoost added to the scorecard.
 
 ## Risks

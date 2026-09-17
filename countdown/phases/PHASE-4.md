@@ -127,8 +127,9 @@ ModelRegistry.list()   # includes: flow_gbdt, seq_cnn_baseline/seq_cnn,
 ---
 
 ## 8. Risks
-- **GPU/compute:** deep models need a GPU (you have an RTX A4000 per the WF paper's setup); keep
-  batch/seq configurable; provide CPU-small configs for CI.
+- **GPU/compute:** deep models need a GPU. The box has an **RTX 5090** (32 GB, `sm_120`), which
+  needs a CUDA ≥ 12.8 build of torch (`PHASE-4-HANDOFF.md` §0); every replication to date ran on
+  the RTX 3090 it replaced. Keep batch/seq configurable; provide CPU-small configs for CI.
 - **Fair comparison:** baseline vs recommended must use the **same split/features/target** — enforce
   via shared configs so the scorecard is honest.
 - **Overfitting on small datasets** (ISCX): augmentation + early stopping + group-aware split.

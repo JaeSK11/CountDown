@@ -63,13 +63,71 @@ and collapses only on `facebook_audio` (1.00 → **0.03**), which happens to be 
 
 `flow_image_cnn_baseline` is 102,570 params.
 
-### Still to produce
-| Variant | macro-F1 (MobileApp activity) | macro-F1 (ISCX traffic_type) | #params | infer ms/flow |
+### Variants, measured (ISCX, grouped protocol — `runs/okonkwo/variant_*.json`)
+Same driver and settings as the replication (windows 15/30/60 s, 60 epochs, batch 10, no class
+weights); only the construction, channel count or backbone changes. **Single seed (42)**, macro-F1:
+
+| Task (classes) | scatter 1ch (baseline) | FlowPic 1ch | FlowPic 3ch | ResNet-18, FlowPic 3ch |
 | --- | --- | --- | --- | --- |
-| flow_image_cnn_baseline (scatter) | … | 0.917 / 0.934 ✅ | 102,570 | … |
-| flow_image_cnn (FlowPic, 1ch) | … | … | … | … |
-| flow_image_cnn (FlowPic, 3ch +direction) | … | … | … | … |
-| flow_image_cnn (FlowPic ResNet-18) | … | … | … | … |
+| 1 non-VPN app (10) | 0.803 | 0.798 | 0.642 | 0.741 |
+| 2 non-VPN traffic (4) | 0.934 | 0.939 | 0.943 | **0.955** |
+| 3 VPN app (6) | *2 of 6 classes in the test fold — not measurable* | | | |
+| 4 VPN traffic (4) | 0.917 | 0.860 | **0.968** | 0.949 |
+| 5 Tor app (4) | 0.434 | 0.310 | 0.346 | 0.392 |
+| 6 Tor traffic (7) | 0.665 | 0.669 | 0.710 | **0.747** |
+| #params (4-class head) | 102,180 | 102,180 | 102,756 | 11,170,884 |
+
+3 channels = presence + direction + byte volume. ResNet-18 (`flow_image_resnet18`, torchvision, stem
+adapted, no pretraining) costs ~80× the wall-clock of the small CNN (2,519 s vs 31 s on task 4).
+
+**Seed sweep** (`runs/okonkwo/seeds/`, 5 seeds per cell, same settings, mean ± sd; tasks 1/4/5 on
+the RTX 3090 / torch 2.5.1, tasks 2/6 on the RTX 5090 / torch 2.14 on 2026-09-17):
+
+| Task | scatter 1ch | FlowPic 3ch | Δ |
+| --- | --- | --- | --- |
+| 1 non-VPN app | 0.779 ± 0.022 | 0.794 ± 0.029 | +0.015 (noise) |
+| 2 non-VPN traffic | 0.899 ± 0.057 | 0.894 ± 0.061 | −0.005 (noise; both swing 0.82–0.97 with the fold) |
+| 4 VPN traffic | 0.864 ± 0.028 | **0.930 ± 0.027** | **+0.066** |
+| 5 Tor app | **0.442 ± 0.010** | 0.397 ± 0.038 | **−0.045** |
+| 6 Tor traffic | 0.666 ± 0.011 | **0.711 ± 0.019** | **+0.045** (every FlowPic seed above every scatter seed) |
+
+How to read these:
+
+- In `replicate_okonkwo.py` the seed sets **both** the init and the group split (which captures land
+  in test), so the sd is split + init variance. At sd 0.01–0.04, single-seed gaps under ~0.05 in the
+  first table are not evidence.
+- Task 1's 0.642 for FlowPic 3ch (seed 42) is far below its 5-seed mean of 0.794: a hard fold, not
+  a construction effect.
+- Three differences hold across seeds. FlowPic 3ch is **+0.066 on VPN traffic type** (4 of its 5
+  seeds above every scatter seed), **+0.045 on Tor traffic type** (all 5 above all 5), and
+  **−0.045 on Tor application** (all 5 below all 5). Both traffic-type wins are on the tasks the
+  member is actually for; the loss is on a 4-class app task with 5 captures per class, where the
+  extra channels look like extra capture fingerprint rather than signal. Non-VPN traffic type is
+  dominated by fold variance (sd 0.06 for both constructions) and separates nothing.
+- ResNet-18 leads on the two tasks with the most captures per class (2 and 6) — single seed, 100×
+  the parameters, unverified across seeds.
+
+### Still to produce
+- **MobileApp activity** (the primary target), baseline only, 2026-09-17
+  (`configs/experiments/mobileapp_activity_image_baseline.yaml`, windows 5 + 10 s → 1,829 images,
+  grouped by capture, 92 classes, `runs/mobileapp-image/`):
+
+  | run | macro-F1 | accuracy |
+  | --- | --- | --- |
+  | scatter CNN, 60 epochs (paper schedule) | **0.165** | 0.266 |
+  | same, early stop patience 10 on val accuracy (the config as first shipped) | 0.004 | 0.026 |
+  | `flow_gbdt` on flow_stats, whole captures (Phase 3) | 0.441 | 0.489 |
+
+  Early stopping stopped the first run at epoch 18 with the model still at chance — on 92 classes
+  the val accuracy is flat for ~15 epochs — so the config now runs the fixed schedule. Even so
+  the image baseline is far below the tabular member on its own primary target. Few-shot (4
+  captures per class, 1 in test) is the regime, exactly as the risk below says. Not yet run
+  here: the FlowPic constructions (the harness has no per-experiment feature params, so
+  `flow_image` construction/channels are global in `configs/features.yaml`), more seeds, and a
+  pretrained backbone.
+- Inference latency per flow for every row; more seeds on tasks 2/6 before trusting the ResNet rows.
+- The recommended construction is **not decided** — this section is the evidence for that decision
+  (`../PHASE-4-HANDOFF.md` §5 D1), and `flow_image_cnn` is not registered yet.
 
 **ViT row dropped.** `MODEL-DECISIONS.md` assigns the image member to in-app activity and
 traffic_type only, so it never runs on CSTNET — the one corpus large enough to justify a ViT. The

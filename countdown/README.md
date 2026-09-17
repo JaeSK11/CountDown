@@ -17,7 +17,7 @@ See [`PLAN.md`](PLAN.md) for the full roadmap and [`phases/`](phases/) for per-p
 
 ---
 
-## Status: Phases 0–3 complete
+## Status: Phases 0–3 complete, Phase 4 in progress
 
 Phase 0 delivers the data layer: **any dataset → `(X, y)`**.
 
@@ -90,8 +90,24 @@ These read *lower* than much of the published work on ISCX, and deliberately so:
 flow-level split puts near-duplicate flows from one capture on both sides. See
 `phases/PHASE-3.md` §5.3.
 
-Not yet built: deep models (P4), byte/image/graph features (P4), calibration + stacking
-(P5), live capture (P6).
+### Phase-4 status
+
+Each ensemble member is built as a **paper baseline first**, replicated against its published
+numbers under both the paper's protocol and a leak-free one, before the recommended variant is
+compared to it. Live status, blockers and open decisions: `phases/PHASE-4-HANDOFF.md`.
+
+| member | registered today | paper baseline | write-up |
+| --- | --- | --- | --- |
+| flow-stats | `flow_gbdt` (P3), `flow_c45_paper`, `flow_knn_paper` | Draper-Gil C4.5 / k-NN | `phases/phase4-models/REPLICATION-DRAPERGIL.md` |
+| image | `flow_image_cnn_baseline`, `flow_image_resnet18` | Okonkwo scatter-CNN | `phases/phase4-models/REPLICATION-OKONKWO.md`, `MODEL-image.md` |
+| bytes | `byte_net_baseline` | ET-BERT (public checkpoint) | `phases/phase4-models/MODEL-bytes.md` |
+| graph | — (`models/tfe_gnn.py`, not yet a `BaseModel`) | TFE-GNN | `phases/phase4-models/REPLICATION-TFEGNN.md` |
+
+All three replications reach the published number only under the paper's own (leaky) protocol;
+the grouped column is the bar for every recommended variant.
+
+Not yet built: the sequence member (`seq_cnn`), every recommended deep variant, `experts/`,
+calibration + stacking (P5), live capture (P6).
 
 ## Install
 
@@ -102,6 +118,10 @@ python3 -m venv .venv && .venv/bin/pip install -e ".[dev,viz]"
 
 `viz` is optional and only adds the confusion-matrix PNG; every run writes `metrics.json`
 with the matrix in it either way.
+
+The Phase-4 deep members additionally need `torch` + `torchvision` (a CUDA build that matches
+the GPU — an RTX 5090 needs CUDA ≥ 12.8) and `torch-geometric` for the graph member. They are
+lazy-imported and not yet declared in `pyproject.toml`; the registry works without them.
 
 ## Layout
 
@@ -120,8 +140,21 @@ countdown/
   data/                   DatasetLoader ABC + registry + parquet cache + 5 loaders
   data/pooled.py          load_pooled([...]) -> one FlowDataset                    [P3]
   features/               FeatureExtractor ABC + flow_stats, packet_seq
+  features/timeonly.py    Draper-Gil's 23 time-only features (paper baseline)          [P4]
+  features/flow_image.py  scatter / FlowPic images, 1 or 3 channels                    [P4]
+  features/payload_bytes.py  ET-BERT bi-gram tokens from handshake bytes               [P4]
+  features/byte_prep.py   byte-retaining pcap pass for TFE-GNN (ISCX)                  [P4]
+  features/traffic_graph.py  PMI byte graphs (TFE-GNN)                                 [P4]
+  data/windows.py         capture-window sample unit (Okonkwo); data/app_labels.py     [P4]
+  data/etbert_corpus.py   the released ET-BERT CSTNET corpus + endpoint-leakage audit  [P4]
+  flows/segment.py        flow-timeout segmentation (Draper-Gil ftm)                   [P4]
   models/base.py          BaseModel ABC + ModelRegistry (the ensemble seam)        [P3]
   models/flow_gbdt.py     LightGBM on flow_stats -- the universal baseline member  [P3]
+  models/paper_baselines.py  flow_c45_paper, flow_knn_paper                        [P4]
+  models/flow_image_cnn.py   flow_image_cnn_baseline (Okonkwo); flow_image_resnet.py  [P4]
+  models/byte_net.py      byte_net_baseline (ET-BERT transcription)                [P4]
+  models/tfe_gnn.py       TFEGNNNet (not yet registered)                           [P4]
+  training/deep.py        shared torch trainer: early stop, checkpoint/resume, AMP [P4]
   eval/splits.py          group-aware splits + the vacuous-grouping guard          [P3]
   eval/metrics.py         macro-F1 headline, per-class, Dummy baseline             [P3]
   eval/report.py          reproducible runs/<id>/ directories                      [P3]
@@ -131,6 +164,9 @@ runs/                     per-run artifacts (gitignored)
 scripts/train.py          training CLI
 scripts/summarize_runs.py tabulate runs/ into the results table
 scripts/summarize_datasets.py
+scripts/replicate_drapergil.py, replicate_okonkwo.py, replicate_tfegnn.py, repro_etbert.py
+                          paper replications (write to runs/)                        [P4]
+scripts/build_tfegnn_cache.py  pcap -> TFE-GNN byte shards under cache/tfegnn/        [P4]
 scripts/gen_pqc_pcaps.sh  self-generated PQC/classical captures  → data/_pqc_synth/
 scripts/validate_pqc.py   parser vs tshark oracle + PQC precision/recall
 tests/

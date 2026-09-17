@@ -34,8 +34,9 @@ any UER-derived model, so they are recorded here rather than only in the module 
    padding must carry `seg = 0`.
 
 ### Named deviations from the authors' run
-- **Mixed precision.** They run fp32 on V100S; we default to AMP on the RTX 3090 because fp32 puts
-  the 10-epoch packet run out of wall-clock reach. `--no-amp` restores fp32.
+- **Mixed precision.** They run fp32 on V100S; we default to AMP because fp32 puts the 10-epoch
+  packet run out of wall-clock reach. `--no-amp` restores fp32. (Both replication runs were made on
+  the RTX 3090 this box had at the time; it now has an RTX 5090 — see `../PHASE-4-HANDOFF.md` §0.)
 - **Model selection.** They train a fixed 10 epochs and report the final model; we restore the best
   validation macro-F1 epoch. Standard, and can only help the baseline.
 - **Optimiser.** Faithful by default: UER's `AdamW(correct_bias=False)` is reproduced by folding the
@@ -79,8 +80,8 @@ lr 2e-5 (packet) / 6e-5 (flow), their corpus, their 8:1:1 split.
 | Run | our macro-F1 | paper | delta | notes |
 | --- | --- | --- | --- | --- |
 | ET-BERT(flow), seq 128 | **0.8585** (acc 0.8736) | 0.9426 (acc 0.9510) | **−0.0841** | 20.8 min, best epoch 9 |
-| ET-BERT(packet), seq 128 | _running_ | 0.9741 (acc 0.9737) | — | ~3.9 h, 145,430 steps |
-| ET-BERT(packet), no pretrain | _not run_ | — | — | the paper's ablation row |
+| ET-BERT(packet), seq 128 | **0.9076** (acc 0.9066) | 0.9741 (acc 0.9737) | **−0.0665** | 5.0 h, best epoch 10 (the last) |
+| ET-BERT(packet), no pretrain | **0.6877** (acc 0.6842) | — | **−0.2199 vs pretrained** | 1.4 h on the RTX 5090, best epoch 10 (still rising) |
 
 **The flow gap is not undertraining.** Train loss reached 0.044 and val macro-F1 plateaued from
 epoch 7 (0.847 → 0.848 → 0.852 → 0.851). Leading hypothesis: **`seq_length 128` truncates the
@@ -88,7 +89,26 @@ epoch 7 (0.847 → 0.848 → 0.852 → 0.851). Leading hypothesis: **`seq_length
 length is not stated in the paper and their README documents only the packet command
 (`--seq_length 128`). Testing it costs one `--seq-length 512` run (~2 h; attention is quadratic).
 
-Read that gap against the leakage table above: our 0.8736 accuracy is 7 points above the address
+**The packet gap is smaller, and the curve had not flattened.** Validation macro-F1 rose every
+epoch — 0.450 → 0.725 → 0.797 → 0.841 → 0.866 → 0.883 → 0.895 → 0.902 → 0.906 → 0.908 — so the
+best model is the final one, unlike the flow run. But the last three epochs add 0.002–0.004 each;
+training longer would not close 0.066. The leakage audit on `packet_5000` is 0.0 (nothing parses
+as Ethernet/IPv4), so this is the one ET-BERT number that measures byte modelling rather than the
+address book: **0.9076 macro-F1 over 58,171 test packets, 0.67 ms/sample** on the paper's own
+8:1:1 split (`runs/etbert-repro/packet.json`, `packet_metrics.json` for the per-class table).
+
+**Pre-training is worth +0.22 macro-F1 on the clean corpus** (`runs/etbert-repro-nopretrain/
+packet_scratch.json`, 2026-09-17, same 10-epoch protocol, random init instead of the checkpoint):
+0.688 against 0.908. The from-scratch curve (0.12 → 0.33 → 0.44 → 0.53 → 0.59 → 0.62 → 0.65 →
+0.67 → 0.68 → 0.69) is still climbing ~0.01 per epoch at the end, so part of the gap is the
+paper's fixed 10-epoch budget rather than capacity — but the pretrained model reached 0.69 by
+epoch 2. The paper's own ablation (−37.57 %) was measured at ≤ 100 samples/class; at CSTNET's
+~500/class the effect is smaller but still the largest single factor measured on this member,
+which is the fact the bytes selection (`BYTES-SELECTION-BRIEF.md`, D1) has to weigh: a candidate
+without pretraining starts 0.22 behind on this corpus, and one with lighter pretraining
+(YaTC / NetMamba) is betting that most of the 0.22 comes cheaply.
+
+Read the flow gap against the leakage table above: our 0.8736 accuracy is 7 points above the address
 book, the paper's 0.9510 is 15 points above it. Both sit in a band where endpoint memorisation
 dominates, so the flow reproduction is a pipeline check, not evidence about byte modelling.
 
@@ -126,8 +146,8 @@ and the `--no-pretrained` ablation measure is precisely the question that decide
 | Variant | macro-F1 (CSTNET app) | #params | pretrain cost | infer ms/sample |
 | --- | --- | --- | --- | --- |
 | byte_net_baseline (ET-BERT), flow | 0.8585 | 132.2M | reused public checkpoint | 0.77 |
-| byte_net_baseline (ET-BERT), packet | _running_ | 132.2M | reused public checkpoint | ~0.7 |
-| byte_net_baseline, no pretrain | … | 132.2M | none | … |
+| byte_net_baseline (ET-BERT), packet | **0.9076** | 132.2M | reused public checkpoint | 0.67 |
+| byte_net_baseline, no pretrain, packet | **0.6877** | 132.2M | none | 0.28 (fp16 eval, 5090) |
 | byte_net (recommended) | … | … | … | … |
 
 ## DoD

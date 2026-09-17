@@ -7,8 +7,8 @@
 > `runs/tfegnn-random-tfegnn-refbytes/tor.json`
 > Paper: arXiv:2307.16713 · authors' code: github.com/ViktorAxelsen/TFE-GNN
 
-**Status:** ISCX-Tor only, one seed per cell. The VPN / non-VPN / non-Tor caches are built but
-untrained; CSTNET (the plan's primary target for this member) has no byte cache yet. Since
+**Status:** ISCX-Tor and ISCX-VPN, one seed per cell. The non-VPN / non-Tor caches are built but
+untrained (≈ 30 h and 9 h of GPU at the authors' epoch counts); CSTNET (the plan's primary target for this member) has no byte cache yet. Since
 2026-09-17 the network is a registered `BaseModel` (`graph_gnn_baseline`) and has a grouped
 5-fold number on Tor (section below). See `MODEL-graph.md` for what is left.
 
@@ -123,6 +123,32 @@ Per-class F1 across the no-val folds 1–4: audio_streaming 0.70–0.91, voip 0.
 0.45–0.91, video_streaming 0.45–0.60, browsing 0.33–0.71, chat 0.00–0.32, file_transfer
 0.00–0.18, email 0.00 except one fold at 0.32. About 13.5 min per 100-epoch fold on the 5090
 (16.5 with the per-epoch validation pass).
+
+### ISCX-VPN through the member (2026-09-17)
+
+Same script on the `vpn` cache (31 captures, 18,233 samples, the paper's six classes with audio
+and video merged into `streaming`; authors' 20 epochs; ~3.3 min per run). Published F1 0.9536.
+Runs: `runs/graph-gnn-vpn/`.
+
+| Protocol | test | captures | macro-F1 (present classes) | [all 6] | accuracy | absent from test |
+| --- | --- | --- | --- | --- | --- | --- |
+| `sequential` (authors' split) | 1,827 | 9 | **0.622** | 0.622 | 0.791 | — |
+| grouped fold 0 | 5,130 | 10 | 0.491 | 0.327 | 0.969 | email, p2p |
+| grouped fold 1 | 3,849 | 4 | 0.893 | 0.595 | 0.969 | email, p2p |
+| grouped fold 2 | 2,765 | 5 | 0.831 | 0.692 | 0.850 | p2p |
+| grouped fold 3 | 3,349 | 7 | 0.541 | 0.541 | 0.732 | — |
+| grouped fold 4 | 3,140 | 5 | 0.897 | 0.598 | 0.928 | email, p2p |
+| **grouped, 5-fold mean** | | | 0.731 ± 0.198 | **0.551** | | |
+
+Two readings. First, the authors' split with stripped addressing lands at 0.62 against 0.95,
+the same shape as Tor (0.39–0.53 against 0.99); the addressing-kept diagnostic was not built for
+VPN, and the Tor 2×2 already shows what it would say. Second, **ISCX-VPN alone cannot score
+`p2p` under any grouped protocol**: the class is one capture, so it is either wholly in train
+(absent from test) or wholly in test with nothing to learn from (F1 0.00 in fold 3). `email` is
+two captures and has the same problem in three folds. This is the reason `PHASE-3.md` pools
+ISCX-VPN with ISCX-Tor for the traffic-type head, and it means the VPN column of Table 2 is not
+a target the honest protocol can even express. Per-class where it can be scored: voip
+0.76–0.99, chat 0.82–0.96, streaming 0.48–0.92, file_transfer 0.16–0.80.
 
 ## Fidelity gaps and deviations, stated
 

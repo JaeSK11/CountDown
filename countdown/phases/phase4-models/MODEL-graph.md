@@ -33,7 +33,7 @@ Full write-up: [`REPLICATION-TFEGNN.md`](REPLICATION-TFEGNN.md).
 | `TFEGNNNet` | `models/tfe_gnn.py` | ✅ PyG `SAGEConv` towers + cross-gated fusion + BiLSTM; 44.3M params with the 8-class head |
 | `graph_gnn_baseline` | `models/graph_gnn.py`, `tests/test_graph_gnn.py` (7 tests) | ✅ `BaseModel` wrapper: authors' schedule by default, optional `class_weight="balanced"` and early stop on val macro-F1, `LabelSpace`-ordered `predict_proba`, save/load |
 | caches | `cache/tfegnn/{vpn,nonvpn,tor,nontor}` | ✅ 31 / 109 / 51 / 44 shards (one per capture) = 18,233 / 290,198 / 3,003 / 88,600 samples |
-| training | `scripts/replicate_tfegnn.py` (authors' split), `scripts/train_graph_gnn.py` (member through the Phase-3 harness, `--fold k` of a grouped 5-fold) | ✅ **only `tor` has been trained**, single seed per cell |
+| training | `scripts/replicate_tfegnn.py` (authors' split), `scripts/train_graph_gnn.py` (member through the Phase-3 harness, `--fold k` of a grouped 5-fold) | ✅ `tor` and `vpn` trained, single seed per cell; `nonvpn` / `nontor` not (≈ 30 h / 9 h) |
 
 ISCX-Tor, macro-F1, published **0.9855** (Table 2):
 
@@ -49,8 +49,11 @@ no-validation protocol (`runs/graph-gnn-noval/`; 0.400 ± 0.138 with a 10 % val 
 `runs/graph-gnn/`) — see `REPLICATION-TFEGNN.md` for why the fold spread is that wide: one p2p
 capture is 36 % of ISCX-Tor. Every cell is a single seed over
 300–450 test samples with three classes at ≤ 10 samples; read the Tor numbers as ~0.4–0.5.
+ISCX-VPN (six paper classes): authors' split **0.622** vs published 0.954; grouped 5-fold 0.55
+over all six classes — `p2p` is one capture and `email` two, so no grouped protocol on VPN
+alone can score them (`REPLICATION-TFEGNN.md`).
 
-**Left for this member:** train the three cached ISCX splits; a CSTNET
+**Left for this member:** train the `nonvpn` / `nontor` caches (long — ask); a CSTNET
 graph cache (`byte_prep.py` is ISCX-only today) for the scorecard below; seeds; then GraphSAGE/GIN.
 
 ## Recommended (our chat) — GraphSAGE / GIN

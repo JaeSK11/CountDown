@@ -1,0 +1,18 @@
+# Image member, recommended (D1a): FlowPic 3-channel input on the small CNN, MobileApp
+# in-app activity.  Same windows and split as mobileapp_activity_image_baseline.yaml so the
+# only difference is the representation + the shared trainer.  Few-shot: 4 captures/class.
+dataset: mobileapp
+target: activity
+model: flow_image_cnn
+features: flow_image
+feature_params:
+  construction: flowpic
+  channels: 3
+windows: [5, 10]
+grouped: true
+test_size: 0.25
+val_size: 0.1
+params:
+  epochs: 60
+  batch_size: 32
+notes: FlowPic 3ch + small CNN via training/deep.py; no class weights (D5).

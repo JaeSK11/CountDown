@@ -28,6 +28,11 @@ trains via `scripts/train.py --model <name>`, and produces a **baseline-vs-recom
 **Axis A — domain experts** (`experts/`): a `(model, dataset, target)` binding, routed by Stage-1
 protocol in Phase 5. Any base learner can back an expert.
 
+> **Superseded 2026-09-19 (decision D2):** Axis A is built as the **three target-specific
+> ensembles of `ENSEMBLE-MAP.md`** — E1 traffic type, E2 app-ID, E3 in-app activity — in
+> `countdown/experts/`, not the five protocol experts tabulated below. `tunnel_type` needs no
+> model; Stage 1 reads it. The table is kept for the record of the original plan.
+
 | Expert | Dataset | Target | Default backing model |
 | --- | --- | --- | --- |
 | `TLSExpert` | CSTNET / PostQuantumTLS | app | bytes (ET-BERT/YaTC) |
@@ -54,6 +59,16 @@ protocol in Phase 5. Any base learner can back an expert.
 - End-to-end CLI / live capture → Phase 6.
 
 ---
+
+## 2a. Decisions that changed this spec (2026-09-19)
+All in `PHASE-4-HANDOFF.md` §5. In short: recommended members are **FlowPic-3ch small CNN**
+(image), **ET-BERT checkpoint + field-randomising fine-tune** (bytes, not YaTC), **GIN in the
+TFE-GNN towers** (graph), **dilated-residual CNN** (sequence; Mamba deferred — no CUDA toolkit);
+replicated **baselines keep their paper loops** while every recommended member trains through
+`training/deep.py`; **no class weights** for any member; scorecards live in the `MODEL-*.md` docs
+with the evidence copied into the tracked **`results/`** folder (`scripts/collect_results.py`),
+because `runs/` is gitignored. Feature files landed as `features/traffic_graph.py` +
+`features/byte_prep.py` (not `graph.py`) and `features/dir_seq.py` (DF's input).
 
 ## 3. Dependencies (added this phase)
 `torch`, `torch-geometric` **or** `dgl` (graph), optional `mamba-ssm` (falls back to a pure-torch

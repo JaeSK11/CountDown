@@ -53,10 +53,20 @@ ISCX-VPN (six paper classes): authors' split **0.622** vs published 0.954; group
 over all six classes — `p2p` is one capture and `email` two, so no grouped protocol on VPN
 alone can score them (`REPLICATION-TFEGNN.md`).
 
-**Left for this member:** train the `nonvpn` / `nontor` caches (long — ask); a CSTNET
-graph cache (`byte_prep.py` is ISCX-only today) for the scorecard below; seeds; then GraphSAGE/GIN.
+**Left for this member:** seeds. (`nonvpn` / `nontor`, the CSTNET cache and GIN were done
+2026-09-19/20 — see the scorecard.)
 
-## Recommended (our chat) — GraphSAGE / GIN
+## Recommended — decided 2026-09-19 (D1c): GIN in the same towers
+`@register("graph_gnn")` in `models/graph_gnn.py`; `TFEGNNNet(conv="gin")` swaps each GraphSAGE
+layer for a `GINConv` (sum aggregation + 2-layer MLP, `train_eps`). Everything else — byte-graph
+construction, dual towers, JKN concat, cross-gated fusion, BiLSTM — is unchanged, so a scorecard
+difference is attributable to the message-passing rule alone. Trained by `training/deep.py` (D3):
+AdamW 5e-3, one 256-sample batch in place of the authors' 5 × 102 accumulation, no class weights
+(D5), no validation fold where none is honest (ISCX-Tor). `scripts/train_graph_gnn.py --model
+graph_gnn`. A CSTNET byte cache now exists (`cache/tfegnn/cstnet`, 46,284 samples, 120 apps, grouped
+by `capture_day`), so both variants are scored on the member's real target. Original plan text:
+
+### Original plan — GraphSAGE / GIN
 - **Model:** a cleaner **GraphSAGE** (inductive, scales) or **GIN** (max expressive power, WL-test
   discriminative) backbone on the same graph construction.
 - **Why better:** simpler, inductive (generalizes to unseen graphs), strong on graph classification;

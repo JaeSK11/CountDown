@@ -29,6 +29,13 @@ dev = ["pytest>=7.4"]
 # Phase 3: the confusion-matrix PNG only.  Every run writes metrics.json regardless; the
 # plot is skipped with a note when matplotlib is absent, never an ImportError.
 viz = ["matplotlib>=3.7"]
+# Phase 4: the deep members.  Every one of them lazy-imports these, so the registry, the
+# tabular members and the whole Phase 0-3 surface work without them.  torch must be a CUDA
+# build that matches the GPU -- an RTX 5090 (sm_120) needs CUDA >= 12.8, e.g.
+#   pip install torch==2.14.0 torchvision==0.29.0 --index-url https://download.pytorch.org/whl/cu130
+deep = ["torch>=2.7", "torchvision>=0.22", "torch-geometric>=2.6"]
+# Phase 4: the flow-stats bake-off only (flow_catboost is a comparison model, not a member).
+bakeoff = ["catboost>=1.2"]
 
 [tool.setuptools.packages.find]
 include = ["countdown*"]

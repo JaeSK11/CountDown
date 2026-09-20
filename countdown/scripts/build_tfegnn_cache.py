@@ -123,9 +123,68 @@ def _process_one(args) -> dict:
     return {"path": str(path), "samples": len(samples), **stats.as_dict()}
 
 
+def _process_app(args) -> dict:
+    """CSTNET: one shard per app.  A pcap there is one TLS session, so per-capture shards
+    would mean 46k tiny files; the label is ``app`` and every sample keeps its own
+    ``source_file`` so the trainer can group by capture day."""
+    app, paths, out_path, strip_addr = args
+    from countdown.features.byte_prep import PrepStats
+
+    stats = PrepStats()
+    H, P, N, S = [], [], [], []
+    errors = 0
+    for path in paths:
+        try:
+            samples = extract_byte_samples(path, label_fields={"app": app}, meta={"source_file": str(path)},
+                                           segment_seconds=None, stats=stats, strip_addressing=strip_addr)
+        except Exception:
+            errors += 1
+            continue
+        for smp in samples:
+            H.append(smp.header); P.append(smp.payload); N.append(smp.n_packets); S.append(str(path))
+    if not H:
+        return {"path": app, "skipped": "no-samples", "samples": 0, "errors": errors, **stats.as_dict()}
+    tmp_path = Path(str(out_path) + ".tmp.npz")
+    np.savez_compressed(
+        tmp_path, header=np.stack(H).astype(np.int16), payload=np.stack(P).astype(np.int16),
+        n_packets=np.asarray(N, dtype=np.int32), label=np.array([app] * len(H)), source_file=np.array(S),
+    )
+    tmp_path.replace(out_path)
+    return {"path": app, "samples": len(H), "errors": errors, **stats.as_dict()}
+
+
+def _build_cstnet(args) -> int:
+    out_dir = Path(args.out) / "cstnet"
+    out_dir.mkdir(parents=True, exist_ok=True)
+    by_app: dict[str, list] = {}
+    for item in get_loader("cstnet").discover():
+        by_app.setdefault(item.label_fields["app"], []).append(item.path)
+    apps = sorted(by_app)[: args.limit] if args.limit else sorted(by_app)
+    jobs = []
+    for app in apps:
+        shard = out_dir / f"{app}.npz"
+        if shard.exists() and not args.force and _shard_is_readable(shard):
+            continue
+        jobs.append((app, by_app[app], shard, not args.keep_addressing))
+    print(f"[cstnet] {len(apps)} apps, {sum(len(by_app[a]) for a in apps)} pcaps, "
+          f"{len(jobs)} shards to build, {args.workers} workers")
+    t0, results = time.time(), []
+    with ProcessPoolExecutor(max_workers=args.workers) as pool:
+        for i, fut in enumerate(as_completed([pool.submit(_process_app, j) for j in jobs]), 1):
+            results.append(fut.result())
+            if i % 10 == 0 or i == len(jobs):
+                print(f"  {i}/{len(jobs)} shards, {sum(r['samples'] for r in results)} samples, "
+                      f"{time.time() - t0:.0f}s", flush=True)
+    summary = {"split": "cstnet", "shards": len(results), "samples": sum(r["samples"] for r in results),
+               "errors": sum(r.get("errors", 0) for r in results), "seconds": round(time.time() - t0, 1)}
+    (out_dir / "_summary.json").write_text(json.dumps(summary, indent=2))
+    print(json.dumps(summary))
+    return 0
+
+
 def main() -> int:
     ap = argparse.ArgumentParser(description=__doc__)
-    ap.add_argument("--split", choices=sorted(SPLITS), required=True)
+    ap.add_argument("--split", choices=sorted(SPLITS) + ["cstnet"], required=True)
     ap.add_argument("--out", default="cache/tfegnn", help="cache root")
     ap.add_argument("--workers", type=int, default=4)
     ap.add_argument("--limit", type=int, default=0, help="process at most N captures")
@@ -136,6 +195,8 @@ def main() -> int:
              "(diagnostic only -- see byte_prep.DEVIATIONS)",
     )
     args = ap.parse_args()
+    if args.split == "cstnet":
+        return _build_cstnet(args)
 
     loader_name, want_tunnel, segment_seconds, class_map = SPLITS[args.split]
     out_dir = Path(args.out) / args.split

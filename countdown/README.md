@@ -98,16 +98,22 @@ compared to it. Live status, blockers and open decisions: `phases/PHASE-4-HANDOF
 
 | member | registered today | paper baseline | write-up |
 | --- | --- | --- | --- |
-| flow-stats | `flow_gbdt` (P3), `flow_c45_paper`, `flow_knn_paper` | Draper-Gil C4.5 / k-NN | `phases/phase4-models/REPLICATION-DRAPERGIL.md` |
-| image | `flow_image_cnn_baseline`, `flow_image_resnet18` | Okonkwo scatter-CNN | `phases/phase4-models/REPLICATION-OKONKWO.md`, `MODEL-image.md` |
-| bytes | `byte_net_baseline` | ET-BERT (public checkpoint) | `phases/phase4-models/MODEL-bytes.md` |
-| graph | — (`models/tfe_gnn.py`, not yet a `BaseModel`) | TFE-GNN | `phases/phase4-models/REPLICATION-TFEGNN.md` |
+| flow-stats | **`flow_gbdt`** (P3), `flow_c45_paper`, `flow_knn_paper`, `flow_catboost` (bake-off only) | Draper-Gil C4.5 / k-NN | `phases/phase4-models/REPLICATION-DRAPERGIL.md` |
+| image | `flow_image_cnn_baseline`, **`flow_image_cnn`** (FlowPic 3ch), `flow_image_resnet18` | Okonkwo scatter-CNN | `phases/phase4-models/REPLICATION-OKONKWO.md`, `MODEL-image.md` |
+| bytes | `byte_net_baseline`, **`byte_net`** (+ seq/ack randomisation) | ET-BERT (public checkpoint) | `phases/phase4-models/MODEL-bytes.md` |
+| graph | `graph_gnn_baseline`, **`graph_gnn`** (GIN) | TFE-GNN | `phases/phase4-models/REPLICATION-TFEGNN.md` |
+| sequence | `seq_cnn_baseline` (DF), **`seq_cnn`** (dilated-residual) | Deep Fingerprinting | `phases/phase4-models/MODEL-sequence.md` |
 
 All three replications reach the published number only under the paper's own (leaky) protocol;
 the grouped column is the bar for every recommended variant.
 
-Not yet built: the sequence member (`seq_cnn`), every recommended deep variant, `experts/`,
-calibration + stacking (P5), live capture (P6).
+Bold = the recommended member. Recommended members train through `training/deep.py`; baselines
+keep their paper loops; no member uses class weights. `countdown/experts/` binds them into the
+three ensembles of `phases/ENSEMBLE-MAP.md` (E1 traffic type, E2 app-ID, E3 activity). The
+evidence behind every scorecard is copied from the gitignored `runs/` into the tracked
+[`results/`](results/INDEX.md) by `scripts/collect_results.py`.
+
+Not yet built: calibration + stacking + router (P5), live capture (P6).
 
 ## Install
 

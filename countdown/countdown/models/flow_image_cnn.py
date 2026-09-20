@@ -290,3 +290,52 @@ class FlowImageCNN(BaseModel):
 
     _in_channels: int = 1
     _size: int = 224
+
+
+# ---------------------------------------------------------------------------------------
+# Recommended variant (decision D1a, 2026-09-19)
+# ---------------------------------------------------------------------------------------
+from countdown.models.deep_member import DeepArrayMember  # noqa: E402
+
+
+@register("flow_image_cnn")
+class FlowPicCNN(DeepArrayMember):
+    """The recommended image member: **FlowPic 3-channel input, the same small CNN**.
+
+    What changed against ``flow_image_cnn_baseline`` is the *representation*, not the
+    backbone: a log-density FlowPic histogram with direction and byte-volume channels
+    instead of a binary scatter.  That is where the measured gain is -- +0.066 macro-F1
+    on VPN traffic type and +0.045 on Tor traffic type over five seeds
+    (``phases/phase4-models/MODEL-image.md``) -- while ResNet-18 at 100x the parameters
+    was never verified across seeds.  The representation is an extractor setting, so an
+    experiment selects it with ``feature_params: {construction: flowpic, channels: 3}``;
+    :attr:`recommended_feature_params` records that pairing in code.
+
+    Training goes through ``training/deep.py`` (decision D3): AdamW, warmup + linear
+    decay, best-validation-epoch restore when a val fold is given, no class weights (D5).
+    """
+
+    input_type = "flow_image"
+    expects_ndim = 4
+    supports = "*"
+    recommended_feature_params = {"construction": "flowpic", "channels": 3}
+    deep_defaults = {
+        "epochs": 60, "batch_size": 32, "eval_batch_size": 256, "learning_rate": 1e-3,
+        "weight_decay": 0.01, "warmup_ratio": 0.1, "patience": 0, "amp": True, "num_workers": 4,
+    }
+
+    def __init__(self, label_space=None, **params: Any) -> None:
+        params.pop("gpu_resident_gb", None)      # a baseline-loop knob the drivers pass
+        super().__init__(label_space=label_space, **params)
+        self.params.setdefault("dropout", (0.25, 0.5))
+
+    def _prep(self, X: np.ndarray) -> np.ndarray:
+        X = FlowImageCNN._as_nchw(X)
+        if X.shape[1] == 1:
+            log.warning("[flow_image_cnn] got a 1-channel image; the recommended input is "
+                        "%s", self.recommended_feature_params)
+        return X
+
+    def _build(self, n_classes: int, sample_shape: tuple[int, ...]):
+        return build_network(n_classes, in_channels=sample_shape[0],
+                             dropout=tuple(self.params["dropout"]), size=sample_shape[-1])

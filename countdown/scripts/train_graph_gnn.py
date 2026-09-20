@@ -46,13 +46,14 @@ from countdown.models import ModelRegistry  # noqa: E402
 from countdown.schema import LabelSpace  # noqa: E402
 
 #: Per-dataset epoch counts from the authors' ``config.py`` (see replicate_tfegnn.py).
-EPOCHS = {"vpn": 20, "nonvpn": 120, "tor": 100, "nontor": 120}
-LR_MIN = {"vpn": 1e-4, "nonvpn": 1e-5, "tor": 1e-4, "nontor": 1e-4}
-PUBLISHED_F1 = {"vpn": 0.9536, "nonvpn": 0.9240, "tor": 0.9855, "nontor": 0.8507}
+#: ``cstnet`` is not in the paper; it gets the authors' base setting (20 epochs).
+EPOCHS = {"vpn": 20, "nonvpn": 120, "tor": 100, "nontor": 120, "cstnet": 20}
+LR_MIN = {"vpn": 1e-4, "nonvpn": 1e-5, "tor": 1e-4, "nontor": 1e-4, "cstnet": 1e-4}
+PUBLISHED_F1 = {"vpn": 0.9536, "nonvpn": 0.9240, "tor": 0.9855, "nontor": 0.8507, "cstnet": None}
 
 
 def load_cache(root: Path, split: str):
-    files = sorted(glob.glob(str(root / split / "*.npz")))
+    files = sorted(f for f in glob.glob(str(root / split / "*.npz")) if not f.endswith(".tmp.npz"))
     if not files:
         raise SystemExit(f"no shards in {root / split} -- run build_tfegnn_cache.py first")
     H, P, L, S = [], [], [], []
@@ -62,6 +63,26 @@ def load_cache(root: Path, split: str):
             L.append(d["label"]); S.append(d["source_file"])
     X = np.concatenate([np.concatenate(H), np.concatenate(P)], axis=2).astype(np.int16)
     return X, np.concatenate(L), np.concatenate(S), int(H[0].shape[2])
+
+
+def cstnet_capture_days(sources: np.ndarray) -> np.ndarray:
+    """``capture_day`` per sample -- the group key Phase 3 uses for CSTNET.
+
+    One CSTNET pcap is one flow, so ``source_file`` groups nothing; the real correlation is
+    the crawl batch.  The day comes from the Phase-0 flow cache, joined on ``app/file`` so
+    that a moved checkout (the project was renamed once) still matches.
+    """
+    from countdown.data import load
+
+    ds = load("cstnet")
+    key = lambda sf: "/".join(Path(str(sf)).parts[-2:])           # noqa: E731
+    day = {key(f.meta.get("source_file")): d for f, d in zip(ds.flows, ds.groups("capture_day"))}
+    out = np.array([day.get(key(sf)) for sf in sources], dtype=object)
+    missing = int(sum(v is None for v in out))
+    if missing:
+        print(f"  {missing}/{len(out)} samples have no flow-cache entry; grouping them by file")
+        out = np.array([v if v is not None else str(sf) for v, sf in zip(out, sources)], dtype=object)
+    return out
 
 
 def grouped_fold(y: np.ndarray, groups: np.ndarray, fold: int, n_folds: int, seed: int):
@@ -99,11 +120,17 @@ def main() -> int:
     ap.add_argument("--workers", type=int, default=12)
     ap.add_argument("--seed", type=int, default=42)
     ap.add_argument("--runs-dir", default="runs/graph-gnn")
+    ap.add_argument("--model", choices=("graph_gnn_baseline", "graph_gnn"), default="graph_gnn_baseline")
     args = ap.parse_args()
 
     X, names, sources, header_len = load_cache(Path(args.cache), args.split)
     taxonomy = LabelSpace.taxonomy("traffic_type")
-    if set(names.tolist()) <= set(taxonomy.names):
+    if args.split == "cstnet":
+        if args.protocol != "grouped":
+            raise SystemExit("cstnet has no authors' split; use --protocol grouped")
+        space = LabelSpace.from_names("app", sorted(set(names.tolist())))
+        sources = cstnet_capture_days(sources)
+    elif set(names.tolist()) <= set(taxonomy.names):
         space = taxonomy
     else:
         # The VPN / non-VPN caches carry the paper's six-class set (audio + video merged into
@@ -127,16 +154,19 @@ def main() -> int:
         tr, te = sequential_split(y)
         va = np.array([], dtype=np.int64)
     audit = split_report(y, sources, tr, te, len(space), space.names)
-    audit["group_key"] = "source_file" if args.protocol == "grouped" else "(sequential, authors')"
+    audit["group_key"] = ("capture_day" if args.split == "cstnet" else "source_file") \
+        if args.protocol == "grouped" else "(sequential, authors')"
     audit["fold"] = f"{args.fold}/{args.n_folds}" if args.protocol == "grouped" else None
     audit["n_val"] = int(len(va))
 
     params = dict(
         header_len=header_len, epochs=args.epochs or EPOCHS[args.split],
-        lr_min=LR_MIN[args.split], class_weight=None if args.class_weight == "none" else "balanced",
+        class_weight=None if args.class_weight == "none" else "balanced",
         early_stop_patience=args.patience, workers=args.workers, seed=args.seed,
     )
-    model = ModelRegistry.create("graph_gnn_baseline", label_space=space, **params)
+    if args.model == "graph_gnn_baseline":
+        params["lr_min"] = LR_MIN[args.split]        # the authors' per-dataset schedule floor
+    model = ModelRegistry.create(args.model, label_space=space, **params)
     t0 = time.time()
     model.fit(X[tr], y[tr], val=(X[va], y[va]) if len(va) else None)
     train_seconds = time.time() - t0
@@ -149,7 +179,7 @@ def main() -> int:
     metrics["history"] = model.history_
 
     config = {
-        "model": "graph_gnn_baseline", "dataset": f"iscx-{args.split} (tfegnn cache)",
+        "model": args.model, "dataset": f"iscx-{args.split} (tfegnn cache)",
         "target": space.target, "features": "byte_matrix", "protocol": args.protocol,
         "cache": args.cache, "fold": args.fold, "n_folds": args.n_folds, "val_size": args.val_size,
         "seed": args.seed, "params": params, "n_samples": int(X.shape[0]),
@@ -158,9 +188,10 @@ def main() -> int:
     run_dir = write_run(metrics, config, model=model, split=audit,
                         runs_dir=Path(args.runs_dir), extra={"split": audit})
     tag = f"{args.protocol} fold {args.fold}/{args.n_folds}" if args.protocol == "grouped" else args.protocol
-    print(f"\ngraph_gnn_baseline / iscx-{args.split} / traffic_type ({tag})")
+    print(f"\n{args.model} / iscx-{args.split} / {space.target} ({tag})")
     print(summarize(metrics, audit))
-    print(f"  published     {PUBLISHED_F1[args.split]:.4f} macro-F1 (authors' protocol)")
+    if PUBLISHED_F1[args.split] is not None:
+        print(f"  published     {PUBLISHED_F1[args.split]:.4f} macro-F1 (authors' protocol)")
     print(f"  train         {train_seconds / 60:.1f} min, {model.n_params() / 1e6:.1f}M params")
     print(f"  run           {run_dir}")
     return 0

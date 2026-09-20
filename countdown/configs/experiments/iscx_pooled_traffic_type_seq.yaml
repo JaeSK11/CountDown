@@ -1,0 +1,12 @@
+# Sequence member, recommended (D1d): dilated-residual CNN on signed sizes + IATs.
+dataset: iscx_pooled
+target: traffic_type
+model: seq_cnn
+features: packet_seq
+feature_params:
+  n: 256
+  channels: 2
+grouped: true
+test_size: 0.2
+val_size: 0.1
+notes: Dilated-residual CNN through training/deep.py; no class weights (D5).

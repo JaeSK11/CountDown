@@ -216,7 +216,22 @@ Run dirs: `runs/tfegnn`, `runs/tfegnn-refbytes`, `runs/tfegnn-random-tfegnn`,
 
 ---
 
-## 5. Decisions that belong to the user — ask, don't pick
+## 5. Decisions — all made by the user on 2026-09-19
+
+| # | Decision | Decided |
+| --- | --- | --- |
+| D1a | image recommended | **FlowPic 3ch on the small Okonkwo CNN** as `flow_image_cnn` |
+| D1b | bytes recommended | **ET-BERT checkpoint + TrafficFormer-style field-randomising fine-tune augmentation** as `byte_net` |
+| D1c | graph recommended | **GIN** in the same towers and byte-graph construction as `graph_gnn` |
+| D1d | sequence recommended | **DF baseline → dilated-residual CNN** as `seq_cnn`; Mamba deferred (no CUDA toolkit for `mamba-ssm`) |
+| D2 | experts | **three ensembles** (E1 traffic-type, E2 app-ID, E3 in-app activity) per `ENSEMBLE-MAP.md` |
+| D3 | trainer | replicated **baselines keep their paper loops**; every **recommended member uses `training/deep.py`**; `deep.py` gets a unit test |
+| D4 | scorecards | tables in the `MODEL-*.md` docs + `metrics.json` copies in a **tracked `results/`** folder |
+| D5 | class weights | **none, for every member**; Phase-5 calibration handles priors |
+
+Also approved: `pip install catboost`; a per-experiment feature-params field in the harness; the
+non-Tor and non-VPN TFE-GNN runs. The original wording of each question is kept below.
+
 
 - **D1 — recommended models still open.** `SEQUENCE-`, `BYTES-` and `GRAPH-SELECTION-BRIEF.md` are
   open discussions. Bytes candidates: YaTC, NetMamba, MambaNetBurst, TrafficFormer. Image has

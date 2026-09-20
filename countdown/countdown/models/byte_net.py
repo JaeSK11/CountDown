@@ -366,3 +366,145 @@ class ETBertBaseline(BaseModel):
         self._net = self._build(self.n_classes_)
         self._net.load_state_dict(torch.load(io.BytesIO(state["weights"]), map_location="cpu", weights_only=True))
         self.fit_result_ = state.get("fit_result")
+
+
+# ---------------------------------------------------------------------------------------
+# Recommended variant (decision D1b, 2026-09-19)
+# ---------------------------------------------------------------------------------------
+class FieldRandomiser:
+    """Overwrite header fields that carry no semantics with random bytes.
+
+    TrafficFormer (Zhou et al., IEEE S&P 2025) fine-tunes with *random-initialisation field
+    augmentation*: TCP sequence / acknowledgement numbers start from a random value, so
+    their absolute bytes say nothing about the application -- but within one capture they
+    are near-constant across a flow's packets, which makes them a capture fingerprint a
+    byte model will happily memorise (the SoK's "contextual overfitting").  Randomising
+    them at fine-tune time removes the shortcut without touching the payload.
+
+    In the released ``packet_5000`` corpus the TCP header starts at byte 2 with the ports
+    already stripped, so seq + ack are datagram **bytes 2..9**.  ET-BERT words are
+    overlapping bi-grams (word ``t`` covers bytes ``t, t+1``), so those bytes live in words
+    1..9 and the replacement chain has to agree with the untouched neighbours, bytes 1 and
+    10.  The work is done on *words*, not token ids, because ~12 % of bi-grams are outside
+    the vocabulary and WordPiece splits them in two (``c3`` + ``##de``): two thirds of real
+    packets have at least one such split inside the span, and random bytes produce them at
+    the same rate.  So the prefix is decoded to words, rewritten, re-tokenised, and the
+    untouched tail is re-attached, truncated or padded back to the row length.
+    """
+
+    _HEX = set("0123456789abcdef")
+
+    def __init__(self, tokenizer, fields: tuple[tuple[int, int], ...] = ((2, 10),)) -> None:
+        self.tok = tokenizer
+        self.fields = tuple((int(a), int(b)) for a, b in fields)
+        self.inv = {i: t for t, i in tokenizer.vocab.items()}
+        self.pad_id = tokenizer.pad_id
+
+    def _words(self, row: np.ndarray, n_words: int):
+        """First ``n_words`` bi-gram words of a row and the index where the rest starts."""
+        words, cur, j = [], "", 1                       # row[0] is [CLS]
+        while len(words) < n_words and j < len(row):
+            t = self.inv.get(int(row[j]), "")
+            piece = t[2:] if t.startswith("##") else t
+            if not piece or not set(piece) <= self._HEX:
+                return None, j                          # [PAD] / [UNK] / not a byte word
+            cur = cur + piece if t.startswith("##") else piece
+            j += 1
+            if len(cur) == 4:
+                words.append(cur); cur = ""
+            elif len(cur) > 4:
+                return None, j
+        return (words, j) if len(words) == n_words and not cur else (None, j)
+
+    def __call__(self, src: np.ndarray, rng: np.random.Generator) -> tuple[np.ndarray, np.ndarray]:
+        """A randomised ``(src, seg)`` copy of one token row (the input is not modified)."""
+        row = np.array(src, dtype=np.int64, copy=True)
+        for a, b in self.fields:
+            words, j = self._words(row, b)              # words 0 .. b-1 cover bytes 0 .. b
+            if words is None or a < 1:
+                continue
+            left, right = words[a - 1][:2], words[b - 1][2:]
+            chain = [left] + [f"{v:02x}" for v in rng.integers(0, 256, size=b - a)] + [right]
+            new_words = words[:a - 1] + [chain[i] + chain[i + 1] for i in range(len(chain) - 1)]
+            ids: list[int] = []
+            for w in new_words:
+                ids.extend(self.tok.vocab.get(t, self.tok.unk_id) for t in self.tok._wordpiece(w))
+            tail = row[j:]
+            merged = np.concatenate(([row[0]], np.asarray(ids, dtype=np.int64), tail[tail != self.pad_id]))
+            row = np.full(len(src), self.pad_id, dtype=np.int64)
+            row[:min(len(merged), len(src))] = merged[:len(src)]
+        return row, (row != self.pad_id).astype(np.int64)
+
+    def apply(self, src: np.ndarray, seed: int = 0) -> tuple[np.ndarray, np.ndarray]:
+        rng = np.random.default_rng(seed)
+        rows = [self(r, rng) for r in np.asarray(src)]
+        return np.stack([r[0] for r in rows]), np.stack([r[1] for r in rows])
+
+
+class AugmentedTokenDataset(TokenDataset):
+    """``TokenDataset`` whose rows are field-randomised afresh on every access."""
+
+    def __init__(self, src, seg, y, randomiser: FieldRandomiser, prob: float = 1.0) -> None:
+        super().__init__(src, seg, y)
+        self.randomiser, self.prob = randomiser, float(prob)
+
+    def __getitem__(self, i: int) -> dict:
+        torch = _torch()
+        item = super().__getitem__(i)
+        # torch's generator is seeded per worker from the run seed, so this is reproducible.
+        rng = np.random.default_rng(int(torch.randint(0, 2**31 - 1, (1,)).item()))
+        if rng.random() < self.prob:
+            src, seg = self.randomiser(self.src[i], rng)
+            item["src"], item["seg"] = torch.from_numpy(src), torch.from_numpy(seg)
+        return item
+
+
+@register("byte_net")
+class ByteNetRecommended(ETBertBaseline):
+    """The recommended bytes member: the ET-BERT checkpoint + field-randomising fine-tuning.
+
+    Decision D1b.  The measured case for keeping the checkpoint is the no-pretrain ablation
+    (0.688 vs 0.908 macro-F1 on the clean packet corpus); what changes is that the fine-tune
+    no longer lets the model read TCP seq/ack.  Evaluate it twice -- on the released test
+    split and on the same split with seq/ack randomised (:meth:`randomise_fields`) -- because
+    the second column is the one that says how much of a byte model's score was the shortcut.
+    """
+
+    def __init__(self, label_space=None, augment_fields=((2, 10),), augment_prob: float = 1.0,
+                 vocab_path: str | Path | None = None, **params: Any) -> None:
+        super().__init__(label_space=label_space, **params)
+        self.params.update(augment_fields=[list(f) for f in augment_fields],
+                           augment_prob=float(augment_prob),
+                           vocab_path=str(vocab_path) if vocab_path else None)
+        self._randomiser: FieldRandomiser | None = None
+
+    @property
+    def randomiser(self) -> FieldRandomiser:
+        if self._randomiser is None:
+            from countdown.features.payload_bytes import ETBertTokenizer
+
+            vp = self.params.get("vocab_path")
+            tok = ETBertTokenizer(vp) if vp else ETBertTokenizer()
+            self._randomiser = FieldRandomiser(tok, tuple(tuple(f) for f in self.params["augment_fields"]))
+        return self._randomiser
+
+    def randomise_fields(self, X: np.ndarray, seed: int = 0) -> np.ndarray:
+        """``X`` with the augmented fields randomised -- the shortcut-free evaluation input."""
+        src, _ = self._split_src_seg(X)
+        return np.stack(self.randomiser.apply(src, seed=seed), axis=1)
+
+    def _fit(self, X, y, sample_weight=None, val=None) -> None:
+        src, seg = self._split_src_seg(X)
+        self._net = self._build(self.n_classes_)
+        val_ds = None
+        if val is not None:
+            vsrc, vseg = self._split_src_seg(val[0])
+            val_ds = TokenDataset(vsrc, vseg, val[1])
+        train_ds = AugmentedTokenDataset(src, seg, y, self.randomiser, self.params["augment_prob"])
+        self.fit_result_ = DeepTrainer(self.deep_cfg).fit(
+            self._net, train_ds, n_classes=self.n_classes_, val_ds=val_ds,
+            forward_fn=lambda m, b: m(b["src"], b["seg"]),
+        )
+        r = self.fit_result_
+        log.info("[byte_net] fit %.1fs, best epoch %d, val macro-F1 %.4f",
+                 r.train_seconds, r.best_epoch, r.best_val_macro_f1)

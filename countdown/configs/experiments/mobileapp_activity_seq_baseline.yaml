@@ -7,6 +7,7 @@ features: dir_seq
 feature_params:
   n: 5000
 grouped: true
-test_size: 0.2
-val_size: 0.1
+test_size: 0.25             # 4 captures per class: a 5-way split cannot hold every class
+val_size: 0.0               # no capture to spare for a val fold; same split as the GBDT floor
+tail_min_support: 2
 notes: DF (Sirinam et al., CCS'18) as published -- Adamax 2e-3, batch 128, 30 epochs, final model.

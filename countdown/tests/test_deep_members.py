@@ -50,6 +50,17 @@ def test_deep_trainer_learns_a_toy_problem_stops_early_and_checkpoints(tmp_path)
     assert proba.shape == (60, 3) and (proba.argmax(1) == y[180:]).mean() > 0.95
 
 
+def test_final_epoch_is_reported_unless_early_stopping_is_requested():
+    """A noisy small-capture val fold must not roll a member back to an early epoch."""
+    X, y = _separable(40, (3, 32, 32), seed=9)
+    fixed = ModelRegistry.create("flow_image_cnn", label_space=SPACE, epochs=2, batch_size=8, **CPU)
+    assert fixed._deep_config().restore_best is False
+    stopping = ModelRegistry.create("flow_image_cnn", label_space=SPACE, epochs=2, early_stop_patience=3, **CPU)
+    assert stopping._deep_config().restore_best is True
+    forced = ModelRegistry.create("flow_image_cnn", label_space=SPACE, restore_best=True, **CPU)
+    assert forced._deep_config().restore_best is True
+
+
 def test_class_weights_default_off_for_every_member():
     """Decision D5: one convention -- no class weights -- for every registered member."""
     for name in ModelRegistry.list():

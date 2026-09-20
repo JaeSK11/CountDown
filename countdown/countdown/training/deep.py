@@ -189,6 +189,7 @@ class DeepTrainer:
         val_ds=None,
         forward_fn: Callable[[Any, dict], Any] | None = None,
         class_weights: np.ndarray | None = None,
+        collate_fn: Callable | None = None,
     ) -> FitResult:
         import torch
         import torch.nn as nn
@@ -203,8 +204,9 @@ class DeepTrainer:
         train_dl = DataLoader(
             train_ds, batch_size=cfg.batch_size, shuffle=True, drop_last=False,
             num_workers=cfg.num_workers, pin_memory=(device.type == "cuda"),
-            persistent_workers=cfg.num_workers > 0,
+            persistent_workers=cfg.num_workers > 0, collate_fn=collate_fn,
         )
+        self._collate_fn = collate_fn
         total_steps = max(1, len(train_dl) * cfg.epochs)
         optimizer = _build_optimizer(model, cfg)
         scheduler = _linear_warmup_decay(optimizer, int(total_steps * cfg.warmup_ratio), total_steps)
@@ -378,7 +380,8 @@ class DeepTrainer:
         result.train_seconds = time.time() - t0
         return result
 
-    def predict_proba(self, model, ds, forward_fn: Callable | None = None) -> np.ndarray:
+    def predict_proba(self, model, ds, forward_fn: Callable | None = None,
+                      collate_fn: Callable | None = None) -> np.ndarray:
         import torch
         from torch.utils.data import DataLoader
 
@@ -389,6 +392,7 @@ class DeepTrainer:
         dl = DataLoader(
             ds, batch_size=cfg.eval_batch_size, shuffle=False,
             num_workers=cfg.num_workers, pin_memory=(device.type == "cuda"),
+            collate_fn=collate_fn or getattr(self, "_collate_fn", None),
         )
         out = []
         use_amp = cfg.amp and device.type == "cuda"

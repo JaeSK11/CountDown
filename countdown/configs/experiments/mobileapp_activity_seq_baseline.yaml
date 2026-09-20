@@ -1,0 +1,12 @@
+# Sequence member, paper baseline: Deep Fingerprinting on direction-only sequences.
+# n=5000 is the paper's input length; on flow-level ETC data most of it is padding.
+dataset: mobileapp
+target: activity
+model: seq_cnn_baseline
+features: dir_seq
+feature_params:
+  n: 5000
+grouped: true
+test_size: 0.2
+val_size: 0.1
+notes: DF (Sirinam et al., CCS'18) as published -- Adamax 2e-3, batch 128, 30 epochs, final model.

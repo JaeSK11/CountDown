@@ -66,7 +66,7 @@ class FlowStatsGBDT(BaseModel):
     def __init__(
         self,
         label_space=None,
-        class_weight: str | dict | None = "balanced",
+        class_weight: str | dict | None = None,   # D5 (2026-09-19): no class weights, any member
         early_stopping_rounds: int = 50,
         seed: int = 42,
         **params: Any,

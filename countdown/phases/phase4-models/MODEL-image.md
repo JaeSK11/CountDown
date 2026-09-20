@@ -35,7 +35,17 @@ and collapses only on `facebook_audio` (1.00 → **0.03**), which happens to be 
 **Consequence for this plan:** the published 93/96/91 are not the bar for the recommended variant.
 `flow_image_cnn_baseline` under the grouped protocol is.
 
-## Recommended (our chat) — FlowPic + modern backbone
+## Recommended — decided 2026-09-19 (D1a): FlowPic 3-channel, the same small CNN
+`@register("flow_image_cnn")` in `models/flow_image_cnn.py`. The change against the baseline is
+the **representation** (log-density FlowPic histogram + direction + byte-volume channels), where
+the measured gain is, not the backbone — ResNet-18 at 100× the parameters was never verified
+across seeds. The representation is an extractor setting, selected per experiment with
+`feature_params: {construction: flowpic, channels: 3}` (the harness field added for this) and
+recorded on the class as `recommended_feature_params`. Training goes through `training/deep.py`
+(D3): AdamW 1e-3, warmup + linear decay, batch 32, 60 epochs, best-validation-epoch restore, no
+class weights (D5). The original plan text follows for the record.
+
+### Original plan — FlowPic + modern backbone
 - **Representation:** **FlowPic** 2D histogram (denser, normalized) instead of a sparse scatter.
 - **Model:** a small **ResNet/EfficientNet** (via `timm`), or **ViT** when data is large (CSTNET-
   scale). Ref: Shapira & Shavitt, "FlowPic," 2019/2021.

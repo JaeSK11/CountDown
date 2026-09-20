@@ -330,3 +330,140 @@ class TFEGNNBaseline(BaseModel):
 
     def n_params(self) -> int:
         return 0 if self.net is None else sum(p.numel() for p in self.net.parameters())
+
+
+# ---------------------------------------------------------------------------------------
+# Recommended variant (decision D1c, 2026-09-19)
+# ---------------------------------------------------------------------------------------
+class _DictGraphDataset(ByteMatrixGraphDataset):
+    """The same on-access byte graphs, shaped for ``training/deep.py`` (dict batches)."""
+
+    def labels(self) -> np.ndarray:
+        return self.y if self.y is not None else np.zeros(len(self), dtype=np.int64)
+
+
+def _collate_dict(items):
+    h, p, y = _collate(items)
+    return {"h": h, "p": p, "y": y.clamp(min=0)}
+
+
+@register("graph_gnn")
+class GINGraphMember(BaseModel):
+    """The recommended graph member: **GIN** in the TFE-GNN towers, trained by ``deep.py``.
+
+    Same input (``byte_matrix``), same byte-graph construction, same dual towers, fusion and
+    BiLSTM as ``graph_gnn_baseline``; the message-passing rule is GIN instead of GraphSAGE
+    (decision D1c) and the optimisation is the shared trainer (D3): AdamW, warmup + linear
+    decay, gradient clipping, no class weights (D5).  The authors' 5-step accumulation of
+    102-sample batches becomes one 256-sample batch.  Pass no ``val`` on data with no
+    honest validation fold (ISCX-Tor) and the final epoch is reported.
+    """
+
+    input_type = "byte_matrix"
+    expects_ndim = 3
+    supports = "*"
+
+    def __init__(self, label_space=None, **params: Any) -> None:
+        super().__init__(label_space=label_space, **params)
+        p = self.params
+        p.setdefault("header_len", 40)
+        p.setdefault("conv", "gin")
+        p.setdefault("epochs", 20)
+        p.setdefault("batch_size", 256)
+        p.setdefault("lr", 5e-3)
+        p.setdefault("weight_decay", 0.01)
+        p.setdefault("embedding_dim", 64)
+        p.setdefault("hidden_dim", 128)
+        p.setdefault("n_gnn_layers", 4)
+        p.setdefault("dropout", 0.2)
+        p.setdefault("class_weight", None)
+        p.setdefault("early_stop_patience", 0)
+        p.setdefault("device", "auto")
+        p.setdefault("seed", 42)
+        p.setdefault("workers", 8)
+        self.net = None
+        self.fit_result_ = None
+        self._n_packets: int | None = None
+
+    _check_X = TFEGNNBaseline._check_X
+
+    def _build(self, n_classes: int):
+        from countdown.models.tfe_gnn import TFEGNNNet
+
+        p = self.params
+        return TFEGNNNet(n_classes=n_classes, embedding_dim=int(p["embedding_dim"]),
+                         hidden_dim=int(p["hidden_dim"]), n_gnn_layers=int(p["n_gnn_layers"]),
+                         dropout=float(p["dropout"]), conv=str(p["conv"]))
+
+    def _deep_config(self):
+        from countdown.training.deep import DeepConfig
+
+        p = self.params
+        if p["class_weight"] not in (None, "none", "balanced"):
+            raise ValueError(f"class_weight must be None or 'balanced', got {p['class_weight']!r}")
+        return DeepConfig(
+            epochs=int(p["epochs"]), batch_size=int(p["batch_size"]), eval_batch_size=int(p["batch_size"]),
+            learning_rate=float(p["lr"]), weight_decay=float(p["weight_decay"]), warmup_ratio=0.1,
+            patience=int(p["early_stop_patience"]), seed=int(p["seed"]),
+            device=None if p["device"] == "auto" else str(p["device"]),
+            amp=False, num_workers=int(p["workers"]), log_every=0,
+            class_weighted_loss=p["class_weight"] == "balanced",
+        )
+
+    def _forward(self, model, batch):
+        n = int(batch["y"].shape[0])
+        h, pl = batch["h"], batch["p"]
+        z = model.encode_packets(h.x, h.edge_index, h.batch, pl.x, pl.edge_index, pl.batch,
+                                 n_packets=n * self._n_packets)
+        return model(z.view(n, self._n_packets, -1))
+
+    def _fit(self, X, y, sample_weight=None, val=None) -> None:
+        from countdown.training.deep import DeepTrainer
+
+        _torch(); _pyg()
+        X = self._check_X(X)
+        y = np.asarray(y, dtype=np.int64)
+        self._n_packets = int(X.shape[1])
+        self.net = self._build(self.n_classes_)
+        cfg = self._deep_config()
+        hl = int(self.params["header_len"])
+        class_weights = None
+        if cfg.class_weighted_loss:
+            c = np.bincount(y, minlength=self.n_classes_).astype(np.float64)
+            class_weights = np.where(c > 0, len(y) / (np.count_nonzero(c) * np.maximum(c, 1)), 0.0)
+        val_ds = None
+        if val is not None and len(val[1]):
+            val_ds = _DictGraphDataset(self._check_X(val[0]), np.asarray(val[1], dtype=np.int64), hl)
+        self.fit_result_ = DeepTrainer(cfg).fit(
+            self.net, _DictGraphDataset(X, y, hl), n_classes=self.n_classes_, val_ds=val_ds,
+            forward_fn=self._forward, class_weights=class_weights, collate_fn=_collate_dict,
+        )
+
+    def _predict_proba(self, X) -> np.ndarray:
+        from countdown.training.deep import DeepTrainer
+
+        X = self._check_X(X)
+        ds = _DictGraphDataset(X, np.zeros(len(X), dtype=np.int64), int(self.params["header_len"]))
+        return DeepTrainer(self._deep_config()).predict_proba(
+            self.net, ds, forward_fn=self._forward, collate_fn=_collate_dict)
+
+    @property
+    def history_(self) -> list:
+        return [] if self.fit_result_ is None else self.fit_result_.history
+
+    def n_params(self) -> int:
+        return 0 if self.net is None else sum(p.numel() for p in self.net.parameters())
+
+    def _state(self) -> dict[str, Any]:
+        if self.net is None:
+            return {}
+        return {"state_dict": {k: v.detach().cpu().numpy() for k, v in self.net.state_dict().items()},
+                "n_packets": self._n_packets, "history": self.history_}
+
+    def _load_state(self, state: dict[str, Any]) -> None:
+        if not state:
+            return
+        torch = _torch()
+        self._n_packets = int(state["n_packets"])
+        self.net = self._build(self.n_classes_)
+        self.net.load_state_dict({k: torch.from_numpy(np.asarray(v)) for k, v in state["state_dict"].items()})

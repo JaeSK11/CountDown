@@ -45,7 +45,7 @@ from __future__ import annotations
 
 import torch
 import torch.nn as nn
-from torch_geometric.nn import SAGEConv, global_mean_pool
+from torch_geometric.nn import GINConv, SAGEConv, global_mean_pool
 
 from countdown.features.traffic_graph import N_BYTE_VALUES
 
@@ -68,8 +68,11 @@ class TrafficGraphEncoder(nn.Module):
         hidden_dim: int = 128,
         n_layers: int = 4,
         dropout: float = 0.2,
+        conv: str = "sage",
     ) -> None:
         super().__init__()
+        if conv not in ("sage", "gin"):
+            raise ValueError(f"conv must be 'sage' (the paper) or 'gin', got {conv!r}")
         self.embedding = nn.Embedding(N_BYTE_VALUES, embedding_dim)
         self.convs = nn.ModuleList()
         self.acts = nn.ModuleList()
@@ -77,7 +80,15 @@ class TrafficGraphEncoder(nn.Module):
 
         in_dim = embedding_dim
         for _ in range(n_layers):
-            self.convs.append(SAGEConv(in_dim, hidden_dim))
+            if conv == "gin":
+                # GIN (Xu et al., ICLR'19): sum aggregation + an MLP, as expressive as the
+                # 1-WL test.  The recommended backbone (decision D1c); everything around it
+                # -- towers, JKN concat, fusion, BiLSTM -- is unchanged so that a scorecard
+                # difference is attributable to the message-passing rule alone.
+                mlp = nn.Sequential(nn.Linear(in_dim, hidden_dim), nn.ReLU(), nn.Linear(hidden_dim, hidden_dim))
+                self.convs.append(GINConv(mlp, train_eps=True))
+            else:
+                self.convs.append(SAGEConv(in_dim, hidden_dim))
             # PReLU with per-channel slopes: the paper leans on this deliberately, calling
             # the per-channel negative scale "similar to an attention mechanism".  A plain
             # ReLU here is one of the ablations that collapses the model (F1 0.53).
@@ -160,6 +171,7 @@ class TFEGNNNet(nn.Module):
         lstm_layers: int = 2,
         dropout: float = 0.2,
         readout: str = "last_state",
+        conv: str = "sage",
     ) -> None:
         super().__init__()
         if readout not in ("last_state", "mean"):
@@ -168,8 +180,8 @@ class TFEGNNNet(nn.Module):
 
         # Two towers, same architecture, deliberately *not* shared -- that separation is
         # the "dual" in dual embedding, worth 3.63 F1 on ISCX-VPN in their ablation.
-        self.header_encoder = TrafficGraphEncoder(embedding_dim, hidden_dim, n_gnn_layers, dropout)
-        self.payload_encoder = TrafficGraphEncoder(embedding_dim, hidden_dim, n_gnn_layers, dropout)
+        self.header_encoder = TrafficGraphEncoder(embedding_dim, hidden_dim, n_gnn_layers, dropout, conv=conv)
+        self.payload_encoder = TrafficGraphEncoder(embedding_dim, hidden_dim, n_gnn_layers, dropout, conv=conv)
 
         self.fusion = CrossGatedFusion(self.header_encoder.out_dim)
 

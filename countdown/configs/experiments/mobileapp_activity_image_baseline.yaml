@@ -23,7 +23,7 @@ val_size: 0.1
 params:
   epochs: 60
   batch_size: 32
-  class_weight: balanced
+  class_weight: null          # decision D5: no class weights for any member
   # 0 = the paper's fixed 60-epoch schedule. Measured 2026-09-17: with patience 10 on val
   # accuracy the run stops at epoch 18 while still at chance (macro-F1 0.004); val accuracy
   # only starts moving after ~epoch 15 on 92 classes. The full schedule reaches 0.165.

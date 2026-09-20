@@ -117,7 +117,18 @@ dominates, so the flow reproduction is a pipeline check, not evidence about byte
 invariant to the permutation, so ids are used as class names and the ambiguity is confined to
 `data/etbert_corpus.py`.
 
-## Recommended (our chat) — under revision
+## Recommended — decided 2026-09-19 (D1b): the ET-BERT checkpoint + field-randomising fine-tune
+`@register("byte_net")` in `models/byte_net.py`. The no-pretrain ablation (0.688 vs 0.908) is the
+case for keeping the public checkpoint; what changes is the fine-tune. `FieldRandomiser`
+implements TrafficFormer's random-initialisation field augmentation for the one such field this
+corpus still carries: **TCP seq/ack, datagram bytes 2..9**, re-drawn on every access. It works
+in byte space — decode the prefix (including WordPiece-split words), rewrite, re-tokenise —
+because ~12 % of bi-grams are outside the vocabulary, so a token-space version reached only a
+third of packets. `scripts/score_byte_net.py` scores baseline and recommended **twice**: on the
+released test split and on the same packets with seq/ack randomised; the drop between the two
+columns is how much of a member's score was that shortcut. The earlier discussion follows.
+
+### Earlier discussion — candidates considered
 `MODEL-bytes` originally paired the ET-BERT baseline with **YaTC** (Zhao et al., AAAI 2023) as the
 recommended upgrade. That is a reasonable 2023 answer, but the efficiency axis has moved:
 **NetMamba** (ICCCN 2024) matches YaTC with ~4× less GPU memory via a unidirectional SSM, and

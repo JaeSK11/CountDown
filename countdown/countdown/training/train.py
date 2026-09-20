@@ -44,6 +44,11 @@ class ExperimentConfig:
     target: str | None = None
     model: str = "flow_gbdt"
     features: str = "flow_stats"
+    #: Per-experiment overrides of the extractor's ``configs/features.yaml`` parameters,
+    #: e.g. ``{construction: flowpic, channels: 3}`` for ``flow_image`` or ``{n: 256}`` for
+    #: ``packet_seq``.  Without this a recommended member could only differ from its
+    #: baseline's representation by editing the global feature config.
+    feature_params: dict[str, Any] = field(default_factory=dict)
     params: dict[str, Any] = field(default_factory=dict)
     group_key: str | None = None          # None -> the dataset's declared key
     grouped: bool = True                  # False -> stratified (optimistic), for quick looks
@@ -135,7 +140,7 @@ def train(
             f"model {cfg.model!r} consumes {model_cls.input_type!r} but the config asks "
             f"for features={cfg.features!r}"
         )
-    X = feat_ds.features(cfg.features)
+    X = feat_ds.features(cfg.features, **cfg.feature_params)
     # Rank is then an internal-consistency assertion: the extractor is the one named in
     # the contract, so a surprise here means the extractor's own params are wrong (e.g.
     # packet_seq channels=1 gives rank 2, channels=2 gives rank 3).
@@ -146,7 +151,7 @@ def train(
             f"{cfg.features!r} parameters in configs/features.yaml."
         )
     y = feat_ds.labels(target, space=space)
-    feature_names = feat_ds.feature_names(cfg.features)
+    feature_names = feat_ds.feature_names(cfg.features, **cfg.feature_params)
     log.info(
         "[train] %s: X=%s, %d classes in space (%d realised)",
         feat_ds.name, X.shape, len(space), len(np.unique(y)),

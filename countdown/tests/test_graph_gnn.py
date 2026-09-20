@@ -116,3 +116,29 @@ def test_save_load_round_trip_preserves_probabilities(small_model, tmp_path):
     assert restored.label_space == small_model.label_space
     assert restored._n_packets == PACKETS
     np.testing.assert_allclose(restored.predict_proba(X), before, atol=1e-6)
+
+
+# -- the recommended variant: GIN through training/deep.py --------------------------------
+def test_gin_member_contract_and_round_trip(tmp_path):
+    from countdown.models import load_model
+    from countdown.models.tfe_gnn import TFEGNNNet
+    from torch_geometric.nn import GINConv, SAGEConv
+
+    cls = ModelRegistry.get("graph_gnn")
+    assert (cls.input_type, cls.expects_ndim) == ("byte_matrix", 3)
+    assert isinstance(TFEGNNNet(3, 8, 8, 2, conv="gin").header_encoder.convs[0], GINConv)
+    assert isinstance(TFEGNNNet(3, 8, 8, 2).header_encoder.convs[0], SAGEConv)   # paper default untouched
+
+    space = LabelSpace.from_names("traffic_type", ["a", "b", "c"])
+    m = ModelRegistry.create("graph_gnn", label_space=space, header_len=HEADER, epochs=2,
+                             batch_size=4, workers=0, device="cpu", seed=0,
+                             embedding_dim=8, hidden_dim=8, n_gnn_layers=2)
+    X, y = _byte_rows(12, seed=7)
+    Xv, yv = _byte_rows(6, seed=8)
+    m.fit(X, y, val=(Xv, yv))
+    proba = m.predict_proba(Xv)
+    assert proba.shape == (6, 3)
+    np.testing.assert_allclose(proba.sum(axis=1), 1.0, atol=1e-5)
+    assert len(m.history_) == 2
+    restored = load_model(m.save(tmp_path / "gin.joblib"))
+    np.testing.assert_allclose(restored.predict_proba(Xv), proba, atol=1e-5)

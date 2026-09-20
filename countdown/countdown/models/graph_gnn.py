@@ -407,6 +407,7 @@ class GINGraphMember(BaseModel):
             patience=int(p["early_stop_patience"]), seed=int(p["seed"]),
             device=None if p["device"] == "auto" else str(p["device"]),
             amp=False, num_workers=int(p["workers"]), log_every=0,
+            restore_best=int(p["early_stop_patience"]) > 0,
             class_weighted_loss=p["class_weight"] == "balanced",
         )
 

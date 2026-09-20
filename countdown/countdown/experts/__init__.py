@@ -44,7 +44,7 @@ E3 = Expert(
         MemberSpec("flow_image_cnn", "flow_image", {"construction": "flowpic", "channels": 3},
                    windows=(5.0, 10.0), role="FlowPic on 5/10 s windows (median capture is 11 s)"),
     ),
-    test_size=0.25,
+    test_size=0.25, val_size=0.0,       # 4 captures per class: 3 train / 1 test, none to spare
     notes="Fine + data-poor (92 x 4 captures): few-shot; deep transformers / GNNs overfit here.",
 )
 

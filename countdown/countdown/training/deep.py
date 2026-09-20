@@ -47,6 +47,13 @@ class DeepConfig:
     class_weighted_loss: bool = False
     #: Stop after this many epochs with no val macro-F1 improvement.  ``0`` disables.
     patience: int = 0
+    #: Hand back the best-validation epoch instead of the final one.  Right when the val
+    #: fold is large and independent (CSTNET's 58k-packet valid split).  Wrong on the
+    #: small-capture ISCX tasks, where a grouped val fold is a handful of captures and its
+    #: macro-F1 is noisy enough that epoch 1 or 2 can "win": measured 2026-09-20 on VPN
+    #: traffic type, restoring gave 0.80 +/- 0.21 over five seeds against 0.93 +/- 0.03 for
+    #: the final epoch.  The best-epoch checkpoint on disk is written either way.
+    restore_best: bool = True
     seed: int = 42
     device: str | None = None
     #: Where to mirror the best-so-far weights.  A multi-hour fine-tune that only keeps
@@ -374,7 +381,7 @@ class DeepTrainer:
             resume_file.unlink()
             log.info("run complete; removed resume state %s", resume_file)
 
-        if best_state is not None:
+        if best_state is not None and cfg.restore_best:
             model.load_state_dict(best_state)
             log.info("restored epoch %d (val macro-F1 %.4f)", result.best_epoch, result.best_val_macro_f1)
         result.train_seconds = time.time() - t0

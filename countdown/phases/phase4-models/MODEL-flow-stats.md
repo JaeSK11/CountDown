@@ -76,6 +76,21 @@ accuracy is *not* the reason to choose. Pick on mechanism:
 CatBoost's categorical handling is irrelevant here (all 56 columns numeric); its *other* two
 mechanisms are the reason it belongs in the comparison.
 
+**Bake-off result (2026-09-19, `runs/gbdt-bakeoff/`)** — same harness, same grouped split, no
+class weights, 600 rounds with early stopping, three seeds (the seed moves split and model):
+
+| Target | LightGBM `flow_gbdt` | CatBoost `flow_catboost` | Δ |
+| --- | --- | --- | --- |
+| `iscx_pooled` traffic_type (8) | **0.645 ± 0.003** | 0.616 ± 0.003 | −0.029 |
+| `cstnet` app (120) | **0.811 ± 0.002** | 0.759 ± 0.003 | −0.052 |
+
+LightGBM wins both, by ten to thirty times the seed spread, and the gap is *larger* on the
+120-class target where ordered boosting was supposed to help the thin classes. CatBoost ran at
+its defaults (depth 6, lr 0.1) against LightGBM's Phase-3 settings, so this is not a tuned
+ceiling for it — but nothing here argues for the swap. **`flow_gbdt` stays the member**;
+`flow_catboost` stays registered as a comparison model only. XGBoost was not run: it is
+mechanically the closest to LightGBM and would add the least information.
+
 ⚠️ **Do not promote two GBDTs to separate ensemble members.** Three boosted-tree variants on the
 same `flow_stats` vector produce highly correlated errors and add almost nothing to a combiner that
 already holds bytes / sequence / image / graph members. One winner becomes the member; the others
@@ -116,10 +131,10 @@ real; it comes from `chat`, `audio_streaming` and `voip` (+0.04 to +0.05 F1 each
 losses on `email` and `video_streaming`. Balanced weights are not rescuing the thin classes they
 were adopted for.
 
-**Still not a config change.** `PHASE-5.md` §1 requires one class-weight convention across every
-member, so flipping `flow_gbdt` alone is a cross-member decision — recorded for the user in
-`../PHASE-4-HANDOFF.md` §5. Until then: `balanced` stays the shipped default, is **suspect, not
-settled**, and is not added to new members by default.
+**Decided 2026-09-19 (D5): no class weights for any member.** `flow_gbdt` now defaults to
+`class_weight=None`, every deep member does too, and `tests/test_deep_members.py` asserts the
+convention across the whole registry. Phase-5 calibration on the true prior handles the rest.
+The Phase-3 headline for `iscx_pooled` traffic_type therefore moves from 0.632 to **0.645**.
 
 Whatever is chosen, the Phase-5 convention still applies (`PHASE-5.md` §1): calibration fitted on a
 split carrying the **true** class distribution largely corrects a reweighted posterior, and **every
@@ -178,7 +193,7 @@ unweighting does it lead. A default can cost more than an architecture.
    `runs/ablate_features_vs_model.json`). Answer above; it is task-dependent.
 3. ✅ `class_weight` re-tested on the Phase-3 config (2026-09-17): unweighted +0.014 macro-F1,
    consistent over three seeds. Default unchanged pending the cross-member convention (above).
-4. ⬜ CatBoost added to the scorecard.
+4. ✅ CatBoost added to the scorecard (2026-09-19): LightGBM wins on both targets; it stays the member.
 
 ## Risks
 Mature methods; low modelling risk. The real risks are evaluation-shaped and now quantified:

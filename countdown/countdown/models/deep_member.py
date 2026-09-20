@@ -11,9 +11,11 @@ array: subclasses implement :meth:`_build` (the network) and, if needed, :meth:`
 Class weights are **off** for every member (decision D5): Phase 5 calibrates on the true
 prior.  ``class_weight="balanced"`` is still accepted so the choice can be measured.
 
-If a validation fold is passed, the trainer restores the best-validation epoch.  On data
-where no honest validation fold exists (ISCX-Tor: one capture is 36 % of the samples) pass
-no ``val`` and the final epoch is reported, which is also what the papers do.
+The final epoch is reported unless early stopping is requested (``early_stop_patience >
+0``) or ``restore_best=True`` is passed: on the small-capture tasks these members serve, a
+grouped validation fold is a handful of captures, and selecting an epoch on it measurably
+hurts (VPN traffic type: 0.80 +/- 0.21 restored vs 0.93 +/- 0.03 final, five seeds).  The
+validation curve is still recorded in ``fit_result_.history``.
 """
 
 from __future__ import annotations
@@ -37,6 +39,7 @@ _TRAINER_KEYS = {
     "early_stop_patience": "patience", "patience": "patience", "seed": "seed",
     "device": "device", "amp": "amp", "workers": "num_workers", "num_workers": "num_workers",
     "checkpoint_path": "checkpoint_path", "log_every": "log_every",
+    "restore_best": "restore_best",
 }
 
 
@@ -93,6 +96,11 @@ class DeepArrayMember(BaseModel):
         if cw not in (None, "none", "balanced"):
             raise ValueError(f"class_weight must be None or 'balanced', got {cw!r}")
         kw["class_weighted_loss"] = cw == "balanced"
+        # Select on validation only when early stopping was asked for.  With a fixed
+        # schedule the final epoch is reported, as the papers do: on the small-capture
+        # tasks these members serve, a grouped val fold is too noisy to pick an epoch with
+        # (see DeepConfig.restore_best).  An explicit ``restore_best`` param still wins.
+        kw.setdefault("restore_best", bool(kw.get("patience", 0)))
         return DeepConfig(**kw)
 
     @staticmethod

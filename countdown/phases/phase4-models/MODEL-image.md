@@ -117,8 +117,41 @@ How to read these:
 - ResNet-18 leads on the two tasks with the most captures per class (2 and 6) — single seed, 100×
   the parameters, unverified across seeds.
 
+### Baseline vs recommended — the scorecard (2026-09-20)
+`flow_image_cnn` = FlowPic 3ch + the same small CNN, trained by `training/deep.py`, no class
+weights, final epoch reported. Five seeds, grouped protocol, macro-F1 mean ± sd
+(`runs/okonkwo/seeds/{base,fp3,rec}_*.json`):
+
+| Task | `flow_image_cnn_baseline` (scatter) | FlowPic 3ch, baseline loop | **`flow_image_cnn`** | Δ vs baseline |
+| --- | --- | --- | --- | --- |
+| 2 non-VPN traffic (4) | 0.899 ± 0.057 | 0.894 ± 0.061 | **0.950 ± 0.024** | **+0.051** |
+| 4 VPN traffic (4) | 0.864 ± 0.027 | 0.930 ± 0.027 | **0.938 ± 0.015** | **+0.074** |
+| 6 Tor traffic (7) | 0.666 ± 0.011 | 0.711 ± 0.019 | **0.729 ± 0.014** | **+0.063** |
+| 1 non-VPN app (10) | **0.779 ± 0.022** | 0.794 ± 0.029 | 0.752 ± 0.044 | −0.027 |
+| 5 Tor app (4) | **0.442 ± 0.010** | 0.397 ± 0.038 | 0.419 ± 0.048 | −0.023 |
+| MobileApp activity (92), 1 seed | 0.115 *(0.165 with balanced weights)* | — | **0.264** | **+0.149** |
+
+| | `flow_image_cnn_baseline` | `flow_image_cnn` |
+| --- | --- | --- |
+| #params (4-class head) | 102,180 | 102,756 |
+| train, VPN traffic task | ~30 s (GPU-resident loop) | ~65 s (`deep.py` DataLoader) |
+
+**The recommended member wins on every traffic-type task — the targets `MODEL-DECISIONS.md`
+assigns to the image member — by 0.05–0.07, five seeds, with tighter spread**, and more than
+doubles the baseline on MobileApp activity. It loses 0.02–0.03 on the two ISCX application
+tasks, inside one sd; those are the 5-captures-per-class tasks where nothing generalises. It
+still trails the tabular member on MobileApp (`flow_gbdt` 0.441), so E3 keeps the GBDT floor.
+
+One trainer lesson is baked in: the first run of this table **restored the best-validation
+epoch** and VPN traffic came out 0.798 ± 0.206 — seed 1 was rolled back to *epoch 1* because a
+val fold of a few captures happened to peak there (`runs/okonkwo/seeds-restored/`). Recommended
+members now report the final epoch unless early stopping is requested
+(`DeepConfig.restore_best`). Same family as the MobileApp early-stop and the Tor val-fold
+findings: on small-capture data, do not select on validation.
+
 ### Still to produce
-- **MobileApp activity** (the primary target), baseline only, 2026-09-17
+- **MobileApp activity** (the primary target), first baseline runs, 2026-09-17 — superseded by
+  the scorecard above for the D5 (no-class-weights) numbers
   (`configs/experiments/mobileapp_activity_image_baseline.yaml`, windows 5 + 10 s → 1,829 images,
   grouped by capture, 92 classes, `runs/mobileapp-image/`):
 
@@ -135,9 +168,7 @@ How to read these:
   here: the FlowPic constructions (the harness has no per-experiment feature params, so
   `flow_image` construction/channels are global in `configs/features.yaml`), more seeds, and a
   pretrained backbone.
-- Inference latency per flow for every row; more seeds on tasks 2/6 before trusting the ResNet rows.
-- The recommended construction is **not decided** — this section is the evidence for that decision
-  (`../PHASE-4-HANDOFF.md` §5 D1), and `flow_image_cnn` is not registered yet.
+- Inference latency per flow; seeds on MobileApp; a pretrained backbone for the few-shot regime.
 
 **ViT row dropped.** `MODEL-DECISIONS.md` assigns the image member to in-app activity and
 traffic_type only, so it never runs on CSTNET — the one corpus large enough to justify a ViT. The

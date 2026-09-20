@@ -45,15 +45,29 @@
 - Augmentation: random truncation/jitter of the sequence; padding mask.
 - Same group-aware split + macro-F1 as Phase 3.
 
-## Scorecard (to produce)
-| Variant | macro-F1 | #params | infer ms/flow |
+## Scorecard (2026-09-20)
+Phase-3 harness, grouped split, no class weights, seed 42 (`runs/seq/`). MobileApp uses the
+3-train / 1-test capture split of the GBDT floor — four captures per class cannot fill a 5-way
+split, and there is no capture to spare for a validation fold.
+
+| Variant | `iscx_pooled` traffic_type (8) | MobileApp activity (92) | #params |
 | --- | --- | --- | --- |
-| seq_cnn_baseline (DF) | … | … | … |
-| seq_cnn (dilated-res) | … | … | … |
-| seq_cnn (+Mamba) | … | … | … |
+| `seq_cnn_baseline` (DF, directions × 5000) | 0.547 (acc 0.821) | 0.073 (acc 0.130) | 3.9 M |
+| **`seq_cnn`** (dilated-res, sizes + IAT × 256) | **0.616** (acc 0.885) | **0.220** (acc 0.294) | 1.6 M |
+| *floor:* `flow_gbdt` on flow_stats | 0.645 | 0.441 | — |
+| seq_cnn (+Mamba) | deferred (D1d) | | |
+
+**Recommended ≥ DF on both targets (+0.07 and +0.15) at 40 % of the parameters** — the DoD.
+DF's input is the limiting factor, as predicted: direction-only over 5,000 positions is >99 %
+padding on ISCX flows (median 9 packets) and carries no size signal. Neither sequence model
+beats the tabular floor on these two targets, which is what `ENSEMBLE-MAP.md` expects for a
+coarse target (E1) and a data-poor one (E3): the sequence member earns its place as a
+*decorrelated* voter for the Phase-5 stacker, not as a standalone winner. Single seed; the
+best-validation-epoch variant of `seq_cnn` scored 0.626 on ISCX (within noise of 0.616).
 
 ## DoD
-All variants registered; scorecard on ISCXVPN traffic_type + MobileApp activity; recommended ≥ DF.
+✅ Both variants registered; scorecard on `iscx_pooled` traffic_type + MobileApp activity;
+recommended ≥ DF on both. (Mamba variant deferred by decision D1d.)
 
 ## Risks
 Long sequences → memory (cap N, bucket by length); Mamba CUDA kernel availability (S4 fallback);

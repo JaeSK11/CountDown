@@ -153,16 +153,45 @@ and the `--no-pretrained` ablation measure is precisely the question that decide
 - Privacy hygiene: strip/mask IPs/ports from byte input so the model learns content, not endpoints.
   Now demonstrably load-bearing, not a nicety.
 
-## Scorecard (to produce)
-| Variant | macro-F1 (CSTNET app) | #params | pretrain cost | infer ms/sample |
-| --- | --- | --- | --- | --- |
-| byte_net_baseline (ET-BERT), flow | 0.8585 | 132.2M | reused public checkpoint | 0.77 |
-| byte_net_baseline (ET-BERT), packet | **0.9076** | 132.2M | reused public checkpoint | 0.67 |
-| byte_net_baseline, no pretrain, packet | **0.6877** | 132.2M | none | 0.28 (fp16 eval, 5090) |
-| byte_net (recommended) | … | … | … | … |
+## Scorecard (2026-09-20)
+ET-BERT's own `packet_5000` corpus and 8:1:1 split, 58,171 test packets, both members fine-tuned
+from the same public checkpoint with the same 10-epoch protocol (`scripts/score_byte_net.py`,
+`runs/byte-net/scorecard.json`). Each member is scored on the test split **as released** and on
+the same packets with **TCP seq/ack (bytes 2..9) randomised** — 100 % of rows rewritten:
+
+| Member | macro-F1, released | macro-F1, seq/ack randomised | drop | #params | infer ms/sample |
+| --- | --- | --- | --- | --- | --- |
+| `byte_net_baseline` (ET-BERT) | **0.9076** | 0.5660 | **−0.342** | 132.2M | 0.67 |
+| **`byte_net`** (+ field-randomising fine-tune) | 0.8564 | **0.8567** | 0.000 | 132.2M | same network |
+| `byte_net_baseline`, no pretrain | 0.6877 | — | — | 132.2M | 0.28 (fp16, 5090) |
+| *floor:* `flow_gbdt` on flow_stats, `capture_day`-grouped flows | 0.811 | — | — | — | — |
+
+**A third of ET-BERT's packet-level score is the TCP sequence/acknowledgement numbers.** The
+corpus is split 8:1:1 *over packets*, so packets of one flow can sit on both sides, and within a
+flow seq/ack move slowly: eight bytes that identify the flow identify its class. That is the
+likely mechanism; the size of the effect is measured, not inferred. Blind the
+baseline to them at test time and it falls from 0.908 to 0.566. This is the "contextual
+overfitting" the 2025 SoK describes, now measured on the clean corpus — the one we had marked
+as the trustworthy ET-BERT number. The header-stripping that removed IPs and ports left this
+shortcut in.
+
+**`byte_net` does not use it, by construction, and keeps 0.857 either way** — 0.29 above the
+baseline on the shortcut-free input, 0.05 below it on the released split where the shortcut is
+available to be exploited. The honest comparison is the randomised column: a deployed classifier
+never sees a test packet whose flow was in its training set. Its validation curve was still
+rising at epoch 10 (0.852 → 0.855), as in every 10-epoch run here.
+
+What this does **not** yet give is a grouped number: the released corpus carries no flow or
+capture ids, so a flow-disjoint split of it cannot be built. That needs BURST-capable byte
+extraction from our own CSTNET pcaps (task 4.2, `features/payload_bytes.py`), split by
+`capture_day` like every other CSTNET number. Until then 0.857 is the bytes member's best
+estimate, and it is comparable in spirit — not in protocol — to the GBDT floor of 0.811 and the
+graph member's 0.85–0.87 on the same target.
 
 ## DoD
-Both registered; scorecard on CSTNET app-ID; recommended matches/lowers cost vs ET-BERT.
+✅ Both registered; scorecard on CSTNET app-ID (above). The recommended member is the same
+network at the same cost; what it buys is robustness to the seq/ack shortcut (+0.29 on the
+shortcut-free input). Open: a `capture_day`-grouped score on our own pcaps (needs task 4.2).
 
 ## Risks
 - **Endpoint leakage — CONFIRMED on the released flow corpus** (see above). Any byte member must be

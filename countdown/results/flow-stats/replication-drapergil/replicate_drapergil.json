@@ -1,0 +1,3596 @@
+{
+  "dataset": "iscxvpn",
+  "features": {
+    "extractor": "timeonly",
+    "n": 23,
+    "activity_timeout": 5.0
+  },
+  "folds": 10,
+  "seed": 42,
+  "runs": [
+    {
+      "ftm": 15.0,
+      "scenario": "A1",
+      "model": "flow_c45_paper",
+      "protocol": "paper",
+      "n_classes": 2,
+      "segmentation": {
+        "source_flows": 16094,
+        "windows_kept": 80091,
+        "windows_dropped_min_packets": 24161
+      },
+      "n_folds": 10,
+      "n_test": 80091,
+      "avg_precision": 0.9396420269058371,
+      "avg_recall": 0.9296272774499732,
+      "macro_f1": 0.9345294828922737,
+      "accuracy": 0.9603950506299085,
+      "per_class": {
+        "non-vpn": {
+          "precision": 0.9724,
+          "recall": 0.979,
+          "support": 64994
+        },
+        "vpn": {
+          "precision": 0.9069,
+          "recall": 0.8802,
+          "support": 15097
+        }
+      },
+      "published_avg_precision": 0.898
+    },
+    {
+      "ftm": 15.0,
+      "scenario": "A1",
+      "model": "flow_c45_paper",
+      "protocol": "grouped",
+      "n_classes": 2,
+      "segmentation": {
+        "source_flows": 16094,
+        "windows_kept": 80091,
+        "windows_dropped_min_packets": 24161
+      },
+      "n_folds": 10,
+      "n_test": 80091,
+      "avg_precision": 0.844144489691597,
+      "avg_recall": 0.816993207900457,
+      "macro_f1": 0.8295122997051068,
+      "accuracy": 0.8997390468342261,
+      "per_class": {
+        "non-vpn": {
+          "precision": 0.9283,
+          "recall": 0.9498,
+          "support": 64994
+        },
+        "vpn": {
+          "precision": 0.76,
+          "recall": 0.6842,
+          "support": 15097
+        }
+      },
+      "published_avg_precision": 0.898
+    },
+    {
+      "ftm": 15.0,
+      "scenario": "A1",
+      "model": "flow_knn_paper",
+      "protocol": "paper",
+      "n_classes": 2,
+      "segmentation": {
+        "source_flows": 16094,
+        "windows_kept": 80091,
+        "windows_dropped_min_packets": 24161
+      },
+      "n_folds": 10,
+      "n_test": 80091,
+      "avg_precision": 0.8649023303311155,
+      "avg_recall": 0.8593020246467679,
+      "macro_f1": 0.8620606032016798,
+      "accuracy": 0.9162452710042327,
+      "per_class": {
+        "non-vpn": {
+          "precision": 0.9463,
+          "recall": 0.9507,
+          "support": 64994
+        },
+        "vpn": {
+          "precision": 0.7835,
+          "recall": 0.7679,
+          "support": 15097
+        }
+      },
+      "published_avg_precision": 0.847
+    },
+    {
+      "ftm": 15.0,
+      "scenario": "A1",
+      "model": "flow_knn_paper",
+      "protocol": "grouped",
+      "n_classes": 2,
+      "segmentation": {
+        "source_flows": 16094,
+        "windows_kept": 80091,
+        "windows_dropped_min_packets": 24161
+      },
+      "n_folds": 10,
+      "n_test": 80091,
+      "avg_precision": 0.7401285583408903,
+      "avg_recall": 0.7319877055659001,
+      "macro_f1": 0.7359053643160567,
+      "accuracy": 0.8411307138130377,
+      "per_class": {
+        "non-vpn": {
+          "precision": 0.8981,
+          "recall": 0.9072,
+          "support": 64994
+        },
+        "vpn": {
+          "precision": 0.5822,
+          "recall": 0.5568,
+          "support": 15097
+        }
+      },
+      "published_avg_precision": 0.847
+    },
+    {
+      "ftm": 15.0,
+      "scenario": "A2-nonvpn",
+      "model": "flow_c45_paper",
+      "protocol": "paper",
+      "n_classes": 6,
+      "segmentation": {
+        "source_flows": 16094,
+        "windows_kept": 80091,
+        "windows_dropped_min_packets": 24161
+      },
+      "n_folds": 10,
+      "n_test": 64994,
+      "avg_precision": 0.5616687059954563,
+      "avg_recall": 0.5996855093102004,
+      "macro_f1": 0.5784893836862743,
+      "accuracy": 0.6793550173862203,
+      "per_class": {
+        "audio_streaming": {
+          "precision": 0.2978,
+          "recall": 0.3951,
+          "support": 658
+        },
+        "chat": {
+          "precision": 0.5609,
+          "recall": 0.657,
+          "support": 5802
+        },
+        "email": {
+          "precision": 0.544,
+          "recall": 0.5959,
+          "support": 2893
+        },
+        "file_transfer": {
+          "precision": 0.5264,
+          "recall": 0.5578,
+          "support": 13351
+        },
+        "video_streaming": {
+          "precision": 0.6427,
+          "recall": 0.6457,
+          "support": 6551
+        },
+        "voip": {
+          "precision": 0.7982,
+          "recall": 0.7466,
+          "support": 35739
+        }
+      },
+      "published_avg_precision": 0.89
+    },
+    {
+      "ftm": 15.0,
+      "scenario": "A2-nonvpn",
+      "model": "flow_c45_paper",
+      "protocol": "grouped",
+      "n_classes": 6,
+      "segmentation": {
+        "source_flows": 16094,
+        "windows_kept": 80091,
+        "windows_dropped_min_packets": 24161
+      },
+      "n_folds": 10,
+      "n_test": 64994,
+      "avg_precision": 0.359266317869332,
+      "avg_recall": 0.4217650849529371,
+      "macro_f1": 0.3833354059303697,
+      "accuracy": 0.47104348093670184,
+      "per_class": {
+        "audio_streaming": {
+          "precision": 0.1424,
+          "recall": 0.2477,
+          "support": 658
+        },
+        "chat": {
+          "precision": 0.4157,
+          "recall": 0.5481,
+          "support": 5802
+        },
+        "email": {
+          "precision": 0.4158,
+          "recall": 0.5188,
+          "support": 2893
+        },
+        "file_transfer": {
+          "precision": 0.1862,
+          "recall": 0.173,
+          "support": 13351
+        },
+        "video_streaming": {
+          "precision": 0.3403,
+          "recall": 0.4732,
+          "support": 6551
+        },
+        "voip": {
+          "precision": 0.6552,
+          "recall": 0.5697,
+          "support": 35739
+        }
+      },
+      "published_avg_precision": 0.89
+    },
+    {
+      "ftm": 15.0,
+      "scenario": "A2-nonvpn",
+      "model": "flow_knn_paper",
+      "protocol": "paper",
+      "n_classes": 6,
+      "segmentation": {
+        "source_flows": 16094,
+        "windows_kept": 80091,
+        "windows_dropped_min_packets": 24161
+      },
+      "n_folds": 10,
+      "n_test": 64994,
+      "avg_precision": 0.5763361660688519,
+      "avg_recall": 0.579148699100711,
+      "macro_f1": 0.5772242251124502,
+      "accuracy": 0.6857402221743546,
+      "per_class": {
+        "audio_streaming": {
+          "precision": 0.33,
+          "recall": 0.3055,
+          "support": 658
+        },
+        "chat": {
+          "precision": 0.5949,
+          "recall": 0.5924,
+          "support": 5802
+        },
+        "email": {
+          "precision": 0.5914,
+          "recall": 0.6664,
+          "support": 2893
+        },
+        "file_transfer": {
+          "precision": 0.5463,
+          "recall": 0.5245,
+          "support": 13351
+        },
+        "video_streaming": {
+          "precision": 0.6195,
+          "recall": 0.6008,
+          "support": 6551
+        },
+        "voip": {
+          "precision": 0.7758,
+          "recall": 0.7852,
+          "support": 35739
+        }
+      },
+      "published_avg_precision": null
+    },
+    {
+      "ftm": 15.0,
+      "scenario": "A2-nonvpn",
+      "model": "flow_knn_paper",
+      "protocol": "grouped",
+      "n_classes": 6,
+      "segmentation": {
+        "source_flows": 16094,
+        "windows_kept": 80091,
+        "windows_dropped_min_packets": 24161
+      },
+      "n_folds": 10,
+      "n_test": 64994,
+      "avg_precision": 0.3804890246408632,
+      "avg_recall": 0.42655258661716317,
+      "macro_f1": 0.3999035726365609,
+      "accuracy": 0.49832292211588763,
+      "per_class": {
+        "audio_streaming": {
+          "precision": 0.174,
+          "recall": 0.2097,
+          "support": 658
+        },
+        "chat": {
+          "precision": 0.4559,
+          "recall": 0.5207,
+          "support": 5802
+        },
+        "email": {
+          "precision": 0.4578,
+          "recall": 0.5925,
+          "support": 2893
+        },
+        "file_transfer": {
+          "precision": 0.2053,
+          "recall": 0.1724,
+          "support": 13351
+        },
+        "video_streaming": {
+          "precision": 0.3321,
+          "recall": 0.439,
+          "support": 6551
+        },
+        "voip": {
+          "precision": 0.6578,
+          "recall": 0.625,
+          "support": 35739
+        }
+      },
+      "published_avg_precision": null
+    },
+    {
+      "ftm": 15.0,
+      "scenario": "A2-vpn",
+      "model": "flow_c45_paper",
+      "protocol": "paper",
+      "n_classes": 7,
+      "segmentation": {
+        "source_flows": 16094,
+        "windows_kept": 80091,
+        "windows_dropped_min_packets": 24161
+      },
+      "n_folds": 10,
+      "n_test": 15097,
+      "avg_precision": 0.7328350161502141,
+      "avg_recall": 0.7469470140263397,
+      "macro_f1": 0.738342463441356,
+      "accuracy": 0.837782340862423,
+      "per_class": {
+        "audio_streaming": {
+          "precision": 0.3847,
+          "recall": 0.5111,
+          "support": 542
+        },
+        "chat": {
+          "precision": 0.6915,
+          "recall": 0.7402,
+          "support": 1705
+        },
+        "email": {
+          "precision": 0.7316,
+          "recall": 0.7464,
+          "support": 347
+        },
+        "file_transfer": {
+          "precision": 0.7948,
+          "recall": 0.7871,
+          "support": 2987
+        },
+        "p2p": {
+          "precision": 0.7449,
+          "recall": 0.732,
+          "support": 347
+        },
+        "video_streaming": {
+          "precision": 0.8248,
+          "recall": 0.7721,
+          "support": 2220
+        },
+        "voip": {
+          "precision": 0.9575,
+          "recall": 0.9398,
+          "support": 6949
+        }
+      },
+      "published_avg_precision": 0.84
+    },
+    {
+      "ftm": 15.0,
+      "scenario": "A2-vpn",
+      "model": "flow_c45_paper",
+      "protocol": "grouped",
+      "n_classes": 7,
+      "segmentation": {
+        "source_flows": 16094,
+        "windows_kept": 80091,
+        "windows_dropped_min_packets": 24161
+      },
+      "n_folds": 10,
+      "n_test": 15097,
+      "avg_precision": 0.3843767948519169,
+      "avg_recall": 0.37996204426928465,
+      "macro_f1": 0.37932456817822213,
+      "accuracy": 0.6375438828906406,
+      "per_class": {
+        "audio_streaming": {
+          "precision": 0.0,
+          "recall": 0.0,
+          "support": 542
+        },
+        "chat": {
+          "precision": 0.4472,
+          "recall": 0.5836,
+          "support": 1705
+        },
+        "email": {
+          "precision": 0.2616,
+          "recall": 0.2104,
+          "support": 347
+        },
+        "file_transfer": {
+          "precision": 0.5333,
+          "recall": 0.5825,
+          "support": 2987
+        },
+        "p2p": {
+          "precision": 0.0,
+          "recall": 0.0,
+          "support": 347
+        },
+        "video_streaming": {
+          "precision": 0.5552,
+          "recall": 0.4441,
+          "support": 2220
+        },
+        "voip": {
+          "precision": 0.8934,
+          "recall": 0.8391,
+          "support": 6949
+        }
+      },
+      "published_avg_precision": 0.84
+    },
+    {
+      "ftm": 15.0,
+      "scenario": "A2-vpn",
+      "model": "flow_knn_paper",
+      "protocol": "paper",
+      "n_classes": 7,
+      "segmentation": {
+        "source_flows": 16094,
+        "windows_kept": 80091,
+        "windows_dropped_min_packets": 24161
+      },
+      "n_folds": 10,
+      "n_test": 15097,
+      "avg_precision": 0.688419931726297,
+      "avg_recall": 0.6964558561826334,
+      "macro_f1": 0.6921863854834202,
+      "accuracy": 0.8147314035901172,
+      "per_class": {
+        "audio_streaming": {
+          "precision": 0.4159,
+          "recall": 0.4151,
+          "support": 542
+        },
+        "chat": {
+          "precision": 0.6593,
+          "recall": 0.6457,
+          "support": 1705
+        },
+        "email": {
+          "precision": 0.6862,
+          "recall": 0.7435,
+          "support": 347
+        },
+        "file_transfer": {
+          "precision": 0.7698,
+          "recall": 0.7399,
+          "support": 2987
+        },
+        "p2p": {
+          "precision": 0.581,
+          "recall": 0.5994,
+          "support": 347
+        },
+        "video_streaming": {
+          "precision": 0.774,
+          "recall": 0.7896,
+          "support": 2220
+        },
+        "voip": {
+          "precision": 0.9329,
+          "recall": 0.9419,
+          "support": 6949
+        }
+      },
+      "published_avg_precision": null
+    },
+    {
+      "ftm": 15.0,
+      "scenario": "A2-vpn",
+      "model": "flow_knn_paper",
+      "protocol": "grouped",
+      "n_classes": 7,
+      "segmentation": {
+        "source_flows": 16094,
+        "windows_kept": 80091,
+        "windows_dropped_min_packets": 24161
+      },
+      "n_folds": 10,
+      "n_test": 15097,
+      "avg_precision": 0.3777477324987963,
+      "avg_recall": 0.37809133512168275,
+      "macro_f1": 0.37603894177638125,
+      "accuracy": 0.6485394449228323,
+      "per_class": {
+        "audio_streaming": {
+          "precision": 0.0,
+          "recall": 0.0,
+          "support": 542
+        },
+        "chat": {
+          "precision": 0.4275,
+          "recall": 0.5566,
+          "support": 1705
+        },
+        "email": {
+          "precision": 0.1822,
+          "recall": 0.1412,
+          "support": 347
+        },
+        "file_transfer": {
+          "precision": 0.5576,
+          "recall": 0.5638,
+          "support": 2987
+        },
+        "p2p": {
+          "precision": 0.0,
+          "recall": 0.0,
+          "support": 347
+        },
+        "video_streaming": {
+          "precision": 0.5971,
+          "recall": 0.532,
+          "support": 2220
+        },
+        "voip": {
+          "precision": 0.8799,
+          "recall": 0.8531,
+          "support": 6949
+        }
+      },
+      "published_avg_precision": null
+    },
+    {
+      "ftm": 15.0,
+      "scenario": "B",
+      "model": "flow_c45_paper",
+      "protocol": "paper",
+      "n_classes": 13,
+      "segmentation": {
+        "source_flows": 16094,
+        "windows_kept": 80091,
+        "windows_dropped_min_packets": 24161
+      },
+      "n_folds": 10,
+      "n_test": 80091,
+      "avg_precision": 0.6284498936443377,
+      "avg_recall": 0.6315411814824667,
+      "macro_f1": 0.6276534484036626,
+      "accuracy": 0.6848085302967875,
+      "per_class": {
+        "audio_streaming": {
+          "precision": 0.281,
+          "recall": 0.3891,
+          "support": 658
+        },
+        "chat": {
+          "precision": 0.5317,
+          "recall": 0.6391,
+          "support": 5802
+        },
+        "email": {
+          "precision": 0.4914,
+          "recall": 0.5655,
+          "support": 2893
+        },
+        "file_transfer": {
+          "precision": 0.5055,
+          "recall": 0.5454,
+          "support": 13351
+        },
+        "video_streaming": {
+          "precision": 0.6101,
+          "recall": 0.6335,
+          "support": 6551
+        },
+        "voip": {
+          "precision": 0.7892,
+          "recall": 0.7368,
+          "support": 35739
+        },
+        "vpn-audio_streaming": {
+          "precision": 0.3981,
+          "recall": 0.476,
+          "support": 542
+        },
+        "vpn-chat": {
+          "precision": 0.6485,
+          "recall": 0.6405,
+          "support": 1705
+        },
+        "vpn-email": {
+          "precision": 0.686,
+          "recall": 0.6484,
+          "support": 347
+        },
+        "vpn-file_transfer": {
+          "precision": 0.7669,
+          "recall": 0.7128,
+          "support": 2987
+        },
+        "vpn-p2p": {
+          "precision": 0.7397,
+          "recall": 0.6225,
+          "support": 347
+        },
+        "vpn-video_streaming": {
+          "precision": 0.8211,
+          "recall": 0.7527,
+          "support": 2220
+        },
+        "vpn-voip": {
+          "precision": 0.9005,
+          "recall": 0.8479,
+          "support": 6949
+        }
+      },
+      "published_avg_precision": 0.783
+    },
+    {
+      "ftm": 15.0,
+      "scenario": "B",
+      "model": "flow_c45_paper",
+      "protocol": "grouped",
+      "n_classes": 13,
+      "segmentation": {
+        "source_flows": 16094,
+        "windows_kept": 80091,
+        "windows_dropped_min_packets": 24161
+      },
+      "n_folds": 10,
+      "n_test": 80091,
+      "avg_precision": 0.3422185336312966,
+      "avg_recall": 0.3518527454304864,
+      "macro_f1": 0.3413076060419478,
+      "accuracy": 0.45069982894457555,
+      "per_class": {
+        "audio_streaming": {
+          "precision": 0.15,
+          "recall": 0.2736,
+          "support": 658
+        },
+        "chat": {
+          "precision": 0.3728,
+          "recall": 0.5205,
+          "support": 5802
+        },
+        "email": {
+          "precision": 0.3684,
+          "recall": 0.487,
+          "support": 2893
+        },
+        "file_transfer": {
+          "precision": 0.15,
+          "recall": 0.1408,
+          "support": 13351
+        },
+        "video_streaming": {
+          "precision": 0.3072,
+          "recall": 0.4485,
+          "support": 6551
+        },
+        "voip": {
+          "precision": 0.6144,
+          "recall": 0.5494,
+          "support": 35739
+        },
+        "vpn-audio_streaming": {
+          "precision": 0.0,
+          "recall": 0.0,
+          "support": 542
+        },
+        "vpn-chat": {
+          "precision": 0.4491,
+          "recall": 0.4868,
+          "support": 1705
+        },
+        "vpn-email": {
+          "precision": 0.2644,
+          "recall": 0.1988,
+          "support": 347
+        },
+        "vpn-file_transfer": {
+          "precision": 0.5356,
+          "recall": 0.4784,
+          "support": 2987
+        },
+        "vpn-p2p": {
+          "precision": 0.0,
+          "recall": 0.0,
+          "support": 347
+        },
+        "vpn-video_streaming": {
+          "precision": 0.5888,
+          "recall": 0.4599,
+          "support": 2220
+        },
+        "vpn-voip": {
+          "precision": 0.6482,
+          "recall": 0.5303,
+          "support": 6949
+        }
+      },
+      "published_avg_precision": 0.783
+    },
+    {
+      "ftm": 15.0,
+      "scenario": "B",
+      "model": "flow_knn_paper",
+      "protocol": "paper",
+      "n_classes": 13,
+      "segmentation": {
+        "source_flows": 16094,
+        "windows_kept": 80091,
+        "windows_dropped_min_packets": 24161
+      },
+      "n_folds": 10,
+      "n_test": 80091,
+      "avg_precision": 0.5796602742156279,
+      "avg_recall": 0.5775489325142298,
+      "macro_f1": 0.5782413421975432,
+      "accuracy": 0.661060543631619,
+      "per_class": {
+        "audio_streaming": {
+          "precision": 0.3006,
+          "recall": 0.2933,
+          "support": 658
+        },
+        "chat": {
+          "precision": 0.5609,
+          "recall": 0.5607,
+          "support": 5802
+        },
+        "email": {
+          "precision": 0.5821,
+          "recall": 0.6568,
+          "support": 2893
+        },
+        "file_transfer": {
+          "precision": 0.5211,
+          "recall": 0.5049,
+          "support": 13351
+        },
+        "video_streaming": {
+          "precision": 0.5654,
+          "recall": 0.5566,
+          "support": 6551
+        },
+        "voip": {
+          "precision": 0.7547,
+          "recall": 0.7655,
+          "support": 35739
+        },
+        "vpn-audio_streaming": {
+          "precision": 0.403,
+          "recall": 0.3911,
+          "support": 542
+        },
+        "vpn-chat": {
+          "precision": 0.5098,
+          "recall": 0.4733,
+          "support": 1705
+        },
+        "vpn-email": {
+          "precision": 0.6667,
+          "recall": 0.6974,
+          "support": 347
+        },
+        "vpn-file_transfer": {
+          "precision": 0.694,
+          "recall": 0.6425,
+          "support": 2987
+        },
+        "vpn-p2p": {
+          "precision": 0.5312,
+          "recall": 0.5159,
+          "support": 347
+        },
+        "vpn-video_streaming": {
+          "precision": 0.7529,
+          "recall": 0.7577,
+          "support": 2220
+        },
+        "vpn-voip": {
+          "precision": 0.6931,
+          "recall": 0.6926,
+          "support": 6949
+        }
+      },
+      "published_avg_precision": 0.711
+    },
+    {
+      "ftm": 15.0,
+      "scenario": "B",
+      "model": "flow_knn_paper",
+      "protocol": "grouped",
+      "n_classes": 13,
+      "segmentation": {
+        "source_flows": 16094,
+        "windows_kept": 80091,
+        "windows_dropped_min_packets": 24161
+      },
+      "n_folds": 10,
+      "n_test": 80091,
+      "avg_precision": 0.3041270946588513,
+      "avg_recall": 0.32087273111545783,
+      "macro_f1": 0.31035318672743245,
+      "accuracy": 0.4445817882159044,
+      "per_class": {
+        "audio_streaming": {
+          "precision": 0.1611,
+          "recall": 0.2052,
+          "support": 658
+        },
+        "chat": {
+          "precision": 0.4187,
+          "recall": 0.4812,
+          "support": 5802
+        },
+        "email": {
+          "precision": 0.4168,
+          "recall": 0.5562,
+          "support": 2893
+        },
+        "file_transfer": {
+          "precision": 0.1684,
+          "recall": 0.1441,
+          "support": 13351
+        },
+        "video_streaming": {
+          "precision": 0.3065,
+          "recall": 0.3857,
+          "support": 6551
+        },
+        "voip": {
+          "precision": 0.6086,
+          "recall": 0.5818,
+          "support": 35739
+        },
+        "vpn-audio_streaming": {
+          "precision": 0.0,
+          "recall": 0.0,
+          "support": 542
+        },
+        "vpn-chat": {
+          "precision": 0.3182,
+          "recall": 0.3812,
+          "support": 1705
+        },
+        "vpn-email": {
+          "precision": 0.1158,
+          "recall": 0.0951,
+          "support": 347
+        },
+        "vpn-file_transfer": {
+          "precision": 0.4655,
+          "recall": 0.4332,
+          "support": 2987
+        },
+        "vpn-p2p": {
+          "precision": 0.0,
+          "recall": 0.0,
+          "support": 347
+        },
+        "vpn-video_streaming": {
+          "precision": 0.5983,
+          "recall": 0.5194,
+          "support": 2220
+        },
+        "vpn-voip": {
+          "precision": 0.3758,
+          "recall": 0.3883,
+          "support": 6949
+        }
+      },
+      "published_avg_precision": 0.711
+    },
+    {
+      "ftm": 30.0,
+      "scenario": "A1",
+      "model": "flow_c45_paper",
+      "protocol": "paper",
+      "n_classes": 2,
+      "segmentation": {
+        "source_flows": 16094,
+        "windows_kept": 56887,
+        "windows_dropped_min_packets": 19256
+      },
+      "n_folds": 10,
+      "n_test": 56887,
+      "avg_precision": 0.9339700254996164,
+      "avg_recall": 0.9225220672052802,
+      "macro_f1": 0.9281067836894044,
+      "accuracy": 0.9567036405505651,
+      "per_class": {
+        "non-vpn": {
+          "precision": 0.9697,
+          "recall": 0.9773,
+          "support": 46201
+        },
+        "vpn": {
+          "precision": 0.8983,
+          "recall": 0.8678,
+          "support": 10686
+        }
+      },
+      "published_avg_precision": null
+    },
+    {
+      "ftm": 30.0,
+      "scenario": "A1",
+      "model": "flow_c45_paper",
+      "protocol": "grouped",
+      "n_classes": 2,
+      "segmentation": {
+        "source_flows": 16094,
+        "windows_kept": 56887,
+        "windows_dropped_min_packets": 19256
+      },
+      "n_folds": 10,
+      "n_test": 56887,
+      "avg_precision": 0.8329215904837248,
+      "avg_recall": 0.8043099097664383,
+      "macro_f1": 0.8173944608228885,
+      "accuracy": 0.8932796596762002,
+      "per_class": {
+        "non-vpn": {
+          "precision": 0.9237,
+          "recall": 0.9468,
+          "support": 46201
+        },
+        "vpn": {
+          "precision": 0.7422,
+          "recall": 0.6618,
+          "support": 10686
+        }
+      },
+      "published_avg_precision": null
+    },
+    {
+      "ftm": 30.0,
+      "scenario": "A1",
+      "model": "flow_knn_paper",
+      "protocol": "paper",
+      "n_classes": 2,
+      "segmentation": {
+        "source_flows": 16094,
+        "windows_kept": 56887,
+        "windows_dropped_min_packets": 19256
+      },
+      "n_folds": 10,
+      "n_test": 56887,
+      "avg_precision": 0.8662342006358176,
+      "avg_recall": 0.8652056032226572,
+      "macro_f1": 0.8657185109767435,
+      "accuracy": 0.9181711111501749,
+      "per_class": {
+        "non-vpn": {
+          "precision": 0.9492,
+          "recall": 0.95,
+          "support": 46201
+        },
+        "vpn": {
+          "precision": 0.7832,
+          "recall": 0.7804,
+          "support": 10686
+        }
+      },
+      "published_avg_precision": null
+    },
+    {
+      "ftm": 30.0,
+      "scenario": "A1",
+      "model": "flow_knn_paper",
+      "protocol": "grouped",
+      "n_classes": 2,
+      "segmentation": {
+        "source_flows": 16094,
+        "windows_kept": 56887,
+        "windows_dropped_min_packets": 19256
+      },
+      "n_folds": 10,
+      "n_test": 56887,
+      "avg_precision": 0.7365412482204583,
+      "avg_recall": 0.7355527205633541,
+      "macro_f1": 0.7360446930014102,
+      "accuracy": 0.839260287939248,
+      "per_class": {
+        "non-vpn": {
+          "precision": 0.9005,
+          "recall": 0.9017,
+          "support": 46201
+        },
+        "vpn": {
+          "precision": 0.5725,
+          "recall": 0.5694,
+          "support": 10686
+        }
+      },
+      "published_avg_precision": null
+    },
+    {
+      "ftm": 30.0,
+      "scenario": "A2-nonvpn",
+      "model": "flow_c45_paper",
+      "protocol": "paper",
+      "n_classes": 6,
+      "segmentation": {
+        "source_flows": 16094,
+        "windows_kept": 56887,
+        "windows_dropped_min_packets": 19256
+      },
+      "n_folds": 10,
+      "n_test": 46201,
+      "avg_precision": 0.5907491758682797,
+      "avg_recall": 0.6299427185973415,
+      "macro_f1": 0.6081207445350376,
+      "accuracy": 0.6901582216835134,
+      "per_class": {
+        "audio_streaming": {
+          "precision": 0.3503,
+          "recall": 0.4617,
+          "support": 626
+        },
+        "chat": {
+          "precision": 0.6214,
+          "recall": 0.7063,
+          "support": 4521
+        },
+        "email": {
+          "precision": 0.5582,
+          "recall": 0.6156,
+          "support": 2110
+        },
+        "file_transfer": {
+          "precision": 0.5532,
+          "recall": 0.5907,
+          "support": 9561
+        },
+        "video_streaming": {
+          "precision": 0.6613,
+          "recall": 0.6605,
+          "support": 5087
+        },
+        "voip": {
+          "precision": 0.8,
+          "recall": 0.7449,
+          "support": 24296
+        }
+      },
+      "published_avg_precision": null
+    },
+    {
+      "ftm": 30.0,
+      "scenario": "A2-nonvpn",
+      "model": "flow_c45_paper",
+      "protocol": "grouped",
+      "n_classes": 6,
+      "segmentation": {
+        "source_flows": 16094,
+        "windows_kept": 56887,
+        "windows_dropped_min_packets": 19256
+      },
+      "n_folds": 10,
+      "n_test": 46201,
+      "avg_precision": 0.37647931584454297,
+      "avg_recall": 0.442258528276787,
+      "macro_f1": 0.4021856974111506,
+      "accuracy": 0.47221921603428496,
+      "per_class": {
+        "audio_streaming": {
+          "precision": 0.1592,
+          "recall": 0.278,
+          "support": 626
+        },
+        "chat": {
+          "precision": 0.4859,
+          "recall": 0.6392,
+          "support": 4521
+        },
+        "email": {
+          "precision": 0.4244,
+          "recall": 0.5346,
+          "support": 2110
+        },
+        "file_transfer": {
+          "precision": 0.1794,
+          "recall": 0.1619,
+          "support": 9561
+        },
+        "video_streaming": {
+          "precision": 0.3687,
+          "recall": 0.4783,
+          "support": 5087
+        },
+        "voip": {
+          "precision": 0.6413,
+          "recall": 0.5616,
+          "support": 24296
+        }
+      },
+      "published_avg_precision": null
+    },
+    {
+      "ftm": 30.0,
+      "scenario": "A2-nonvpn",
+      "model": "flow_knn_paper",
+      "protocol": "paper",
+      "n_classes": 6,
+      "segmentation": {
+        "source_flows": 16094,
+        "windows_kept": 56887,
+        "windows_dropped_min_packets": 19256
+      },
+      "n_folds": 10,
+      "n_test": 46201,
+      "avg_precision": 0.6168107972693522,
+      "avg_recall": 0.6196763890415483,
+      "macro_f1": 0.6178198036416799,
+      "accuracy": 0.7037077119542867,
+      "per_class": {
+        "audio_streaming": {
+          "precision": 0.4013,
+          "recall": 0.3866,
+          "support": 626
+        },
+        "chat": {
+          "precision": 0.6713,
+          "recall": 0.668,
+          "support": 4521
+        },
+        "email": {
+          "precision": 0.6171,
+          "recall": 0.6867,
+          "support": 2110
+        },
+        "file_transfer": {
+          "precision": 0.593,
+          "recall": 0.5654,
+          "support": 9561
+        },
+        "video_streaming": {
+          "precision": 0.6392,
+          "recall": 0.6192,
+          "support": 5087
+        },
+        "voip": {
+          "precision": 0.7789,
+          "recall": 0.7921,
+          "support": 24296
+        }
+      },
+      "published_avg_precision": null
+    },
+    {
+      "ftm": 30.0,
+      "scenario": "A2-nonvpn",
+      "model": "flow_knn_paper",
+      "protocol": "grouped",
+      "n_classes": 6,
+      "segmentation": {
+        "source_flows": 16094,
+        "windows_kept": 56887,
+        "windows_dropped_min_packets": 19256
+      },
+      "n_folds": 10,
+      "n_test": 46201,
+      "avg_precision": 0.4063335026173711,
+      "avg_recall": 0.45443112131263835,
+      "macro_f1": 0.4266233617658453,
+      "accuracy": 0.4983658362373109,
+      "per_class": {
+        "audio_streaming": {
+          "precision": 0.2321,
+          "recall": 0.2588,
+          "support": 626
+        },
+        "chat": {
+          "precision": 0.5326,
+          "recall": 0.6025,
+          "support": 4521
+        },
+        "email": {
+          "precision": 0.4821,
+          "recall": 0.6327,
+          "support": 2110
+        },
+        "file_transfer": {
+          "precision": 0.1997,
+          "recall": 0.1601,
+          "support": 9561
+        },
+        "video_streaming": {
+          "precision": 0.3505,
+          "recall": 0.4572,
+          "support": 5087
+        },
+        "voip": {
+          "precision": 0.6411,
+          "recall": 0.6152,
+          "support": 24296
+        }
+      },
+      "published_avg_precision": null
+    },
+    {
+      "ftm": 30.0,
+      "scenario": "A2-vpn",
+      "model": "flow_c45_paper",
+      "protocol": "paper",
+      "n_classes": 7,
+      "segmentation": {
+        "source_flows": 16094,
+        "windows_kept": 56887,
+        "windows_dropped_min_packets": 19256
+      },
+      "n_folds": 10,
+      "n_test": 10686,
+      "avg_precision": 0.7370620528773862,
+      "avg_recall": 0.7492003522378349,
+      "macro_f1": 0.7420663553570603,
+      "accuracy": 0.8265019651880966,
+      "per_class": {
+        "audio_streaming": {
+          "precision": 0.4138,
+          "recall": 0.5067,
+          "support": 521
+        },
+        "chat": {
+          "precision": 0.6914,
+          "recall": 0.7695,
+          "support": 1089
+        },
+        "email": {
+          "precision": 0.745,
+          "recall": 0.745,
+          "support": 251
+        },
+        "file_transfer": {
+          "precision": 0.7751,
+          "recall": 0.7586,
+          "support": 1976
+        },
+        "p2p": {
+          "precision": 0.7636,
+          "recall": 0.7527,
+          "support": 279
+        },
+        "video_streaming": {
+          "precision": 0.8143,
+          "recall": 0.7777,
+          "support": 1939
+        },
+        "voip": {
+          "precision": 0.9562,
+          "recall": 0.9341,
+          "support": 4631
+        }
+      },
+      "published_avg_precision": null
+    },
+    {
+      "ftm": 30.0,
+      "scenario": "A2-vpn",
+      "model": "flow_c45_paper",
+      "protocol": "grouped",
+      "n_classes": 7,
+      "segmentation": {
+        "source_flows": 16094,
+        "windows_kept": 56887,
+        "windows_dropped_min_packets": 19256
+      },
+      "n_folds": 10,
+      "n_test": 10686,
+      "avg_precision": 0.3827241749015235,
+      "avg_recall": 0.38003892706831965,
+      "macro_f1": 0.3787680668932948,
+      "accuracy": 0.6027512633352049,
+      "per_class": {
+        "audio_streaming": {
+          "precision": 0.0,
+          "recall": 0.0,
+          "support": 521
+        },
+        "chat": {
+          "precision": 0.4098,
+          "recall": 0.5464,
+          "support": 1089
+        },
+        "email": {
+          "precision": 0.3194,
+          "recall": 0.2749,
+          "support": 251
+        },
+        "file_transfer": {
+          "precision": 0.4841,
+          "recall": 0.5319,
+          "support": 1976
+        },
+        "p2p": {
+          "precision": 0.0,
+          "recall": 0.0,
+          "support": 279
+        },
+        "video_streaming": {
+          "precision": 0.5953,
+          "recall": 0.493,
+          "support": 1939
+        },
+        "voip": {
+          "precision": 0.8705,
+          "recall": 0.8141,
+          "support": 4631
+        }
+      },
+      "published_avg_precision": null
+    },
+    {
+      "ftm": 30.0,
+      "scenario": "A2-vpn",
+      "model": "flow_knn_paper",
+      "protocol": "paper",
+      "n_classes": 7,
+      "segmentation": {
+        "source_flows": 16094,
+        "windows_kept": 56887,
+        "windows_dropped_min_packets": 19256
+      },
+      "n_folds": 10,
+      "n_test": 10686,
+      "avg_precision": 0.6981454391280426,
+      "avg_recall": 0.704645491053096,
+      "macro_f1": 0.7011871721287619,
+      "accuracy": 0.801422421860378,
+      "per_class": {
+        "audio_streaming": {
+          "precision": 0.4218,
+          "recall": 0.4299,
+          "support": 521
+        },
+        "chat": {
+          "precision": 0.6559,
+          "recall": 0.6878,
+          "support": 1089
+        },
+        "email": {
+          "precision": 0.7205,
+          "recall": 0.7291,
+          "support": 251
+        },
+        "file_transfer": {
+          "precision": 0.7534,
+          "recall": 0.7095,
+          "support": 1976
+        },
+        "p2p": {
+          "precision": 0.6267,
+          "recall": 0.6559,
+          "support": 279
+        },
+        "video_streaming": {
+          "precision": 0.7878,
+          "recall": 0.7963,
+          "support": 1939
+        },
+        "voip": {
+          "precision": 0.921,
+          "recall": 0.924,
+          "support": 4631
+        }
+      },
+      "published_avg_precision": null
+    },
+    {
+      "ftm": 30.0,
+      "scenario": "A2-vpn",
+      "model": "flow_knn_paper",
+      "protocol": "grouped",
+      "n_classes": 7,
+      "segmentation": {
+        "source_flows": 16094,
+        "windows_kept": 56887,
+        "windows_dropped_min_packets": 19256
+      },
+      "n_folds": 10,
+      "n_test": 10686,
+      "avg_precision": 0.36102251918624667,
+      "avg_recall": 0.36734110659719593,
+      "macro_f1": 0.360937614989021,
+      "accuracy": 0.6009732360097324,
+      "per_class": {
+        "audio_streaming": {
+          "precision": 0.0,
+          "recall": 0.0,
+          "support": 521
+        },
+        "chat": {
+          "precision": 0.4008,
+          "recall": 0.562,
+          "support": 1089
+        },
+        "email": {
+          "precision": 0.1932,
+          "recall": 0.1355,
+          "support": 251
+        },
+        "file_transfer": {
+          "precision": 0.47,
+          "recall": 0.5273,
+          "support": 1976
+        },
+        "p2p": {
+          "precision": 0.0,
+          "recall": 0.0,
+          "support": 279
+        },
+        "video_streaming": {
+          "precision": 0.6172,
+          "recall": 0.558,
+          "support": 1939
+        },
+        "voip": {
+          "precision": 0.846,
+          "recall": 0.7886,
+          "support": 4631
+        }
+      },
+      "published_avg_precision": null
+    },
+    {
+      "ftm": 30.0,
+      "scenario": "B",
+      "model": "flow_c45_paper",
+      "protocol": "paper",
+      "n_classes": 13,
+      "segmentation": {
+        "source_flows": 16094,
+        "windows_kept": 56887,
+        "windows_dropped_min_packets": 19256
+      },
+      "n_folds": 10,
+      "n_test": 56887,
+      "avg_precision": 0.6451515383938704,
+      "avg_recall": 0.6513335289106793,
+      "macro_f1": 0.6464372934350494,
+      "accuracy": 0.6941480478844024,
+      "per_class": {
+        "audio_streaming": {
+          "precision": 0.3345,
+          "recall": 0.4601,
+          "support": 626
+        },
+        "chat": {
+          "precision": 0.6029,
+          "recall": 0.6965,
+          "support": 4521
+        },
+        "email": {
+          "precision": 0.5516,
+          "recall": 0.6057,
+          "support": 2110
+        },
+        "file_transfer": {
+          "precision": 0.5411,
+          "recall": 0.5833,
+          "support": 9561
+        },
+        "video_streaming": {
+          "precision": 0.6309,
+          "recall": 0.6515,
+          "support": 5087
+        },
+        "voip": {
+          "precision": 0.7903,
+          "recall": 0.7444,
+          "support": 24296
+        },
+        "vpn-audio_streaming": {
+          "precision": 0.4054,
+          "recall": 0.4645,
+          "support": 521
+        },
+        "vpn-chat": {
+          "precision": 0.6654,
+          "recall": 0.6391,
+          "support": 1089
+        },
+        "vpn-email": {
+          "precision": 0.6932,
+          "recall": 0.6932,
+          "support": 251
+        },
+        "vpn-file_transfer": {
+          "precision": 0.7185,
+          "recall": 0.6589,
+          "support": 1976
+        },
+        "vpn-p2p": {
+          "precision": 0.7748,
+          "recall": 0.7276,
+          "support": 279
+        },
+        "vpn-video_streaming": {
+          "precision": 0.8067,
+          "recall": 0.7298,
+          "support": 1939
+        },
+        "vpn-voip": {
+          "precision": 0.8717,
+          "recall": 0.8128,
+          "support": 4631
+        }
+      },
+      "published_avg_precision": null
+    },
+    {
+      "ftm": 30.0,
+      "scenario": "B",
+      "model": "flow_c45_paper",
+      "protocol": "grouped",
+      "n_classes": 13,
+      "segmentation": {
+        "source_flows": 16094,
+        "windows_kept": 56887,
+        "windows_dropped_min_packets": 19256
+      },
+      "n_folds": 10,
+      "n_test": 56887,
+      "avg_precision": 0.32978172032208997,
+      "avg_recall": 0.3378676385891817,
+      "macro_f1": 0.3288079679535812,
+      "accuracy": 0.44338776873450875,
+      "per_class": {
+        "audio_streaming": {
+          "precision": 0.178,
+          "recall": 0.2812,
+          "support": 626
+        },
+        "chat": {
+          "precision": 0.4405,
+          "recall": 0.5859,
+          "support": 4521
+        },
+        "email": {
+          "precision": 0.3792,
+          "recall": 0.5005,
+          "support": 2110
+        },
+        "file_transfer": {
+          "precision": 0.1448,
+          "recall": 0.1352,
+          "support": 9561
+        },
+        "video_streaming": {
+          "precision": 0.3296,
+          "recall": 0.4563,
+          "support": 5087
+        },
+        "voip": {
+          "precision": 0.6021,
+          "recall": 0.5472,
+          "support": 24296
+        },
+        "vpn-audio_streaming": {
+          "precision": 0.0,
+          "recall": 0.0,
+          "support": 521
+        },
+        "vpn-chat": {
+          "precision": 0.4129,
+          "recall": 0.4307,
+          "support": 1089
+        },
+        "vpn-email": {
+          "precision": 0.1597,
+          "recall": 0.0916,
+          "support": 251
+        },
+        "vpn-file_transfer": {
+          "precision": 0.4578,
+          "recall": 0.4145,
+          "support": 1976
+        },
+        "vpn-p2p": {
+          "precision": 0.0,
+          "recall": 0.0,
+          "support": 279
+        },
+        "vpn-video_streaming": {
+          "precision": 0.5848,
+          "recall": 0.4729,
+          "support": 1939
+        },
+        "vpn-voip": {
+          "precision": 0.5978,
+          "recall": 0.4764,
+          "support": 4631
+        }
+      },
+      "published_avg_precision": null
+    },
+    {
+      "ftm": 30.0,
+      "scenario": "B",
+      "model": "flow_knn_paper",
+      "protocol": "paper",
+      "n_classes": 13,
+      "segmentation": {
+        "source_flows": 16094,
+        "windows_kept": 56887,
+        "windows_dropped_min_packets": 19256
+      },
+      "n_folds": 10,
+      "n_test": 56887,
+      "avg_precision": 0.5990198311916971,
+      "avg_recall": 0.6010107411561987,
+      "macro_f1": 0.5997163991527011,
+      "accuracy": 0.6741610561288168,
+      "per_class": {
+        "audio_streaming": {
+          "precision": 0.3836,
+          "recall": 0.3738,
+          "support": 626
+        },
+        "chat": {
+          "precision": 0.6399,
+          "recall": 0.6355,
+          "support": 4521
+        },
+        "email": {
+          "precision": 0.6043,
+          "recall": 0.673,
+          "support": 2110
+        },
+        "file_transfer": {
+          "precision": 0.5646,
+          "recall": 0.5423,
+          "support": 9561
+        },
+        "video_streaming": {
+          "precision": 0.5919,
+          "recall": 0.5736,
+          "support": 5087
+        },
+        "voip": {
+          "precision": 0.7593,
+          "recall": 0.7724,
+          "support": 24296
+        },
+        "vpn-audio_streaming": {
+          "precision": 0.3814,
+          "recall": 0.3704,
+          "support": 521
+        },
+        "vpn-chat": {
+          "precision": 0.5219,
+          "recall": 0.5253,
+          "support": 1089
+        },
+        "vpn-email": {
+          "precision": 0.6667,
+          "recall": 0.7092,
+          "support": 251
+        },
+        "vpn-file_transfer": {
+          "precision": 0.6498,
+          "recall": 0.6058,
+          "support": 1976
+        },
+        "vpn-p2p": {
+          "precision": 0.5857,
+          "recall": 0.5878,
+          "support": 279
+        },
+        "vpn-video_streaming": {
+          "precision": 0.7585,
+          "recall": 0.7566,
+          "support": 1939
+        },
+        "vpn-voip": {
+          "precision": 0.6796,
+          "recall": 0.6875,
+          "support": 4631
+        }
+      },
+      "published_avg_precision": null
+    },
+    {
+      "ftm": 30.0,
+      "scenario": "B",
+      "model": "flow_knn_paper",
+      "protocol": "grouped",
+      "n_classes": 13,
+      "segmentation": {
+        "source_flows": 16094,
+        "windows_kept": 56887,
+        "windows_dropped_min_packets": 19256
+      },
+      "n_folds": 10,
+      "n_test": 56887,
+      "avg_precision": 0.3123990112020625,
+      "avg_recall": 0.33079596636020336,
+      "macro_f1": 0.31906374654752984,
+      "accuracy": 0.4440030235378909,
+      "per_class": {
+        "audio_streaming": {
+          "precision": 0.2273,
+          "recall": 0.2556,
+          "support": 626
+        },
+        "chat": {
+          "precision": 0.4838,
+          "recall": 0.5576,
+          "support": 4521
+        },
+        "email": {
+          "precision": 0.4409,
+          "recall": 0.5839,
+          "support": 2110
+        },
+        "file_transfer": {
+          "precision": 0.1695,
+          "recall": 0.1418,
+          "support": 9561
+        },
+        "video_streaming": {
+          "precision": 0.3322,
+          "recall": 0.405,
+          "support": 5087
+        },
+        "voip": {
+          "precision": 0.5955,
+          "recall": 0.5773,
+          "support": 24296
+        },
+        "vpn-audio_streaming": {
+          "precision": 0.0,
+          "recall": 0.0,
+          "support": 521
+        },
+        "vpn-chat": {
+          "precision": 0.3085,
+          "recall": 0.4187,
+          "support": 1089
+        },
+        "vpn-email": {
+          "precision": 0.1277,
+          "recall": 0.0956,
+          "support": 251
+        },
+        "vpn-file_transfer": {
+          "precision": 0.407,
+          "recall": 0.3922,
+          "support": 1976
+        },
+        "vpn-p2p": {
+          "precision": 0.0,
+          "recall": 0.0,
+          "support": 279
+        },
+        "vpn-video_streaming": {
+          "precision": 0.61,
+          "recall": 0.5178,
+          "support": 1939
+        },
+        "vpn-voip": {
+          "precision": 0.3588,
+          "recall": 0.3548,
+          "support": 4631
+        }
+      },
+      "published_avg_precision": null
+    },
+    {
+      "ftm": 60.0,
+      "scenario": "A1",
+      "model": "flow_c45_paper",
+      "protocol": "paper",
+      "n_classes": 2,
+      "segmentation": {
+        "source_flows": 16094,
+        "windows_kept": 44681,
+        "windows_dropped_min_packets": 2913
+      },
+      "n_folds": 10,
+      "n_test": 44681,
+      "avg_precision": 0.927257081274625,
+      "avg_recall": 0.9172942269993347,
+      "macro_f1": 0.9221794308372906,
+      "accuracy": 0.9580806159217564,
+      "per_class": {
+        "non-vpn": {
+          "precision": 0.9723,
+          "recall": 0.9778,
+          "support": 37410
+        },
+        "vpn": {
+          "precision": 0.8822,
+          "recall": 0.8568,
+          "support": 7271
+        }
+      },
+      "published_avg_precision": null
+    },
+    {
+      "ftm": 60.0,
+      "scenario": "A1",
+      "model": "flow_c45_paper",
+      "protocol": "grouped",
+      "n_classes": 2,
+      "segmentation": {
+        "source_flows": 16094,
+        "windows_kept": 44681,
+        "windows_dropped_min_packets": 2913
+      },
+      "n_folds": 10,
+      "n_test": 44681,
+      "avg_precision": 0.8281788691526781,
+      "avg_recall": 0.8065692655266786,
+      "macro_f1": 0.8167423974289834,
+      "accuracy": 0.9033817506322598,
+      "per_class": {
+        "non-vpn": {
+          "precision": 0.9355,
+          "recall": 0.9501,
+          "support": 37410
+        },
+        "vpn": {
+          "precision": 0.7208,
+          "recall": 0.663,
+          "support": 7271
+        }
+      },
+      "published_avg_precision": null
+    },
+    {
+      "ftm": 60.0,
+      "scenario": "A1",
+      "model": "flow_knn_paper",
+      "protocol": "paper",
+      "n_classes": 2,
+      "segmentation": {
+        "source_flows": 16094,
+        "windows_kept": 44681,
+        "windows_dropped_min_packets": 2913
+      },
+      "n_folds": 10,
+      "n_test": 44681,
+      "avg_precision": 0.8507143846496948,
+      "avg_recall": 0.8494695507424392,
+      "macro_f1": 0.8500900596382006,
+      "accuracy": 0.9184440813768716,
+      "per_class": {
+        "non-vpn": {
+          "precision": 0.9509,
+          "recall": 0.9517,
+          "support": 37410
+        },
+        "vpn": {
+          "precision": 0.7505,
+          "recall": 0.7472,
+          "support": 7271
+        }
+      },
+      "published_avg_precision": null
+    },
+    {
+      "ftm": 60.0,
+      "scenario": "A1",
+      "model": "flow_knn_paper",
+      "protocol": "grouped",
+      "n_classes": 2,
+      "segmentation": {
+        "source_flows": 16094,
+        "windows_kept": 44681,
+        "windows_dropped_min_packets": 2913
+      },
+      "n_folds": 10,
+      "n_test": 44681,
+      "avg_precision": 0.7161321818579891,
+      "avg_recall": 0.7170410525627342,
+      "macro_f1": 0.7165847146964608,
+      "accuracy": 0.845213849287169,
+      "per_class": {
+        "non-vpn": {
+          "precision": 0.908,
+          "recall": 0.9071,
+          "support": 37410
+        },
+        "vpn": {
+          "precision": 0.5243,
+          "recall": 0.527,
+          "support": 7271
+        }
+      },
+      "published_avg_precision": null
+    },
+    {
+      "ftm": 60.0,
+      "scenario": "A2-nonvpn",
+      "model": "flow_c45_paper",
+      "protocol": "paper",
+      "n_classes": 6,
+      "segmentation": {
+        "source_flows": 16094,
+        "windows_kept": 44681,
+        "windows_dropped_min_packets": 2913
+      },
+      "n_folds": 10,
+      "n_test": 37410,
+      "avg_precision": 0.6151650378560556,
+      "avg_recall": 0.6503776580315153,
+      "macro_f1": 0.631020447862365,
+      "accuracy": 0.7029403902699813,
+      "per_class": {
+        "audio_streaming": {
+          "precision": 0.423,
+          "recall": 0.5152,
+          "support": 528
+        },
+        "chat": {
+          "precision": 0.6257,
+          "recall": 0.7089,
+          "support": 3731
+        },
+        "email": {
+          "precision": 0.5908,
+          "recall": 0.6536,
+          "support": 1862
+        },
+        "file_transfer": {
+          "precision": 0.5763,
+          "recall": 0.6191,
+          "support": 8031
+        },
+        "video_streaming": {
+          "precision": 0.6649,
+          "recall": 0.6498,
+          "support": 3627
+        },
+        "voip": {
+          "precision": 0.8102,
+          "recall": 0.7556,
+          "support": 19631
+        }
+      },
+      "published_avg_precision": null
+    },
+    {
+      "ftm": 60.0,
+      "scenario": "A2-nonvpn",
+      "model": "flow_c45_paper",
+      "protocol": "grouped",
+      "n_classes": 6,
+      "segmentation": {
+        "source_flows": 16094,
+        "windows_kept": 44681,
+        "windows_dropped_min_packets": 2913
+      },
+      "n_folds": 10,
+      "n_test": 37410,
+      "avg_precision": 0.3857560876087365,
+      "avg_recall": 0.4491861343962562,
+      "macro_f1": 0.41097058239059464,
+      "accuracy": 0.47179898422881583,
+      "per_class": {
+        "audio_streaming": {
+          "precision": 0.2243,
+          "recall": 0.3712,
+          "support": 528
+        },
+        "chat": {
+          "precision": 0.4504,
+          "recall": 0.5902,
+          "support": 3731
+        },
+        "email": {
+          "precision": 0.4456,
+          "recall": 0.5274,
+          "support": 1862
+        },
+        "file_transfer": {
+          "precision": 0.193,
+          "recall": 0.1753,
+          "support": 8031
+        },
+        "video_streaming": {
+          "precision": 0.3638,
+          "recall": 0.461,
+          "support": 3627
+        },
+        "voip": {
+          "precision": 0.6375,
+          "recall": 0.57,
+          "support": 19631
+        }
+      },
+      "published_avg_precision": null
+    },
+    {
+      "ftm": 60.0,
+      "scenario": "A2-nonvpn",
+      "model": "flow_knn_paper",
+      "protocol": "paper",
+      "n_classes": 6,
+      "segmentation": {
+        "source_flows": 16094,
+        "windows_kept": 44681,
+        "windows_dropped_min_packets": 2913
+      },
+      "n_folds": 10,
+      "n_test": 37410,
+      "avg_precision": 0.6184859033564846,
+      "avg_recall": 0.621920241339484,
+      "macro_f1": 0.6197174486399833,
+      "accuracy": 0.7040363539160652,
+      "per_class": {
+        "audio_streaming": {
+          "precision": 0.4631,
+          "recall": 0.4394,
+          "support": 528
+        },
+        "chat": {
+          "precision": 0.6359,
+          "recall": 0.6197,
+          "support": 3731
+        },
+        "email": {
+          "precision": 0.5643,
+          "recall": 0.6407,
+          "support": 1862
+        },
+        "file_transfer": {
+          "precision": 0.6054,
+          "recall": 0.5935,
+          "support": 8031
+        },
+        "video_streaming": {
+          "precision": 0.6564,
+          "recall": 0.6498,
+          "support": 3627
+        },
+        "voip": {
+          "precision": 0.7858,
+          "recall": 0.7884,
+          "support": 19631
+        }
+      },
+      "published_avg_precision": null
+    },
+    {
+      "ftm": 60.0,
+      "scenario": "A2-nonvpn",
+      "model": "flow_knn_paper",
+      "protocol": "grouped",
+      "n_classes": 6,
+      "segmentation": {
+        "source_flows": 16094,
+        "windows_kept": 44681,
+        "windows_dropped_min_packets": 2913
+      },
+      "n_folds": 10,
+      "n_test": 37410,
+      "avg_precision": 0.38721627907461587,
+      "avg_recall": 0.4333202101267239,
+      "macro_f1": 0.40702355594377027,
+      "accuracy": 0.4817963111467522,
+      "per_class": {
+        "audio_streaming": {
+          "precision": 0.2528,
+          "recall": 0.3011,
+          "support": 528
+        },
+        "chat": {
+          "precision": 0.4727,
+          "recall": 0.536,
+          "support": 3731
+        },
+        "email": {
+          "precision": 0.3996,
+          "recall": 0.5258,
+          "support": 1862
+        },
+        "file_transfer": {
+          "precision": 0.1873,
+          "recall": 0.1543,
+          "support": 8031
+        },
+        "video_streaming": {
+          "precision": 0.3828,
+          "recall": 0.4753,
+          "support": 3627
+        },
+        "voip": {
+          "precision": 0.6281,
+          "recall": 0.6074,
+          "support": 19631
+        }
+      },
+      "published_avg_precision": null
+    },
+    {
+      "ftm": 60.0,
+      "scenario": "A2-vpn",
+      "model": "flow_c45_paper",
+      "protocol": "paper",
+      "n_classes": 7,
+      "segmentation": {
+        "source_flows": 16094,
+        "windows_kept": 44681,
+        "windows_dropped_min_packets": 2913
+      },
+      "n_folds": 10,
+      "n_test": 7271,
+      "avg_precision": 0.7273807453057862,
+      "avg_recall": 0.7420301417422076,
+      "macro_f1": 0.7335315556644995,
+      "accuracy": 0.795213863292532,
+      "per_class": {
+        "audio_streaming": {
+          "precision": 0.4596,
+          "recall": 0.5503,
+          "support": 527
+        },
+        "chat": {
+          "precision": 0.6457,
+          "recall": 0.7156,
+          "support": 675
+        },
+        "email": {
+          "precision": 0.7299,
+          "recall": 0.7857,
+          "support": 196
+        },
+        "file_transfer": {
+          "precision": 0.7525,
+          "recall": 0.727,
+          "support": 1238
+        },
+        "p2p": {
+          "precision": 0.7882,
+          "recall": 0.7672,
+          "support": 262
+        },
+        "video_streaming": {
+          "precision": 0.7784,
+          "recall": 0.7264,
+          "support": 1422
+        },
+        "voip": {
+          "precision": 0.9373,
+          "recall": 0.9221,
+          "support": 2951
+        }
+      },
+      "published_avg_precision": null
+    },
+    {
+      "ftm": 60.0,
+      "scenario": "A2-vpn",
+      "model": "flow_c45_paper",
+      "protocol": "grouped",
+      "n_classes": 7,
+      "segmentation": {
+        "source_flows": 16094,
+        "windows_kept": 44681,
+        "windows_dropped_min_packets": 2913
+      },
+      "n_folds": 10,
+      "n_test": 7271,
+      "avg_precision": 0.3820368264058246,
+      "avg_recall": 0.3841065257007909,
+      "macro_f1": 0.3809389517925886,
+      "accuracy": 0.5634713244395544,
+      "per_class": {
+        "audio_streaming": {
+          "precision": 0.0,
+          "recall": 0.0,
+          "support": 527
+        },
+        "chat": {
+          "precision": 0.3646,
+          "recall": 0.4948,
+          "support": 675
+        },
+        "email": {
+          "precision": 0.4743,
+          "recall": 0.4235,
+          "support": 196
+        },
+        "file_transfer": {
+          "precision": 0.4404,
+          "recall": 0.483,
+          "support": 1238
+        },
+        "p2p": {
+          "precision": 0.0,
+          "recall": 0.0,
+          "support": 262
+        },
+        "video_streaming": {
+          "precision": 0.534,
+          "recall": 0.4691,
+          "support": 1422
+        },
+        "voip": {
+          "precision": 0.861,
+          "recall": 0.8184,
+          "support": 2951
+        }
+      },
+      "published_avg_precision": null
+    },
+    {
+      "ftm": 60.0,
+      "scenario": "A2-vpn",
+      "model": "flow_knn_paper",
+      "protocol": "paper",
+      "n_classes": 7,
+      "segmentation": {
+        "source_flows": 16094,
+        "windows_kept": 44681,
+        "windows_dropped_min_packets": 2913
+      },
+      "n_folds": 10,
+      "n_test": 7271,
+      "avg_precision": 0.7085337518096466,
+      "avg_recall": 0.7091279981451274,
+      "macro_f1": 0.7084300080480178,
+      "accuracy": 0.777197084307523,
+      "per_class": {
+        "audio_streaming": {
+          "precision": 0.4591,
+          "recall": 0.4687,
+          "support": 527
+        },
+        "chat": {
+          "precision": 0.6321,
+          "recall": 0.677,
+          "support": 675
+        },
+        "email": {
+          "precision": 0.7486,
+          "recall": 0.699,
+          "support": 196
+        },
+        "file_transfer": {
+          "precision": 0.7429,
+          "recall": 0.7003,
+          "support": 1238
+        },
+        "p2p": {
+          "precision": 0.721,
+          "recall": 0.7595,
+          "support": 262
+        },
+        "video_streaming": {
+          "precision": 0.7539,
+          "recall": 0.7539,
+          "support": 1422
+        },
+        "voip": {
+          "precision": 0.9021,
+          "recall": 0.9055,
+          "support": 2951
+        }
+      },
+      "published_avg_precision": null
+    },
+    {
+      "ftm": 60.0,
+      "scenario": "A2-vpn",
+      "model": "flow_knn_paper",
+      "protocol": "grouped",
+      "n_classes": 7,
+      "segmentation": {
+        "source_flows": 16094,
+        "windows_kept": 44681,
+        "windows_dropped_min_packets": 2913
+      },
+      "n_folds": 10,
+      "n_test": 7271,
+      "avg_precision": 0.34269058997261076,
+      "avg_recall": 0.35171750824437636,
+      "macro_f1": 0.34524126102503977,
+      "accuracy": 0.5482051987346995,
+      "per_class": {
+        "audio_streaming": {
+          "precision": 0.0,
+          "recall": 0.0,
+          "support": 527
+        },
+        "chat": {
+          "precision": 0.374,
+          "recall": 0.4904,
+          "support": 675
+        },
+        "email": {
+          "precision": 0.2549,
+          "recall": 0.199,
+          "support": 196
+        },
+        "file_transfer": {
+          "precision": 0.4405,
+          "recall": 0.496,
+          "support": 1238
+        },
+        "p2p": {
+          "precision": 0.0,
+          "recall": 0.0,
+          "support": 262
+        },
+        "video_streaming": {
+          "precision": 0.5406,
+          "recall": 0.5007,
+          "support": 1422
+        },
+        "voip": {
+          "precision": 0.7888,
+          "recall": 0.776,
+          "support": 2951
+        }
+      },
+      "published_avg_precision": null
+    },
+    {
+      "ftm": 60.0,
+      "scenario": "B",
+      "model": "flow_c45_paper",
+      "protocol": "paper",
+      "n_classes": 13,
+      "segmentation": {
+        "source_flows": 16094,
+        "windows_kept": 44681,
+        "windows_dropped_min_packets": 2913
+      },
+      "n_folds": 10,
+      "n_test": 44681,
+      "avg_precision": 0.649945537259938,
+      "avg_recall": 0.6500480842801466,
+      "macro_f1": 0.6483331391669473,
+      "accuracy": 0.6942772095521587,
+      "per_class": {
+        "audio_streaming": {
+          "precision": 0.4198,
+          "recall": 0.5152,
+          "support": 528
+        },
+        "chat": {
+          "precision": 0.603,
+          "recall": 0.6942,
+          "support": 3731
+        },
+        "email": {
+          "precision": 0.5775,
+          "recall": 0.6445,
+          "support": 1862
+        },
+        "file_transfer": {
+          "precision": 0.5632,
+          "recall": 0.6089,
+          "support": 8031
+        },
+        "video_streaming": {
+          "precision": 0.6172,
+          "recall": 0.6339,
+          "support": 3627
+        },
+        "voip": {
+          "precision": 0.7997,
+          "recall": 0.7514,
+          "support": 19631
+        },
+        "vpn-audio_streaming": {
+          "precision": 0.4651,
+          "recall": 0.5313,
+          "support": 527
+        },
+        "vpn-chat": {
+          "precision": 0.5779,
+          "recall": 0.5822,
+          "support": 675
+        },
+        "vpn-email": {
+          "precision": 0.7444,
+          "recall": 0.6837,
+          "support": 196
+        },
+        "vpn-file_transfer": {
+          "precision": 0.6735,
+          "recall": 0.6131,
+          "support": 1238
+        },
+        "vpn-p2p": {
+          "precision": 0.795,
+          "recall": 0.7252,
+          "support": 262
+        },
+        "vpn-video_streaming": {
+          "precision": 0.7678,
+          "recall": 0.6976,
+          "support": 1422
+        },
+        "vpn-voip": {
+          "precision": 0.8452,
+          "recall": 0.7696,
+          "support": 2951
+        }
+      },
+      "published_avg_precision": null
+    },
+    {
+      "ftm": 60.0,
+      "scenario": "B",
+      "model": "flow_c45_paper",
+      "protocol": "grouped",
+      "n_classes": 13,
+      "segmentation": {
+        "source_flows": 16094,
+        "windows_kept": 44681,
+        "windows_dropped_min_packets": 2913
+      },
+      "n_folds": 10,
+      "n_test": 44681,
+      "avg_precision": 0.34828047504832804,
+      "avg_recall": 0.3540431156704243,
+      "macro_f1": 0.3460869884014598,
+      "accuracy": 0.4486694568160963,
+      "per_class": {
+        "audio_streaming": {
+          "precision": 0.2378,
+          "recall": 0.3693,
+          "support": 528
+        },
+        "chat": {
+          "precision": 0.4293,
+          "recall": 0.5671,
+          "support": 3731
+        },
+        "email": {
+          "precision": 0.4077,
+          "recall": 0.5086,
+          "support": 1862
+        },
+        "file_transfer": {
+          "precision": 0.164,
+          "recall": 0.1524,
+          "support": 8031
+        },
+        "video_streaming": {
+          "precision": 0.3272,
+          "recall": 0.448,
+          "support": 3627
+        },
+        "voip": {
+          "precision": 0.6147,
+          "recall": 0.5655,
+          "support": 19631
+        },
+        "vpn-audio_streaming": {
+          "precision": 0.0,
+          "recall": 0.0,
+          "support": 527
+        },
+        "vpn-chat": {
+          "precision": 0.3644,
+          "recall": 0.3881,
+          "support": 675
+        },
+        "vpn-email": {
+          "precision": 0.3692,
+          "recall": 0.2449,
+          "support": 196
+        },
+        "vpn-file_transfer": {
+          "precision": 0.4716,
+          "recall": 0.4435,
+          "support": 1238
+        },
+        "vpn-p2p": {
+          "precision": 0.0,
+          "recall": 0.0,
+          "support": 262
+        },
+        "vpn-video_streaming": {
+          "precision": 0.5771,
+          "recall": 0.4712,
+          "support": 1422
+        },
+        "vpn-voip": {
+          "precision": 0.5647,
+          "recall": 0.4439,
+          "support": 2951
+        }
+      },
+      "published_avg_precision": null
+    },
+    {
+      "ftm": 60.0,
+      "scenario": "B",
+      "model": "flow_knn_paper",
+      "protocol": "paper",
+      "n_classes": 13,
+      "segmentation": {
+        "source_flows": 16094,
+        "windows_kept": 44681,
+        "windows_dropped_min_packets": 2913
+      },
+      "n_folds": 10,
+      "n_test": 44681,
+      "avg_precision": 0.5870989964181115,
+      "avg_recall": 0.590520092117876,
+      "macro_f1": 0.588386494950583,
+      "accuracy": 0.6701506233074461,
+      "per_class": {
+        "audio_streaming": {
+          "precision": 0.4097,
+          "recall": 0.3996,
+          "support": 528
+        },
+        "chat": {
+          "precision": 0.6107,
+          "recall": 0.5958,
+          "support": 3731
+        },
+        "email": {
+          "precision": 0.5527,
+          "recall": 0.6305,
+          "support": 1862
+        },
+        "file_transfer": {
+          "precision": 0.585,
+          "recall": 0.5734,
+          "support": 8031
+        },
+        "video_streaming": {
+          "precision": 0.605,
+          "recall": 0.6019,
+          "support": 3627
+        },
+        "voip": {
+          "precision": 0.7651,
+          "recall": 0.768,
+          "support": 19631
+        },
+        "vpn-audio_streaming": {
+          "precision": 0.309,
+          "recall": 0.3055,
+          "support": 527
+        },
+        "vpn-chat": {
+          "precision": 0.5139,
+          "recall": 0.5215,
+          "support": 675
+        },
+        "vpn-email": {
+          "precision": 0.6888,
+          "recall": 0.6888,
+          "support": 196
+        },
+        "vpn-file_transfer": {
+          "precision": 0.6515,
+          "recall": 0.601,
+          "support": 1238
+        },
+        "vpn-p2p": {
+          "precision": 0.6007,
+          "recall": 0.6603,
+          "support": 262
+        },
+        "vpn-video_streaming": {
+          "precision": 0.6902,
+          "recall": 0.6674,
+          "support": 1422
+        },
+        "vpn-voip": {
+          "precision": 0.65,
+          "recall": 0.6632,
+          "support": 2951
+        }
+      },
+      "published_avg_precision": null
+    },
+    {
+      "ftm": 60.0,
+      "scenario": "B",
+      "model": "flow_knn_paper",
+      "protocol": "grouped",
+      "n_classes": 13,
+      "segmentation": {
+        "source_flows": 16094,
+        "windows_kept": 44681,
+        "windows_dropped_min_packets": 2913
+      },
+      "n_folds": 10,
+      "n_test": 44681,
+      "avg_precision": 0.28917280149904856,
+      "avg_recall": 0.3123759799743038,
+      "macro_f1": 0.2981956695870593,
+      "accuracy": 0.4351737875159464,
+      "per_class": {
+        "audio_streaming": {
+          "precision": 0.2102,
+          "recall": 0.2576,
+          "support": 528
+        },
+        "chat": {
+          "precision": 0.4514,
+          "recall": 0.509,
+          "support": 3731
+        },
+        "email": {
+          "precision": 0.3731,
+          "recall": 0.5043,
+          "support": 1862
+        },
+        "file_transfer": {
+          "precision": 0.1663,
+          "recall": 0.1396,
+          "support": 8031
+        },
+        "video_streaming": {
+          "precision": 0.3601,
+          "recall": 0.4127,
+          "support": 3627
+        },
+        "voip": {
+          "precision": 0.5984,
+          "recall": 0.5795,
+          "support": 19631
+        },
+        "vpn-audio_streaming": {
+          "precision": 0.0,
+          "recall": 0.0,
+          "support": 527
+        },
+        "vpn-chat": {
+          "precision": 0.2609,
+          "recall": 0.3807,
+          "support": 675
+        },
+        "vpn-email": {
+          "precision": 0.1221,
+          "recall": 0.0816,
+          "support": 196
+        },
+        "vpn-file_transfer": {
+          "precision": 0.3547,
+          "recall": 0.3716,
+          "support": 1238
+        },
+        "vpn-p2p": {
+          "precision": 0.0,
+          "recall": 0.0,
+          "support": 262
+        },
+        "vpn-video_streaming": {
+          "precision": 0.4958,
+          "recall": 0.4515,
+          "support": 1422
+        },
+        "vpn-voip": {
+          "precision": 0.3663,
+          "recall": 0.3728,
+          "support": 2951
+        }
+      },
+      "published_avg_precision": null
+    },
+    {
+      "ftm": 120.0,
+      "scenario": "A1",
+      "model": "flow_c45_paper",
+      "protocol": "paper",
+      "n_classes": 2,
+      "segmentation": {
+        "source_flows": 16094,
+        "windows_kept": 29657,
+        "windows_dropped_min_packets": 65
+      },
+      "n_folds": 10,
+      "n_test": 29657,
+      "avg_precision": 0.9217120477687866,
+      "avg_recall": 0.9062678836367393,
+      "macro_f1": 0.9137584697747811,
+      "accuracy": 0.9548167380382372,
+      "per_class": {
+        "non-vpn": {
+          "precision": 0.9692,
+          "recall": 0.9774,
+          "support": 24955
+        },
+        "vpn": {
+          "precision": 0.8742,
+          "recall": 0.8352,
+          "support": 4702
+        }
+      },
+      "published_avg_precision": 0.874
+    },
+    {
+      "ftm": 120.0,
+      "scenario": "A1",
+      "model": "flow_c45_paper",
+      "protocol": "grouped",
+      "n_classes": 2,
+      "segmentation": {
+        "source_flows": 16094,
+        "windows_kept": 29657,
+        "windows_dropped_min_packets": 65
+      },
+      "n_folds": 10,
+      "n_test": 29657,
+      "avg_precision": 0.816408772007982,
+      "avg_recall": 0.796228856348062,
+      "macro_f1": 0.80575279414613,
+      "accuracy": 0.8996189769700239,
+      "per_class": {
+        "non-vpn": {
+          "precision": 0.934,
+          "recall": 0.9476,
+          "support": 24955
+        },
+        "vpn": {
+          "precision": 0.6988,
+          "recall": 0.6448,
+          "support": 4702
+        }
+      },
+      "published_avg_precision": 0.874
+    },
+    {
+      "ftm": 120.0,
+      "scenario": "A1",
+      "model": "flow_knn_paper",
+      "protocol": "paper",
+      "n_classes": 2,
+      "segmentation": {
+        "source_flows": 16094,
+        "windows_kept": 29657,
+        "windows_dropped_min_packets": 65
+      },
+      "n_folds": 10,
+      "n_test": 29657,
+      "avg_precision": 0.8576593186654793,
+      "avg_recall": 0.8586462693673793,
+      "macro_f1": 0.8581516466714105,
+      "accuracy": 0.9242000202313113,
+      "per_class": {
+        "non-vpn": {
+          "precision": 0.9553,
+          "recall": 0.9546,
+          "support": 24955
+        },
+        "vpn": {
+          "precision": 0.7601,
+          "recall": 0.7627,
+          "support": 4702
+        }
+      },
+      "published_avg_precision": 0.826
+    },
+    {
+      "ftm": 120.0,
+      "scenario": "A1",
+      "model": "flow_knn_paper",
+      "protocol": "grouped",
+      "n_classes": 2,
+      "segmentation": {
+        "source_flows": 16094,
+        "windows_kept": 29657,
+        "windows_dropped_min_packets": 65
+      },
+      "n_folds": 10,
+      "n_test": 29657,
+      "avg_precision": 0.7020038342420029,
+      "avg_recall": 0.7130186014963046,
+      "macro_f1": 0.7072139112035638,
+      "accuracy": 0.8394645446269009,
+      "per_class": {
+        "non-vpn": {
+          "precision": 0.9099,
+          "recall": 0.8982,
+          "support": 24955
+        },
+        "vpn": {
+          "precision": 0.4941,
+          "recall": 0.5279,
+          "support": 4702
+        }
+      },
+      "published_avg_precision": 0.826
+    },
+    {
+      "ftm": 120.0,
+      "scenario": "A2-nonvpn",
+      "model": "flow_c45_paper",
+      "protocol": "paper",
+      "n_classes": 6,
+      "segmentation": {
+        "source_flows": 16094,
+        "windows_kept": 29657,
+        "windows_dropped_min_packets": 65
+      },
+      "n_folds": 10,
+      "n_test": 24955,
+      "avg_precision": 0.6523174669290065,
+      "avg_recall": 0.6745460285617915,
+      "macro_f1": 0.6627391585533491,
+      "accuracy": 0.7321178120617111,
+      "per_class": {
+        "audio_streaming": {
+          "precision": 0.4359,
+          "recall": 0.4826,
+          "support": 317
+        },
+        "chat": {
+          "precision": 0.6697,
+          "recall": 0.7449,
+          "support": 2564
+        },
+        "email": {
+          "precision": 0.6935,
+          "recall": 0.7183,
+          "support": 1317
+        },
+        "file_transfer": {
+          "precision": 0.6414,
+          "recall": 0.6679,
+          "support": 5673
+        },
+        "video_streaming": {
+          "precision": 0.6516,
+          "recall": 0.651,
+          "support": 2516
+        },
+        "voip": {
+          "precision": 0.8218,
+          "recall": 0.7825,
+          "support": 12568
+        }
+      },
+      "published_avg_precision": null
+    },
+    {
+      "ftm": 120.0,
+      "scenario": "A2-nonvpn",
+      "model": "flow_c45_paper",
+      "protocol": "grouped",
+      "n_classes": 6,
+      "segmentation": {
+        "source_flows": 16094,
+        "windows_kept": 29657,
+        "windows_dropped_min_packets": 65
+      },
+      "n_folds": 10,
+      "n_test": 24955,
+      "avg_precision": 0.41933640918864407,
+      "avg_recall": 0.4754496169494209,
+      "macro_f1": 0.4430981472502052,
+      "accuracy": 0.4918453215788419,
+      "per_class": {
+        "audio_streaming": {
+          "precision": 0.2346,
+          "recall": 0.3375,
+          "support": 317
+        },
+        "chat": {
+          "precision": 0.5131,
+          "recall": 0.6435,
+          "support": 2564
+        },
+        "email": {
+          "precision": 0.5401,
+          "recall": 0.6553,
+          "support": 1317
+        },
+        "file_transfer": {
+          "precision": 0.2385,
+          "recall": 0.2121,
+          "support": 5673
+        },
+        "video_streaming": {
+          "precision": 0.358,
+          "recall": 0.4149,
+          "support": 2516
+        },
+        "voip": {
+          "precision": 0.6318,
+          "recall": 0.5894,
+          "support": 12568
+        }
+      },
+      "published_avg_precision": null
+    },
+    {
+      "ftm": 120.0,
+      "scenario": "A2-nonvpn",
+      "model": "flow_knn_paper",
+      "protocol": "paper",
+      "n_classes": 6,
+      "segmentation": {
+        "source_flows": 16094,
+        "windows_kept": 29657,
+        "windows_dropped_min_packets": 65
+      },
+      "n_folds": 10,
+      "n_test": 24955,
+      "avg_precision": 0.6913919538350984,
+      "avg_recall": 0.6935626664033072,
+      "macro_f1": 0.6922062054338491,
+      "accuracy": 0.7641755159286716,
+      "per_class": {
+        "audio_streaming": {
+          "precision": 0.4868,
+          "recall": 0.4637,
+          "support": 317
+        },
+        "chat": {
+          "precision": 0.7373,
+          "recall": 0.7289,
+          "support": 2564
+        },
+        "email": {
+          "precision": 0.7314,
+          "recall": 0.792,
+          "support": 1317
+        },
+        "file_transfer": {
+          "precision": 0.7095,
+          "recall": 0.7121,
+          "support": 5673
+        },
+        "video_streaming": {
+          "precision": 0.6578,
+          "recall": 0.6403,
+          "support": 2516
+        },
+        "voip": {
+          "precision": 0.8256,
+          "recall": 0.8243,
+          "support": 12568
+        }
+      },
+      "published_avg_precision": null
+    },
+    {
+      "ftm": 120.0,
+      "scenario": "A2-nonvpn",
+      "model": "flow_knn_paper",
+      "protocol": "grouped",
+      "n_classes": 6,
+      "segmentation": {
+        "source_flows": 16094,
+        "windows_kept": 29657,
+        "windows_dropped_min_packets": 65
+      },
+      "n_folds": 10,
+      "n_test": 24955,
+      "avg_precision": 0.4248968637757491,
+      "avg_recall": 0.47284460176492465,
+      "macro_f1": 0.445412743028659,
+      "accuracy": 0.49821679022240034,
+      "per_class": {
+        "audio_streaming": {
+          "precision": 0.2485,
+          "recall": 0.2555,
+          "support": 317
+        },
+        "chat": {
+          "precision": 0.5589,
+          "recall": 0.6455,
+          "support": 2564
+        },
+        "email": {
+          "precision": 0.5534,
+          "recall": 0.7198,
+          "support": 1317
+        },
+        "file_transfer": {
+          "precision": 0.2103,
+          "recall": 0.1703,
+          "support": 5673
+        },
+        "video_streaming": {
+          "precision": 0.35,
+          "recall": 0.434,
+          "support": 2516
+        },
+        "voip": {
+          "precision": 0.6282,
+          "recall": 0.612,
+          "support": 12568
+        }
+      },
+      "published_avg_precision": null
+    },
+    {
+      "ftm": 120.0,
+      "scenario": "A2-vpn",
+      "model": "flow_c45_paper",
+      "protocol": "paper",
+      "n_classes": 7,
+      "segmentation": {
+        "source_flows": 16094,
+        "windows_kept": 29657,
+        "windows_dropped_min_packets": 65
+      },
+      "n_folds": 10,
+      "n_test": 4702,
+      "avg_precision": 0.7338663785487256,
+      "avg_recall": 0.7334694387111215,
+      "macro_f1": 0.7319514706440549,
+      "accuracy": 0.7826456826882178,
+      "per_class": {
+        "audio_streaming": {
+          "precision": 0.4225,
+          "recall": 0.5197,
+          "support": 304
+        },
+        "chat": {
+          "precision": 0.6056,
+          "recall": 0.6968,
+          "support": 432
+        },
+        "email": {
+          "precision": 0.8411,
+          "recall": 0.7605,
+          "support": 167
+        },
+        "file_transfer": {
+          "precision": 0.7185,
+          "recall": 0.7194,
+          "support": 841
+        },
+        "p2p": {
+          "precision": 0.8635,
+          "recall": 0.8366,
+          "support": 257
+        },
+        "video_streaming": {
+          "precision": 0.7548,
+          "recall": 0.6899,
+          "support": 848
+        },
+        "voip": {
+          "precision": 0.9311,
+          "recall": 0.9115,
+          "support": 1853
+        }
+      },
+      "published_avg_precision": null
+    },
+    {
+      "ftm": 120.0,
+      "scenario": "A2-vpn",
+      "model": "flow_c45_paper",
+      "protocol": "grouped",
+      "n_classes": 7,
+      "segmentation": {
+        "source_flows": 16094,
+        "windows_kept": 29657,
+        "windows_dropped_min_packets": 65
+      },
+      "n_folds": 10,
+      "n_test": 4702,
+      "avg_precision": 0.34755014302762766,
+      "avg_recall": 0.3460961229654533,
+      "macro_f1": 0.34238575069145033,
+      "accuracy": 0.5287111867290515,
+      "per_class": {
+        "audio_streaming": {
+          "precision": 0.0,
+          "recall": 0.0,
+          "support": 304
+        },
+        "chat": {
+          "precision": 0.3581,
+          "recall": 0.5023,
+          "support": 432
+        },
+        "email": {
+          "precision": 0.3136,
+          "recall": 0.2216,
+          "support": 167
+        },
+        "file_transfer": {
+          "precision": 0.352,
+          "recall": 0.4495,
+          "support": 841
+        },
+        "p2p": {
+          "precision": 0.0,
+          "recall": 0.0,
+          "support": 257
+        },
+        "video_streaming": {
+          "precision": 0.5388,
+          "recall": 0.4587,
+          "support": 848
+        },
+        "voip": {
+          "precision": 0.8705,
+          "recall": 0.7906,
+          "support": 1853
+        }
+      },
+      "published_avg_precision": null
+    },
+    {
+      "ftm": 120.0,
+      "scenario": "A2-vpn",
+      "model": "flow_knn_paper",
+      "protocol": "paper",
+      "n_classes": 7,
+      "segmentation": {
+        "source_flows": 16094,
+        "windows_kept": 29657,
+        "windows_dropped_min_packets": 65
+      },
+      "n_folds": 10,
+      "n_test": 4702,
+      "avg_precision": 0.7117106342141994,
+      "avg_recall": 0.7121660427820781,
+      "macro_f1": 0.7118205755651161,
+      "accuracy": 0.7707358570820927,
+      "per_class": {
+        "audio_streaming": {
+          "precision": 0.3945,
+          "recall": 0.375,
+          "support": 304
+        },
+        "chat": {
+          "precision": 0.608,
+          "recall": 0.6319,
+          "support": 432
+        },
+        "email": {
+          "precision": 0.7927,
+          "recall": 0.7784,
+          "support": 167
+        },
+        "file_transfer": {
+          "precision": 0.7524,
+          "recall": 0.7337,
+          "support": 841
+        },
+        "p2p": {
+          "precision": 0.8182,
+          "recall": 0.8405,
+          "support": 257
+        },
+        "video_streaming": {
+          "precision": 0.7295,
+          "recall": 0.7347,
+          "support": 848
+        },
+        "voip": {
+          "precision": 0.8867,
+          "recall": 0.891,
+          "support": 1853
+        }
+      },
+      "published_avg_precision": null
+    },
+    {
+      "ftm": 120.0,
+      "scenario": "A2-vpn",
+      "model": "flow_knn_paper",
+      "protocol": "grouped",
+      "n_classes": 7,
+      "segmentation": {
+        "source_flows": 16094,
+        "windows_kept": 29657,
+        "windows_dropped_min_packets": 65
+      },
+      "n_folds": 10,
+      "n_test": 4702,
+      "avg_precision": 0.3212760405312108,
+      "avg_recall": 0.3306226636955275,
+      "macro_f1": 0.3225354961599577,
+      "accuracy": 0.5036154827732879,
+      "per_class": {
+        "audio_streaming": {
+          "precision": 0.0,
+          "recall": 0.0,
+          "support": 304
+        },
+        "chat": {
+          "precision": 0.3294,
+          "recall": 0.4514,
+          "support": 432
+        },
+        "email": {
+          "precision": 0.2703,
+          "recall": 0.1796,
+          "support": 167
+        },
+        "file_transfer": {
+          "precision": 0.4293,
+          "recall": 0.5196,
+          "support": 841
+        },
+        "p2p": {
+          "precision": 0.0,
+          "recall": 0.0,
+          "support": 257
+        },
+        "video_streaming": {
+          "precision": 0.4878,
+          "recall": 0.4481,
+          "support": 848
+        },
+        "voip": {
+          "precision": 0.7322,
+          "recall": 0.7156,
+          "support": 1853
+        }
+      },
+      "published_avg_precision": null
+    },
+    {
+      "ftm": 120.0,
+      "scenario": "B",
+      "model": "flow_c45_paper",
+      "protocol": "paper",
+      "n_classes": 13,
+      "segmentation": {
+        "source_flows": 16094,
+        "windows_kept": 29657,
+        "windows_dropped_min_packets": 65
+      },
+      "n_folds": 10,
+      "n_test": 29657,
+      "avg_precision": 0.6644210938503184,
+      "avg_recall": 0.6655150217767533,
+      "macro_f1": 0.6638137938228319,
+      "accuracy": 0.7162221397983612,
+      "per_class": {
+        "audio_streaming": {
+          "precision": 0.3959,
+          "recall": 0.4858,
+          "support": 317
+        },
+        "chat": {
+          "precision": 0.6429,
+          "recall": 0.7324,
+          "support": 2564
+        },
+        "email": {
+          "precision": 0.6616,
+          "recall": 0.7304,
+          "support": 1317
+        },
+        "file_transfer": {
+          "precision": 0.6238,
+          "recall": 0.6598,
+          "support": 5673
+        },
+        "video_streaming": {
+          "precision": 0.6252,
+          "recall": 0.6312,
+          "support": 2516
+        },
+        "voip": {
+          "precision": 0.812,
+          "recall": 0.772,
+          "support": 12568
+        },
+        "vpn-audio_streaming": {
+          "precision": 0.4748,
+          "recall": 0.4967,
+          "support": 304
+        },
+        "vpn-chat": {
+          "precision": 0.5518,
+          "recall": 0.5301,
+          "support": 432
+        },
+        "vpn-email": {
+          "precision": 0.7988,
+          "recall": 0.7844,
+          "support": 167
+        },
+        "vpn-file_transfer": {
+          "precision": 0.6565,
+          "recall": 0.6136,
+          "support": 841
+        },
+        "vpn-p2p": {
+          "precision": 0.8133,
+          "recall": 0.7626,
+          "support": 257
+        },
+        "vpn-video_streaming": {
+          "precision": 0.757,
+          "recall": 0.6981,
+          "support": 848
+        },
+        "vpn-voip": {
+          "precision": 0.8238,
+          "recall": 0.7545,
+          "support": 1853
+        }
+      },
+      "published_avg_precision": null
+    },
+    {
+      "ftm": 120.0,
+      "scenario": "B",
+      "model": "flow_c45_paper",
+      "protocol": "grouped",
+      "n_classes": 13,
+      "segmentation": {
+        "source_flows": 16094,
+        "windows_kept": 29657,
+        "windows_dropped_min_packets": 65
+      },
+      "n_folds": 10,
+      "n_test": 29657,
+      "avg_precision": 0.34377620699039835,
+      "avg_recall": 0.35076288552906576,
+      "macro_f1": 0.34198160231639113,
+      "accuracy": 0.45594631958728127,
+      "per_class": {
+        "audio_streaming": {
+          "precision": 0.2015,
+          "recall": 0.3312,
+          "support": 317
+        },
+        "chat": {
+          "precision": 0.4236,
+          "recall": 0.6018,
+          "support": 2564
+        },
+        "email": {
+          "precision": 0.5097,
+          "recall": 0.6416,
+          "support": 1317
+        },
+        "file_transfer": {
+          "precision": 0.1997,
+          "recall": 0.1775,
+          "support": 5673
+        },
+        "video_streaming": {
+          "precision": 0.3311,
+          "recall": 0.409,
+          "support": 2516
+        },
+        "voip": {
+          "precision": 0.6242,
+          "recall": 0.5869,
+          "support": 12568
+        },
+        "vpn-audio_streaming": {
+          "precision": 0.0,
+          "recall": 0.0,
+          "support": 304
+        },
+        "vpn-chat": {
+          "precision": 0.3432,
+          "recall": 0.3472,
+          "support": 432
+        },
+        "vpn-email": {
+          "precision": 0.431,
+          "recall": 0.2994,
+          "support": 167
+        },
+        "vpn-file_transfer": {
+          "precision": 0.3626,
+          "recall": 0.3341,
+          "support": 841
+        },
+        "vpn-p2p": {
+          "precision": 0.0,
+          "recall": 0.0,
+          "support": 257
+        },
+        "vpn-video_streaming": {
+          "precision": 0.5198,
+          "recall": 0.4021,
+          "support": 848
+        },
+        "vpn-voip": {
+          "precision": 0.5227,
+          "recall": 0.429,
+          "support": 1853
+        }
+      },
+      "published_avg_precision": null
+    },
+    {
+      "ftm": 120.0,
+      "scenario": "B",
+      "model": "flow_knn_paper",
+      "protocol": "paper",
+      "n_classes": 13,
+      "segmentation": {
+        "source_flows": 16094,
+        "windows_kept": 29657,
+        "windows_dropped_min_packets": 65
+      },
+      "n_folds": 10,
+      "n_test": 29657,
+      "avg_precision": 0.6263061846900329,
+      "avg_recall": 0.628940856457291,
+      "macro_f1": 0.6272602277438069,
+      "accuracy": 0.7243146643288263,
+      "per_class": {
+        "audio_streaming": {
+          "precision": 0.3994,
+          "recall": 0.388,
+          "support": 317
+        },
+        "chat": {
+          "precision": 0.7194,
+          "recall": 0.7149,
+          "support": 2564
+        },
+        "email": {
+          "precision": 0.7226,
+          "recall": 0.7813,
+          "support": 1317
+        },
+        "file_transfer": {
+          "precision": 0.6966,
+          "recall": 0.6996,
+          "support": 5673
+        },
+        "video_streaming": {
+          "precision": 0.605,
+          "recall": 0.5862,
+          "support": 2516
+        },
+        "voip": {
+          "precision": 0.8062,
+          "recall": 0.8061,
+          "support": 12568
+        },
+        "vpn-audio_streaming": {
+          "precision": 0.296,
+          "recall": 0.2697,
+          "support": 304
+        },
+        "vpn-chat": {
+          "precision": 0.5036,
+          "recall": 0.4907,
+          "support": 432
+        },
+        "vpn-email": {
+          "precision": 0.747,
+          "recall": 0.7425,
+          "support": 167
+        },
+        "vpn-file_transfer": {
+          "precision": 0.6369,
+          "recall": 0.6278,
+          "support": 841
+        },
+        "vpn-p2p": {
+          "precision": 0.6794,
+          "recall": 0.7588,
+          "support": 257
+        },
+        "vpn-video_streaming": {
+          "precision": 0.6761,
+          "recall": 0.645,
+          "support": 848
+        },
+        "vpn-voip": {
+          "precision": 0.6538,
+          "recall": 0.6654,
+          "support": 1853
+        }
+      },
+      "published_avg_precision": null
+    },
+    {
+      "ftm": 120.0,
+      "scenario": "B",
+      "model": "flow_knn_paper",
+      "protocol": "grouped",
+      "n_classes": 13,
+      "segmentation": {
+        "source_flows": 16094,
+        "windows_kept": 29657,
+        "windows_dropped_min_packets": 65
+      },
+      "n_folds": 10,
+      "n_test": 29657,
+      "avg_precision": 0.2851051574362237,
+      "avg_recall": 0.3135706054214652,
+      "macro_f1": 0.2970703663285976,
+      "accuracy": 0.44188555821559833,
+      "per_class": {
+        "audio_streaming": {
+          "precision": 0.1456,
+          "recall": 0.1703,
+          "support": 317
+        },
+        "chat": {
+          "precision": 0.5411,
+          "recall": 0.626,
+          "support": 2564
+        },
+        "email": {
+          "precision": 0.5385,
+          "recall": 0.6902,
+          "support": 1317
+        },
+        "file_transfer": {
+          "precision": 0.197,
+          "recall": 0.1597,
+          "support": 5673
+        },
+        "video_streaming": {
+          "precision": 0.3394,
+          "recall": 0.3676,
+          "support": 2516
+        },
+        "voip": {
+          "precision": 0.594,
+          "recall": 0.5815,
+          "support": 12568
+        },
+        "vpn-audio_streaming": {
+          "precision": 0.0,
+          "recall": 0.0,
+          "support": 304
+        },
+        "vpn-chat": {
+          "precision": 0.2279,
+          "recall": 0.3403,
+          "support": 432
+        },
+        "vpn-email": {
+          "precision": 0.1314,
+          "recall": 0.1078,
+          "support": 167
+        },
+        "vpn-file_transfer": {
+          "precision": 0.3464,
+          "recall": 0.3674,
+          "support": 841
+        },
+        "vpn-p2p": {
+          "precision": 0.0,
+          "recall": 0.0,
+          "support": 257
+        },
+        "vpn-video_streaming": {
+          "precision": 0.3199,
+          "recall": 0.3078,
+          "support": 848
+        },
+        "vpn-voip": {
+          "precision": 0.3252,
+          "recall": 0.3578,
+          "support": 1853
+        }
+      },
+      "published_avg_precision": null
+    }
+  ]
+}

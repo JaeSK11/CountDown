@@ -1,0 +1,29 @@
+{
+  "n_train": 13103,
+  "n_test": 5130,
+  "n_groups_train": 21,
+  "n_groups_test": 10,
+  "groups_disjoint": true,
+  "classes_absent_from_test": [
+    "email",
+    "p2p"
+  ],
+  "classes_absent_from_train": [],
+  "train_class_counts": {
+    "chat": 3903,
+    "email": 293,
+    "file_transfer": 968,
+    "p2p": 475,
+    "streaming": 477,
+    "voip": 6987
+  },
+  "test_class_counts": {
+    "chat": 111,
+    "file_transfer": 22,
+    "streaming": 56,
+    "voip": 4941
+  },
+  "group_key": "source_file",
+  "fold": "0/5",
+  "n_val": 0
+}

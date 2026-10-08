@@ -1,0 +1,21 @@
+{
+  "n_train": 49939,
+  "n_test": 14045,
+  "n_groups_train": 169,
+  "n_groups_test": 48,
+  "groups_disjoint": true,
+  "classes_absent_from_test": [],
+  "classes_absent_from_train": [],
+  "train_class_counts": {
+    "none": 47522,
+    "vpn": 1826,
+    "tor": 591
+  },
+  "test_class_counts": {
+    "none": 13441,
+    "vpn": 529,
+    "tor": 75
+  },
+  "group_key": "source_file",
+  "n_val": 6539
+}

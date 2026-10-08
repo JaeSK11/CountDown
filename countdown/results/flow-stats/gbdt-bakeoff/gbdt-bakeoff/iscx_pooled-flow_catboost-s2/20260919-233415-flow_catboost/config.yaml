@@ -1,0 +1,37 @@
+dataset: iscx_pooled
+target: traffic_type
+model: flow_catboost
+features: flow_stats
+feature_params: {}
+params:
+  thread_count: 8
+group_key: null
+grouped: true
+test_size: 0.2
+val_size: 0.1
+seed: 2
+min_samples_per_class: 0
+top_k_classes: null
+windows: null
+window_per_flow: false
+tail_min_support: 50
+notes: ''
+dataset_resolved: iscx_pooled
+target_resolved: traffic_type
+seed_resolved: 2
+group_key_resolved: source_file
+n_flows: 70523
+n_samples: 70523
+feature_shape:
+- 56
+label_space:
+  target: traffic_type
+  names:
+  - browsing
+  - email
+  - chat
+  - audio_streaming
+  - video_streaming
+  - file_transfer
+  - voip
+  - p2p

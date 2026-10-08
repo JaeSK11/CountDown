@@ -1,0 +1,30 @@
+model: graph_gnn_baseline
+dataset: iscx-nonvpn (tfegnn cache)
+target: traffic_type_tfegnn
+features: byte_matrix
+protocol: sequential
+cache: cache/tfegnn
+fold: 0
+n_folds: 5
+val_size: 0.1
+seed: 42
+params:
+  header_len: 40
+  epochs: 120
+  class_weight: null
+  early_stop_patience: 0
+  workers: 24
+  seed: 42
+  lr_min: 1.0e-05
+n_samples: 290198
+feature_shape:
+- 50
+- 190
+label_space:
+  target: traffic_type_tfegnn
+  names:
+  - chat
+  - email
+  - file_transfer
+  - streaming
+  - voip

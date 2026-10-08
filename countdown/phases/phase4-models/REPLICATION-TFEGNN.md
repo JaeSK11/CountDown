@@ -7,10 +7,10 @@
 > `runs/tfegnn-random-tfegnn-refbytes/tor.json`
 > Paper: arXiv:2307.16713 · authors' code: github.com/ViktorAxelsen/TFE-GNN
 
-**Status:** ISCX-Tor and ISCX-VPN, one seed per cell. The non-VPN / non-Tor caches are built but
-untrained (≈ 30 h and 9 h of GPU at the authors' epoch counts); CSTNET (the plan's primary target for this member) has no byte cache yet. Since
-2026-09-17 the network is a registered `BaseModel` (`graph_gnn_baseline`) and has a grouped
-5-fold number on Tor (section below). See `MODEL-graph.md` for what is left.
+**Status:** all four ISCX splits of the paper's Table 2, one seed per cell (non-VPN and non-Tor
+added 2026-09-20, authors' split only). Since 2026-09-17 the network is a registered `BaseModel`
+(`graph_gnn_baseline`) and has a grouped 5-fold number on Tor (section below). The CSTNET scores
+and the GIN comparison are in `MODEL-graph.md`.
 
 ## What was built
 
@@ -24,7 +24,7 @@ untrained (≈ 30 h and 9 h of GPU at the authors' epoch counts); CSTNET (the pl
 | Tests | `tests/test_tfe_gnn.py` | 12 tests. The graph builder is checked against a verbatim port of the authors' `construct_graph`, because a wrong edge rule trains fine and reports the wrong number. |
 
 **Caches built** (shards = captures): `vpn` 31 / 18,233 samples / 6 classes · `nonvpn` 109 /
-290,198 / 5 · `tor` 51 / 3,003 / 8 · `nontor` 44 / 88,600 / 8. Only `tor` has been trained.
+290,198 / 5 · `tor` 51 / 3,003 / 8 · `nontor` 44 / 88,600 / 8 · `cstnet` 120 / 46,284 / 120 (2026-09-19). All are trained.
 
 ## Setup, held to the authors' code
 
@@ -150,6 +150,22 @@ ISCX-VPN with ISCX-Tor for the traffic-type head, and it means the VPN column of
 a target the honest protocol can even express. Per-class where it can be scored: voip
 0.76–0.99, chat 0.82–0.96, streaming 0.48–0.92, file_transfer 0.16–0.80.
 
+### ISCX-non-VPN and ISCX-non-Tor (2026-09-20)
+
+Authors' split only (`--protocol sequential`), the authors' epoch counts, seed 42. Runs:
+`runs/graph-gnn-nonvpn/`, `runs/graph-gnn-nontor/`. A grouped 5-fold was not run: the two jobs
+already cost 3.2 h and 2.2 h on the 5090.
+
+| Split | test | macro-F1 | accuracy | published F1 | per-class F1 |
+| --- | --- | --- | --- | --- | --- |
+| non-Tor (8) | 8,865 | **0.644** | 0.894 | 0.8507 | p2p 0.99, audio 0.93, browsing 0.89, file_transfer 0.80, email 0.60, voip 0.57, video 0.33, chat 0.05 |
+| non-VPN (5) | 29,023 | **0.350** | 0.692 | 0.924 | voip 0.82, streaming 0.32, email 0.31, chat 0.19, file_transfer 0.11 |
+
+Same shape as Tor and VPN: well short of the published number once addressing is stripped. On
+non-VPN the accuracy (0.692) barely clears the majority-class rate (0.688, voip is 69 % of test),
+so the 0.35 is mostly voip — the weakest result of the four splits, and the one split where the
+paper reports no clear margin over ET-BERT.
+
 ## Fidelity gaps and deviations, stated
 
 1. **Addressing is really removed** (`byte_prep.DEVIATIONS[0]`). The authors' `remove()` slices
@@ -176,9 +192,8 @@ a target the honest protocol can even express. Per-class where it can be scored:
 - **`audit_endpoint_leakage()`-style checks are mandatory for any byte-derived input.** This is the
   second member (after ET-BERT's flow corpus) where addressing bytes alone moved the number by more
   than the difference between competing architectures.
-- **The graph member's primary target is still unmeasured.** CSTNET is 1 pcap → 1 flow, so per-app
-  session graphs are impossible there (`MODEL-graph.md`), and `byte_prep.py` only knows the ISCX
-  loaders. Building a CSTNET byte cache is the next concrete step, followed by registering the
-  network as `graph_gnn_baseline` so it runs through `scripts/train.py` and the Phase-3 harness.
+- **The graph member's primary target is measured (2026-09-20).** A per-flow CSTNET byte cache
+  was built (CSTNET is 1 pcap → 1 flow, so per-app session graphs remain impossible); grouped
+  5-fold scores are in `MODEL-graph.md`. On CSTNET the member is far closer to useful than on ISCX.
 - **The comparison that matters for `graph_gnn` (GraphSAGE / GIN)** is against the stripped,
   sequential column, on the same cached samples.

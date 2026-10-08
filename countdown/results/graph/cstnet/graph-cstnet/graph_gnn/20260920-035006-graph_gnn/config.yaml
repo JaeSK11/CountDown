@@ -1,0 +1,144 @@
+model: graph_gnn
+dataset: iscx-cstnet (tfegnn cache)
+target: app
+features: byte_matrix
+protocol: grouped
+cache: cache/tfegnn
+fold: 0
+n_folds: 5
+val_size: 0.0
+seed: 42
+params:
+  header_len: 40
+  epochs: 20
+  class_weight: null
+  early_stop_patience: 0
+  workers: 24
+  seed: 42
+n_samples: 46284
+feature_shape:
+- 50
+- 190
+label_space:
+  target: app
+  names:
+  - 163.com
+  - 51.la
+  - 51cto.com
+  - acm.org
+  - adobe.com
+  - alibaba.com
+  - alicdn.com
+  - alipay.com
+  - amap.com
+  - amazonaws.com
+  - ampproject.org
+  - apple.com
+  - arxiv.org
+  - asus.com
+  - atlassian.net
+  - azureedge.net
+  - baidu.com
+  - bilibili.com
+  - biligame.com
+  - booking.com
+  - chia.net
+  - chinatax.gov.cn
+  - cisco.com
+  - cloudflare.com
+  - cloudfront.net
+  - cnblogs.com
+  - codepen.io
+  - crazyegg.com
+  - criteo.com
+  - ctrip.com
+  - dailymotion.com
+  - deepl.com
+  - digitaloceanspaces.com
+  - duckduckgo.com
+  - eastday.com
+  - eastmoney.com
+  - elsevier.com
+  - facebook.com
+  - feishu.cn
+  - ggpht.com
+  - github.com
+  - gitlab.com
+  - gmail.com
+  - goat.com
+  - google.com
+  - grammarly.com
+  - gravatar.com
+  - guancha.cn
+  - huanqiu.com
+  - huawei.com
+  - hubspot.com
+  - huya.com
+  - ibm.com
+  - icloud.com
+  - ieee.org
+  - instagram.com
+  - iqiyi.com
+  - jb51.net
+  - jd.com
+  - kugou.com
+  - leetcode-cn.com
+  - media.net
+  - mi.com
+  - microsoft.com
+  - mozilla.org
+  - msn.com
+  - naver.com
+  - netflix.com
+  - nike.com
+  - notion.so
+  - nvidia.com
+  - office.net
+  - onlinedown.net
+  - opera.com
+  - oracle.com
+  - outbrain.com
+  - overleaf.com
+  - paypal.com
+  - pinduoduo.com
+  - python.org
+  - qcloud.com
+  - qq.com
+  - researchgate.net
+  - runoob.com
+  - sciencedirect.com
+  - semanticscholar.org
+  - sina.com.cn
+  - smzdm.com
+  - snapchat.com
+  - sohu.com
+  - spring.io
+  - springer.com
+  - squarespace.com
+  - statcounter.com
+  - steampowered.com
+  - t.co
+  - taboola.com
+  - teads.tv
+  - thepaper.cn
+  - tiktok.com
+  - toutiao.com
+  - twimg.com
+  - twitter.com
+  - unity3d.com
+  - v2ex.com
+  - vivo.com.cn
+  - vk.com
+  - vmware.com
+  - walmart.com
+  - weibo.com
+  - wikimedia.org
+  - wikipedia.org
+  - wp.com
+  - xiaomi.com
+  - ximalaya.com
+  - yahoo.com
+  - yandex.ru
+  - youtube.com
+  - yy.com
+  - zhihu.com

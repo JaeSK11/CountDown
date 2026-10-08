@@ -1,0 +1,33 @@
+{
+  "n_train": 2628,
+  "n_test": 375,
+  "n_groups_train": 43,
+  "n_groups_test": 8,
+  "groups_disjoint": true,
+  "classes_absent_from_test": [
+    "file_transfer"
+  ],
+  "classes_absent_from_train": [],
+  "train_class_counts": {
+    "browsing": 361,
+    "email": 35,
+    "chat": 78,
+    "audio_streaming": 339,
+    "video_streaming": 194,
+    "file_transfer": 94,
+    "voip": 339,
+    "p2p": 1188
+  },
+  "test_class_counts": {
+    "browsing": 93,
+    "email": 21,
+    "chat": 19,
+    "audio_streaming": 37,
+    "video_streaming": 61,
+    "voip": 72,
+    "p2p": 72
+  },
+  "group_key": "source_file",
+  "fold": "4/5",
+  "n_val": 0
+}

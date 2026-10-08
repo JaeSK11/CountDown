@@ -1,0 +1,309 @@
+{
+  "run_id": "20260917-172638-flow_gbdt",
+  "created_utc": "2026-09-17T17:26:38.184273+00:00",
+  "versions": {
+    "python": "3.12.3",
+    "platform": "Linux-7.0.0-31-generic-x86_64-with-glibc2.39",
+    "numpy": "2.5.2",
+    "sklearn": "1.9.0",
+    "lightgbm": "4.7.0",
+    "pandas": "3.0.5",
+    "git": "586d6bb"
+  },
+  "metrics": {
+    "n": 17918,
+    "accuracy": 0.8837481861814934,
+    "macro_f1": 0.631704620927028,
+    "macro_f1_all_classes": 0.631704620927028,
+    "weighted_f1": 0.883607716200041,
+    "per_class": {
+      "browsing": {
+        "precision": 0.9741379310344828,
+        "recall": 0.9645103324348607,
+        "f1": 0.9693002257336343,
+        "support": 4452
+      },
+      "email": {
+        "precision": 0.5927272727272728,
+        "recall": 0.5679442508710801,
+        "f1": 0.5800711743772242,
+        "support": 287
+      },
+      "chat": {
+        "precision": 0.32533733133433285,
+        "recall": 0.5398009950248757,
+        "f1": 0.4059869036482694,
+        "support": 402
+      },
+      "audio_streaming": {
+        "precision": 0.5380952380952381,
+        "recall": 0.70625,
+        "f1": 0.6108108108108108,
+        "support": 160
+      },
+      "video_streaming": {
+        "precision": 0.4157303370786517,
+        "recall": 0.5346820809248555,
+        "f1": 0.46776232616940583,
+        "support": 692
+      },
+      "file_transfer": {
+        "precision": 0.5590828924162258,
+        "recall": 0.37514792899408284,
+        "f1": 0.4490084985835694,
+        "support": 845
+      },
+      "voip": {
+        "precision": 0.6562228024369017,
+        "recall": 0.518213058419244,
+        "f1": 0.5791090629800307,
+        "support": 1455
+      },
+      "p2p": {
+        "precision": 0.9851312551271534,
+        "recall": 0.9981298701298701,
+        "f1": 0.9915879651132786,
+        "support": 9625
+      }
+    },
+    "confusion": [
+      [
+        4294,
+        19,
+        5,
+        26,
+        69,
+        7,
+        21,
+        11
+      ],
+      [
+        25,
+        163,
+        68,
+        0,
+        4,
+        8,
+        16,
+        3
+      ],
+      [
+        35,
+        4,
+        217,
+        0,
+        60,
+        21,
+        55,
+        10
+      ],
+      [
+        0,
+        0,
+        0,
+        113,
+        43,
+        3,
+        1,
+        0
+      ],
+      [
+        5,
+        0,
+        72,
+        46,
+        370,
+        64,
+        129,
+        6
+      ],
+      [
+        26,
+        32,
+        79,
+        22,
+        152,
+        317,
+        173,
+        44
+      ],
+      [
+        10,
+        57,
+        225,
+        0,
+        191,
+        147,
+        754,
+        71
+      ],
+      [
+        13,
+        0,
+        1,
+        3,
+        1,
+        0,
+        0,
+        9607
+      ]
+    ],
+    "class_names": [
+      "browsing",
+      "email",
+      "chat",
+      "audio_streaming",
+      "video_streaming",
+      "file_transfer",
+      "voip",
+      "p2p"
+    ],
+    "target": "traffic_type",
+    "n_classes": 8,
+    "baseline": {
+      "most_frequent": {
+        "accuracy": 0.24846523049447483,
+        "macro_f1": 0.049754135002235134,
+        "weighted_f1": 0.09889738097106857
+      },
+      "stratified": {
+        "accuracy": 0.26615693715816496,
+        "macro_f1": 0.11830647236349712,
+        "weighted_f1": 0.29236983588940335
+      }
+    },
+    "baseline_macro_f1": 0.049754135002235134,
+    "baseline_accuracy": 0.24846523049447483,
+    "beats_baseline": true,
+    "mean_confidence": 0.9247229896201149,
+    "tail_excluded": {
+      "min_support": 50,
+      "n_classes": 8,
+      "n_classes_dropped": 0,
+      "macro_f1": 0.631704620927028,
+      "classes": [
+        "audio_streaming",
+        "browsing",
+        "chat",
+        "email",
+        "file_transfer",
+        "p2p",
+        "video_streaming",
+        "voip"
+      ]
+    },
+    "top_features": [
+      {
+        "feature": "iat_min",
+        "gain": 5301.0
+      },
+      {
+        "feature": "fwd_iat_min",
+        "gain": 3760.0
+      },
+      {
+        "feature": "duration",
+        "gain": 3114.0
+      },
+      {
+        "feature": "iat_max",
+        "gain": 2676.0
+      },
+      {
+        "feature": "bwd_iat_min",
+        "gain": 2490.0
+      },
+      {
+        "feature": "pkt3_signed_size",
+        "gain": 2317.0
+      },
+      {
+        "feature": "iat_std",
+        "gain": 2199.0
+      },
+      {
+        "feature": "fwd_iat_max",
+        "gain": 2058.0
+      },
+      {
+        "feature": "bytes_per_sec",
+        "gain": 1950.0
+      },
+      {
+        "feature": "fwd_iat_std",
+        "gain": 1854.0
+      },
+      {
+        "feature": "fwd_iat_mean",
+        "gain": 1601.0
+      },
+      {
+        "feature": "fwd_size_max",
+        "gain": 1426.0
+      },
+      {
+        "feature": "packets_per_sec",
+        "gain": 1383.0
+      },
+      {
+        "feature": "pkt0_signed_size",
+        "gain": 1375.0
+      },
+      {
+        "feature": "iat_mean",
+        "gain": 1361.0
+      },
+      {
+        "feature": "bwd_iat_max",
+        "gain": 1311.0
+      },
+      {
+        "feature": "total_bytes",
+        "gain": 1299.0
+      },
+      {
+        "feature": "fwd_bwd_byte_ratio",
+        "gain": 1279.0
+      },
+      {
+        "feature": "pkt2_signed_size",
+        "gain": 1263.0
+      },
+      {
+        "feature": "fwd_bytes",
+        "gain": 1223.0
+      }
+    ]
+  },
+  "split": {
+    "n_train": 45960,
+    "n_test": 17918,
+    "n_groups_train": 137,
+    "n_groups_test": 75,
+    "groups_disjoint": true,
+    "classes_absent_from_test": [],
+    "classes_absent_from_train": [],
+    "train_class_counts": {
+      "browsing": 15967,
+      "email": 1012,
+      "chat": 1507,
+      "audio_streaming": 652,
+      "video_streaming": 2476,
+      "file_transfer": 4857,
+      "voip": 5805,
+      "p2p": 13684
+    },
+    "test_class_counts": {
+      "browsing": 4452,
+      "email": 287,
+      "chat": 402,
+      "audio_streaming": 160,
+      "video_streaming": 692,
+      "file_transfer": 845,
+      "voip": 1455,
+      "p2p": 9625
+    },
+    "group_key": "source_file",
+    "n_val": 6645
+  }
+}

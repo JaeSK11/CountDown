@@ -1,0 +1,31 @@
+{
+  "n_train": 45960,
+  "n_test": 17918,
+  "n_groups_train": 137,
+  "n_groups_test": 75,
+  "groups_disjoint": true,
+  "classes_absent_from_test": [],
+  "classes_absent_from_train": [],
+  "train_class_counts": {
+    "browsing": 15967,
+    "email": 1012,
+    "chat": 1507,
+    "audio_streaming": 652,
+    "video_streaming": 2476,
+    "file_transfer": 4857,
+    "voip": 5805,
+    "p2p": 13684
+  },
+  "test_class_counts": {
+    "browsing": 4452,
+    "email": 287,
+    "chat": 402,
+    "audio_streaming": 160,
+    "video_streaming": 692,
+    "file_transfer": 845,
+    "voip": 1455,
+    "p2p": 9625
+  },
+  "group_key": "source_file",
+  "n_val": 6645
+}

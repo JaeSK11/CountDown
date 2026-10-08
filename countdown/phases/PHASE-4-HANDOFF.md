@@ -4,6 +4,7 @@
 not only against the other docs, several of which lag the results on disk (§3).
 **Updated 2026-09-14:** §0 (fix verified; a second, hardware-level GPU blocker found), §4 A, §6.
 **Updated 2026-09-16:** §0 (torch fix applied to `.venv`; GPU stable so far, cause not found), §4 A.1, §6.
+**Updated 2026-10-08:** §2 rewritten (all members scored; Phase 4 done bar the optional items), §6.
 
 **Read first, in order:** `../PLAN.md` → `PHASE-4.md` (task list + exit criterion) →
 `MODEL-DECISIONS.md` (lessons that bind every remaining baseline) → the `phase4-models/MODEL-*.md`
@@ -104,24 +105,35 @@ are declared in `pyproject.toml` yet.
 
 ---
 
-## 2. Status by task (`PHASE-4.md` §6)
+## 2. Status by task (`PHASE-4.md` §6) — as of 2026-10-08
 
 | # | Task | State | Evidence / gap |
 | --- | --- | --- | --- |
-| 4.1 | `training/deep.py` shared trainer | 🟡 built, under-used | 524 lines: early stop on val macro-F1, checkpoint + resume, UER-style AdamW. **Only `byte_net` uses it.** `flow_image_cnn` has its own loop; TFE-GNN trains inside `scripts/replicate_tfegnn.py`. **No test covers `deep.py`** (DoD "trains a toy net" unverified). |
-| 4.2 | `features/payload_bytes.py` | 🟡 partial | ET-BERT bi-gram tokenizer is exact. Extractor yields handshake-window bytes only — **not BURST-capable**; needs per-packet payload retention. `features/byte_prep.py` already does a separate byte-retaining pcap pass (for TFE-GNN) and may be reusable. The ET-BERT replication reads the released corpus instead (`data/etbert_corpus.py`). |
-| 4.3 | `features/flow_image.py` | ✅ | `scatter` + `flowpic`, 1 or 3 channels (3 = + direction + byte volume). `data/windows.py` gives capture- or per-flow windows. |
-| 4.4 | graph feature | 🟡 built, not wired | Lives in `features/traffic_graph.py` (plan said `graph.py`). Verified against the authors' `construct_graph`. **Not a registered extractor** — only the replication script calls it. |
-| 4.5 | **Sequence** (DF + dilated-res → CNN+Mamba) | ⬜ **not started** | No model file. `packet_seq` defaults to 32 packets × 2 channels (`configs/features.yaml`); DF expects long direction sequences. Selection brief still open. |
-| 4.6 | **Bytes** (ET-BERT + recommended) | 🟡 baseline done | `byte_net_baseline` registered, loads the public checkpoint with no key remapping. Flow + packet replications finished (§3.1); no-pretrain ablation done 2026-09-17 (0.688 vs 0.908, `MODEL-bytes.md`). **Left:** flow `--seq-length 512` test (optional), choice + build of the recommended model (D1), scorecard on our own pipeline. |
-| 4.7 | **Graph** (TFE-GNN + SAGE/GIN) | 🟡 baseline registered | `models/tfe_gnn.py` (PyG `SAGEConv`) + `tests/test_tfe_gnn.py`; **registered as `graph_gnn_baseline` 2026-09-17** (`models/graph_gnn.py`, `tests/test_graph_gnn.py`, `scripts/train_graph_gnn.py` — `input_type=byte_matrix`, no extractor yet, driven from the cache). Trained on ISCX-Tor only (§3.3; grouped 5-fold 0.44 ± 0.14 under the paper's no-val protocol, `REPLICATION-TFEGNN.md`). Caches for `vpn/nonvpn/tor/nontor` are built (31/109/51/44 `.npz` shards, one per capture, plus a `_summary.json` each) but only Tor was trained. Nothing on CSTNET, the plan's primary target. Write-up: `phase4-models/REPLICATION-TFEGNN.md` (2026-09-14). GraphSAGE/GIN not built. |
-| 4.8 | **Image** (Okonkwo + FlowPic) | 🟡 baseline done, variants run | `flow_image_cnn_baseline` replicated on 7 tasks (`REPLICATION-OKONKWO.md`). `flow_image_resnet18` registered. FlowPic 1ch / 3ch / ResNet-18 variants + a 5-seed sweep are done and written up in `MODEL-image.md` (2026-09-14; §3.2). **Recommended `flow_image_cnn` is not registered** (D1). MobileApp activity baseline run 2026-09-17: **0.165 macro-F1** with the paper schedule (the config's early stop had to be removed — it fired at chance); tasks 2/6 seed sweep done. No latency column yet. |
-| 4.9 | **Flow-stats** comparison | 🟡 mostly done | Draper-Gil C4.5 + k-NN replicated; features-vs-model ablation done. `class_weight` re-test done 2026-09-17 (unweighted +0.014, → D5). **Left:** CatBoost (not installed — ask). RADCOM Random Forest: not built, optional. |
-| 4.10 | **`experts/`** bindings | ⬜ **not started** | No directory. See decision D2. |
+| 4.1 | `training/deep.py` shared trainer | ✅ | Every recommended member trains through it (D3); `tests/test_deep_members.py` trains a toy net, early-stops and checkpoints. Final epoch reported unless early stopping is requested (`4a3f225`). |
+| 4.2 | `features/payload_bytes.py` | 🟡 partial | Unchanged: handshake-window bytes only, not BURST-capable. Not needed so far — `byte_net` scores on ET-BERT's corpus, the graph member on the `byte_prep.py` cache. |
+| 4.3 | `features/flow_image.py` | ✅ | `scatter` + `flowpic`, 1 or 3 channels; per-experiment `feature_params` in `ExperimentConfig`. |
+| 4.4 | graph feature | 🟡 built, not an extractor | `features/traffic_graph.py` over the `byte_prep.py` cache (now incl. CSTNET); driven by `scripts/train_graph_gnn.py`, not `scripts/train.py`. |
+| 4.5 | **Sequence** | ✅ | `seq_cnn_baseline` (DF) + `seq_cnn` (dilated-res); `seq_cnn` +0.07 / +0.15 over DF at 40 % of the params. Mamba deferred (D1d). `MODEL-sequence.md`. |
+| 4.6 | **Bytes** | ✅ | `byte_net_baseline` + `byte_net`; seq/ack randomisation drops ET-BERT 0.908 → 0.566, `byte_net` holds 0.857 on both. `MODEL-bytes.md`. |
+| 4.7 | **Graph** | ✅ | `graph_gnn_baseline` + `graph_gnn` (GIN); CSTNET grouped 5-fold **0.821 → 0.865**, GIN wins every fold and beats the 0.811 GBDT floor. Same 44M params (DoD's "lower complexity" not met). All four ISCX splits scored. `MODEL-graph.md`. |
+| 4.8 | **Image** | ✅ | `flow_image_cnn_baseline` + `flow_image_cnn` (FlowPic 3ch); +0.05–0.07 on all three traffic-type tasks over 5 seeds, MobileApp 0.115 → 0.264. `MODEL-image.md`. |
+| 4.9 | **Flow-stats** | ✅ | CatBoost bake-off: LightGBM wins on both targets (CSTNET 0.811 vs 0.759); `flow_catboost` kept as comparison only. RADCOM RF not built (optional). `MODEL-flow-stats.md`. |
+| 4.10 | **`experts/`** | ✅ | `countdown/experts/` binds E1/E2/E3 (D2), `tests/test_experts.py`. |
 
-Registered today: `byte_net_baseline, flow_c45_paper, flow_gbdt, flow_image_cnn_baseline,
-flow_image_resnet18, flow_knn_paper, graph_gnn_baseline` (the last since 2026-09-17). The acceptance test in `PHASE-4.md` §7 also expects
-`seq_cnn_baseline, seq_cnn, byte_net, graph_gnn_baseline, graph_gnn, flow_image_cnn`.
+Registered: `byte_net, byte_net_baseline, flow_c45_paper, flow_catboost, flow_gbdt, flow_image_cnn,
+flow_image_cnn_baseline, flow_image_resnet18, flow_knn_paper, graph_gnn, graph_gnn_baseline,
+seq_cnn, seq_cnn_baseline` — every name the `PHASE-4.md` §7 acceptance test lists.
+
+**Acceptance test, honestly read:** "beats `flow_gbdt` on its home target where expected
+(app-ID, activity)". App-ID: ✅ `graph_gnn` 0.865 vs 0.811 (grouped CSTNET). Activity: ✗ — the best
+deep member on MobileApp is `flow_image_cnn` at 0.264 vs `flow_gbdt` 0.441 (`seq_cnn` 0.220), so E3
+keeps the GBDT as its anchor and the deep members enter Phase 5 as decorrelated voters, which is
+what `ENSEMBLE-MAP.md` predicts for a data-poor target. Latency columns are still missing for
+image, sequence and graph.
+
+**Optional, not blocking Phase 5:** graph seeds; a CSTNET graph rerun with the ClientHello payload
+masked (3.3 % of samples carry the domain stem); Mamba sequence variant; latency columns;
+BURST-capable byte extraction (4.2).
 
 ---
 
@@ -253,6 +265,14 @@ non-Tor and non-VPN TFE-GNN runs. The original wording of each question is kept 
 
 ## 6. Progress log
 
+- **2026-10-08** — GPU queue confirmed complete: all 19 jobs of 2026-09-19/20 exited 0, no Xid
+  (`runs/gpu-queue/queue.log`); the card has been stable since. Graph results written up:
+  CSTNET grouped 5-fold `graph_gnn_baseline` **0.821 ± 0.021**, `graph_gnn` (GIN) **0.865 ± 0.008**
+  (first member above the 0.811 GBDT floor); ISCX-Tor GIN 0.547 ± 0.167 vs SAGE 0.442; non-Tor
+  0.644 / non-VPN 0.350 on the authors' split (published 0.851 / 0.924). SNI check on the CSTNET
+  byte cache: domain stem in 3.3 % of samples. `MODEL-graph.md`, `REPLICATION-TFEGNN.md`.
+- **2026-09-19/20** — All D1–D5 implemented and scored (commits `d783864`, `4a3f225`, `6188d55`):
+  image, sequence, bytes scorecards; CatBoost bake-off; `experts/`; tracked `results/`.
 - **2026-09-17** — Step B, everything that needs no §5 decision (all uncommitted; suite **516/516**,
   no Xid all day under the logger, GPU jobs one at a time):
   - Image: 5-seed sweep on tasks 2/6 — FlowPic 3ch +0.045 on Tor traffic (all seeds), noise on

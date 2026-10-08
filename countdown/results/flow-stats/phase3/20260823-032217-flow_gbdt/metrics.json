@@ -1,0 +1,194 @@
+{
+  "run_id": "20260823-032217-flow_gbdt",
+  "created_utc": "2026-08-23T03:22:17.119547+00:00",
+  "versions": {
+    "python": "3.12.3",
+    "platform": "Linux-6.8.0-137-generic-x86_64-with-glibc2.39",
+    "numpy": "2.5.2",
+    "sklearn": "1.9.0",
+    "lightgbm": "4.7.0",
+    "pandas": "3.0.5",
+    "git": "not-a-repo"
+  },
+  "metrics": {
+    "n": 14045,
+    "accuracy": 0.9945888216447134,
+    "macro_f1": 0.8983222893845659,
+    "macro_f1_all_classes": 0.8983222893845659,
+    "weighted_f1": 0.994999951421217,
+    "per_class": {
+      "none": {
+        "precision": 0.9984336540613112,
+        "recall": 0.9959080425563575,
+        "f1": 0.9971692491060786,
+        "support": 13441
+      },
+      "vpn": {
+        "precision": 0.9865642994241842,
+        "recall": 0.9716446124763705,
+        "f1": 0.979047619047619,
+        "support": 529
+      },
+      "tor": {
+        "precision": 0.5897435897435898,
+        "recall": 0.92,
+        "f1": 0.71875,
+        "support": 75
+      }
+    },
+    "confusion": [
+      [
+        13386,
+        7,
+        48
+      ],
+      [
+        15,
+        514,
+        0
+      ],
+      [
+        6,
+        0,
+        69
+      ]
+    ],
+    "class_names": [
+      "none",
+      "vpn",
+      "tor"
+    ],
+    "target": "tunnel_type",
+    "n_classes": 3,
+    "baseline": {
+      "most_frequent": {
+        "accuracy": 0.9569953720185119,
+        "macro_f1": 0.32600839215115573,
+        "weighted_f1": 0.9359655675835565
+      },
+      "stratified": {
+        "accuracy": 0.9138483446066216,
+        "macro_f1": 0.33670394886320515,
+        "weighted_f1": 0.9159969498954178
+      }
+    },
+    "baseline_macro_f1": 0.32600839215115573,
+    "baseline_accuracy": 0.9569953720185119,
+    "beats_baseline": true,
+    "mean_confidence": 0.9932063935490864,
+    "tail_excluded": {
+      "min_support": 50,
+      "n_classes": 3,
+      "n_classes_dropped": 0,
+      "macro_f1": 0.8983222893845659,
+      "classes": [
+        "none",
+        "tor",
+        "vpn"
+      ]
+    },
+    "top_features": [
+      {
+        "feature": "iat_min",
+        "gain": 1303.0
+      },
+      {
+        "feature": "fwd_iat_min",
+        "gain": 839.0
+      },
+      {
+        "feature": "size_min",
+        "gain": 615.0
+      },
+      {
+        "feature": "iat_max",
+        "gain": 561.0
+      },
+      {
+        "feature": "pkt0_signed_size",
+        "gain": 520.0
+      },
+      {
+        "feature": "bytes_per_sec",
+        "gain": 517.0
+      },
+      {
+        "feature": "duration",
+        "gain": 506.0
+      },
+      {
+        "feature": "fwd_iat_std",
+        "gain": 482.0
+      },
+      {
+        "feature": "size_max",
+        "gain": 470.0
+      },
+      {
+        "feature": "fwd_size_min",
+        "gain": 467.0
+      },
+      {
+        "feature": "pkt3_signed_size",
+        "gain": 467.0
+      },
+      {
+        "feature": "fwd_bytes",
+        "gain": 450.0
+      },
+      {
+        "feature": "fwd_size_max",
+        "gain": 450.0
+      },
+      {
+        "feature": "pkt4_signed_size",
+        "gain": 439.0
+      },
+      {
+        "feature": "bwd_size_max",
+        "gain": 428.0
+      },
+      {
+        "feature": "fwd_iat_mean",
+        "gain": 414.0
+      },
+      {
+        "feature": "total_bytes",
+        "gain": 413.0
+      },
+      {
+        "feature": "pkt5_signed_size",
+        "gain": 406.0
+      },
+      {
+        "feature": "iat_std",
+        "gain": 404.0
+      },
+      {
+        "feature": "bwd_iat_min",
+        "gain": 404.0
+      }
+    ]
+  },
+  "split": {
+    "n_train": 49939,
+    "n_test": 14045,
+    "n_groups_train": 169,
+    "n_groups_test": 48,
+    "groups_disjoint": true,
+    "classes_absent_from_test": [],
+    "classes_absent_from_train": [],
+    "train_class_counts": {
+      "none": 47522,
+      "vpn": 1826,
+      "tor": 591
+    },
+    "test_class_counts": {
+      "none": 13441,
+      "vpn": 529,
+      "tor": 75
+    },
+    "group_key": "source_file",
+    "n_val": 6539
+  }
+}

@@ -1,0 +1,147 @@
+dataset: cstnet
+target: app
+model: flow_gbdt
+features: flow_stats
+params: {}
+group_key: null
+grouped: true
+test_size: 0.2
+val_size: 0.1
+seed: null
+min_samples_per_class: 0
+top_k_classes: null
+tail_min_support: 50
+notes: 'Report macro-F1 twice: over all 120 classes and over classes with >=50 test
+  samples. The tail is severe (chia.net has 16 flows in total) and the all-class figure
+  is dominated by classes with a handful of samples.
+
+  '
+dataset_resolved: cstnet
+target_resolved: app
+seed_resolved: 42
+group_key_resolved: capture_day
+n_flows: 46372
+n_features: 56
+label_space:
+  target: app
+  names:
+  - 163.com
+  - 51.la
+  - 51cto.com
+  - acm.org
+  - adobe.com
+  - alibaba.com
+  - alicdn.com
+  - alipay.com
+  - amap.com
+  - amazonaws.com
+  - ampproject.org
+  - apple.com
+  - arxiv.org
+  - asus.com
+  - atlassian.net
+  - azureedge.net
+  - baidu.com
+  - bilibili.com
+  - biligame.com
+  - booking.com
+  - chia.net
+  - chinatax.gov.cn
+  - cisco.com
+  - cloudflare.com
+  - cloudfront.net
+  - cnblogs.com
+  - codepen.io
+  - crazyegg.com
+  - criteo.com
+  - ctrip.com
+  - dailymotion.com
+  - deepl.com
+  - digitaloceanspaces.com
+  - duckduckgo.com
+  - eastday.com
+  - eastmoney.com
+  - elsevier.com
+  - facebook.com
+  - feishu.cn
+  - ggpht.com
+  - github.com
+  - gitlab.com
+  - gmail.com
+  - goat.com
+  - google.com
+  - grammarly.com
+  - gravatar.com
+  - guancha.cn
+  - huanqiu.com
+  - huawei.com
+  - hubspot.com
+  - huya.com
+  - ibm.com
+  - icloud.com
+  - ieee.org
+  - instagram.com
+  - iqiyi.com
+  - jb51.net
+  - jd.com
+  - kugou.com
+  - leetcode-cn.com
+  - media.net
+  - mi.com
+  - microsoft.com
+  - mozilla.org
+  - msn.com
+  - naver.com
+  - netflix.com
+  - nike.com
+  - notion.so
+  - nvidia.com
+  - office.net
+  - onlinedown.net
+  - opera.com
+  - oracle.com
+  - outbrain.com
+  - overleaf.com
+  - paypal.com
+  - pinduoduo.com
+  - python.org
+  - qcloud.com
+  - qq.com
+  - researchgate.net
+  - runoob.com
+  - sciencedirect.com
+  - semanticscholar.org
+  - sina.com.cn
+  - smzdm.com
+  - snapchat.com
+  - sohu.com
+  - spring.io
+  - springer.com
+  - squarespace.com
+  - statcounter.com
+  - steampowered.com
+  - t.co
+  - taboola.com
+  - teads.tv
+  - thepaper.cn
+  - tiktok.com
+  - toutiao.com
+  - twimg.com
+  - twitter.com
+  - unity3d.com
+  - v2ex.com
+  - vivo.com.cn
+  - vk.com
+  - vmware.com
+  - walmart.com
+  - weibo.com
+  - wikimedia.org
+  - wikipedia.org
+  - wp.com
+  - xiaomi.com
+  - ximalaya.com
+  - yahoo.com
+  - yandex.ru
+  - youtube.com
+  - yy.com
+  - zhihu.com

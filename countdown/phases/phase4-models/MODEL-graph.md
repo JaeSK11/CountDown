@@ -23,7 +23,7 @@ edges = temporal adjacency + data-driven dependencies (mutual information / PMI)
   no extractor of that name exists yet, so it is driven by `scripts/train_graph_gnn.py`, not
   `scripts/train.py`, until byte retention lands in the flow layer (task 4.2).
 
-### Status — built, registered, replicated on ISCX-Tor; not on CSTNET
+### Status — built, registered, scored on all four ISCX splits and on CSTNET
 Full write-up: [`REPLICATION-TFEGNN.md`](REPLICATION-TFEGNN.md).
 
 | Component | Where | State |
@@ -32,8 +32,8 @@ Full write-up: [`REPLICATION-TFEGNN.md`](REPLICATION-TFEGNN.md).
 | PMI byte graphs | `features/traffic_graph.py` | ✅ verified against the authors' `construct_graph` (`tests/test_tfe_gnn.py`, 12 tests) |
 | `TFEGNNNet` | `models/tfe_gnn.py` | ✅ PyG `SAGEConv` towers + cross-gated fusion + BiLSTM; 44.3M params with the 8-class head |
 | `graph_gnn_baseline` | `models/graph_gnn.py`, `tests/test_graph_gnn.py` (7 tests) | ✅ `BaseModel` wrapper: authors' schedule by default, optional `class_weight="balanced"` and early stop on val macro-F1, `LabelSpace`-ordered `predict_proba`, save/load |
-| caches | `cache/tfegnn/{vpn,nonvpn,tor,nontor}` | ✅ 31 / 109 / 51 / 44 shards (one per capture) = 18,233 / 290,198 / 3,003 / 88,600 samples |
-| training | `scripts/replicate_tfegnn.py` (authors' split), `scripts/train_graph_gnn.py` (member through the Phase-3 harness, `--fold k` of a grouped 5-fold) | ✅ `tor` and `vpn` trained, single seed per cell; `nonvpn` / `nontor` not (≈ 30 h / 9 h) |
+| caches | `cache/tfegnn/{vpn,nonvpn,tor,nontor,cstnet}` | ✅ 31 / 109 / 51 / 44 / 120 shards (one per capture; one per app for CSTNET) = 18,233 / 290,198 / 3,003 / 88,600 / 46,284 samples |
+| training | `scripts/replicate_tfegnn.py` (authors' split), `scripts/train_graph_gnn.py` (member through the Phase-3 harness, `--fold k` of a grouped 5-fold) | ✅ all five caches trained, single seed per cell (`nonvpn` 3.2 h, `nontor` 2.2 h, authors' split only) |
 
 ISCX-Tor, macro-F1, published **0.9855** (Table 2):
 
@@ -51,10 +51,10 @@ capture is 36 % of ISCX-Tor. Every cell is a single seed over
 300–450 test samples with three classes at ≤ 10 samples; read the Tor numbers as ~0.4–0.5.
 ISCX-VPN (six paper classes): authors' split **0.622** vs published 0.954; grouped 5-fold 0.55
 over all six classes — `p2p` is one capture and `email` two, so no grouped protocol on VPN
-alone can score them (`REPLICATION-TFEGNN.md`).
+alone can score them (`REPLICATION-TFEGNN.md`). ISCX-non-Tor (authors' split) **0.644** vs
+published 0.851; ISCX-non-VPN **0.350** vs 0.924, barely above voip-majority accuracy.
 
-**Left for this member:** seeds. (`nonvpn` / `nontor`, the CSTNET cache and GIN were done
-2026-09-19/20 — see the scorecard.)
+**Left for this member:** seeds; a payload-masking ablation on CSTNET (see the scorecard caveat).
 
 ## Recommended — decided 2026-09-19 (D1c): GIN in the same towers
 `@register("graph_gnn")` in `models/graph_gnn.py`; `TFEGNNNet(conv="gin")` swaps each GraphSAGE
@@ -85,15 +85,40 @@ by `capture_day`), so both variants are scored on the member's real target. Orig
 - Node/edge features from `features/graph.py`; cache built graphs (graph construction is the
   bottleneck).
 
-## Scorecard (to produce)
-| Variant | macro-F1 (CSTNET app) | #params | graph-build ms | infer ms/flow |
-| --- | --- | --- | --- | --- |
-| graph_gnn_baseline (TFE-GNN) | … *(ISCX-Tor grouped 5-fold: 0.44 ± 0.14, see status)* | 44.3M (8-class head) | ~0.09 per graph (build on access) | … |
-| graph_gnn (SAGE/GIN) | … | … | … | … |
+## Scorecard (2026-09-20)
+`scripts/train_graph_gnn.py`, grouped 5-fold (CSTNET by `capture_day`, ISCX by capture), no
+validation fold, no class weights (D5), seed 42, 100 epochs. Mean ± sd over the five folds.
+Runs: `runs/graph-cstnet/{graph_gnn_baseline,graph_gnn}/`, `runs/graph-gnn-noval/`,
+`runs/graph-gin-tor/`.
+
+| Variant | CSTNET app (120) | ISCX-Tor traffic (8) | ISCX-Tor, authors' split | #params (120-class head) | train / fold |
+| --- | --- | --- | --- | --- | --- |
+| `graph_gnn_baseline` (TFE-GNN, SAGE) | 0.821 ± 0.021 (acc 0.851) | 0.442 ± 0.136 | 0.526 | 44.40M | 17.4 min |
+| **`graph_gnn`** (GIN) | **0.865 ± 0.008** (acc 0.891) | **0.547 ± 0.167** | **0.584** | 44.42M | 18.4 min |
+| *floor:* `flow_gbdt` on flow_stats | 0.811 ± 0.002 (fold 0, 3 seeds) | — | — | — | — |
+
+Per fold, CSTNET: SAGE 0.851 / 0.794 / 0.814 / 0.829 / 0.814, GIN 0.866 / 0.863 / 0.859 / 0.861 /
+0.878 — **GIN wins on every fold**, by +0.044 on average, with a third of the spread. On Tor it wins
+4 of 5 folds (+0.105 mean) but the Tor folds stay as noisy as described above.
+
+**GIN is the first Phase-4 member to beat the CSTNET tabular floor**: 0.866 vs 0.811 on fold 0,
+the fold the GBDT number is from (test sets of 9,338 graph samples vs 9,384 flows — the byte cache
+holds 88 fewer samples than there are flows, so the sets are near-identical, not identical). TFE-GNN itself
+clears it on fold 0 (0.851) but not on the 5-fold mean.
+
+**Caveat — payload bytes and the label.** CSTNET's label is the server domain, and the payload
+tower sees the first 150 bytes of each packet, ClientHello included. A string search found the
+app's domain stem in **3.3 %** of samples (196 of 5,966 checked, 50 per app), so SNI is not what
+carries the score, but it is not zero either. A rerun with the ClientHello payload masked is the
+clean test; until then read the CSTNET numbers as an upper bound by a small margin.
+
+Not met from the DoD: "lower complexity". Swapping the conv rule leaves the towers, fusion and
+BiLSTM in place, so GIN is the same 44M parameters. The win
+is accuracy and fold stability, not size. Inference latency was not measured.
 
 ## DoD
-Both registered; scorecard on CSTNET app-ID; graph cache working; recommended competitive with
-TFE-GNN at lower complexity.
+✅ Both registered; scorecard on CSTNET app-ID; graph cache working; recommended beats TFE-GNN
+(+0.044 CSTNET, every fold). ✗ Not at lower complexity — same 44M parameters (see scorecard).
 
 ## Risks
 Graph construction cost at 46k CSTNET flows → cache aggressively; MI/PMI edge estimation params;

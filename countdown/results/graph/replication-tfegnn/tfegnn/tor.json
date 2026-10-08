@@ -1,0 +1,65 @@
+{
+  "split": "tor",
+  "published": {
+    "AC": 0.9886,
+    "PR": 0.9792,
+    "RC": 0.9939,
+    "F1": 0.9855,
+    "name": "ISCX-Tor"
+  },
+  "summary": {
+    "AC": {
+      "mean": 0.6229508196721312,
+      "std": 0.0,
+      "published": 0.9886
+    },
+    "PR": {
+      "mean": 0.3904535486443381,
+      "std": 0.0,
+      "published": 0.9792
+    },
+    "RC": {
+      "mean": 0.3910367564620344,
+      "std": 0.0,
+      "published": 0.9939
+    },
+    "F1": {
+      "mean": 0.3873619339378242,
+      "std": 0.0,
+      "published": 0.9855
+    }
+  },
+  "runs": [
+    {
+      "seed": 32,
+      "AC": 0.6229508196721312,
+      "PR": 0.3904535486443381,
+      "RC": 0.3910367564620344,
+      "F1": 0.3873619339378242,
+      "classes": [
+        "audio_streaming",
+        "browsing",
+        "chat",
+        "email",
+        "file_transfer",
+        "p2p",
+        "video_streaming",
+        "voip"
+      ],
+      "n_test": 305
+    }
+  ],
+  "config": {
+    "split": "tor",
+    "cache": "cache/tfegnn",
+    "epochs": 100,
+    "batch_size": 102,
+    "accum": 5,
+    "lr": 0.01,
+    "lr_min": 0.0001,
+    "split_mode": "sequential",
+    "workers": 12,
+    "runs": 1,
+    "out": "runs/tfegnn"
+  }
+}

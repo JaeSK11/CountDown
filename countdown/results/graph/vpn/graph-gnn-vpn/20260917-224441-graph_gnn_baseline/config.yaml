@@ -1,0 +1,31 @@
+model: graph_gnn_baseline
+dataset: iscx-vpn (tfegnn cache)
+target: traffic_type_tfegnn
+features: byte_matrix
+protocol: grouped
+cache: cache/tfegnn
+fold: 0
+n_folds: 5
+val_size: 0.0
+seed: 42
+params:
+  header_len: 40
+  epochs: 20
+  lr_min: 0.0001
+  class_weight: null
+  early_stop_patience: 0
+  workers: 12
+  seed: 42
+n_samples: 18233
+feature_shape:
+- 50
+- 190
+label_space:
+  target: traffic_type_tfegnn
+  names:
+  - chat
+  - email
+  - file_transfer
+  - p2p
+  - streaming
+  - voip

@@ -1,0 +1,40 @@
+dataset: iscx_pooled
+target: traffic_type
+model: flow_gbdt
+features: flow_stats
+params:
+  class_weight: balanced
+group_key: null
+grouped: true
+test_size: 0.2
+val_size: 0.1
+seed: 1
+min_samples_per_class: 0
+top_k_classes: null
+windows: null
+window_per_flow: false
+tail_min_support: 50
+notes: 'Headline behavioural head (E1). Macro-F1 is the reported metric; accuracy
+  is not, because the pooled target runs ~30:1 between browsing (25,997) and audio_streaming
+  (840).
+
+  '
+dataset_resolved: iscx_pooled
+target_resolved: traffic_type
+seed_resolved: 1
+group_key_resolved: source_file
+n_flows: 70523
+n_samples: 70523
+feature_shape:
+- 56
+label_space:
+  target: traffic_type
+  names:
+  - browsing
+  - email
+  - chat
+  - audio_streaming
+  - video_streaming
+  - file_transfer
+  - voip
+  - p2p

@@ -1,0 +1,128 @@
+dataset: mobileapp
+target: activity
+model: flow_image_cnn
+features: flow_image
+feature_params:
+  construction: flowpic
+  channels: 3
+params:
+  epochs: 60
+  batch_size: 32
+group_key: null
+grouped: true
+test_size: 0.25
+val_size: 0.1
+seed: null
+min_samples_per_class: 0
+top_k_classes: null
+windows:
+- 5
+- 10
+window_per_flow: false
+tail_min_support: 50
+notes: FlowPic 3ch + small CNN via training/deep.py; no class weights (D5).
+dataset_resolved: mobileapp
+target_resolved: activity
+seed_resolved: 42
+group_key_resolved: source_file
+n_flows: 368
+n_samples: 1829
+feature_shape:
+- 3
+- 224
+- 224
+label_space:
+  target: activity
+  names:
+  - FB/Add story-image
+  - FB/Add story-text
+  - FB/Add story-video
+  - FB/Comment a post-image
+  - FB/Comment a post-long text
+  - FB/Comment a post-short text
+  - FB/Comment a post-sticker
+  - FB/Like a comment
+  - FB/Like a post-image
+  - FB/Like a post-video
+  - FB/Live video
+  - FB/Post on wall-checkin
+  - FB/Post on wall-feeling
+  - FB/Post on wall-image
+  - FB/Post on wall-long text
+  - FB/Post on wall-short text
+  - FB/Post on wall-video
+  - FB/Send friend request
+  - FB/Share-image
+  - FB/Share-text
+  - FB/Share-video
+  - FB/Watch video
+  - Gmail/Send attachment file
+  - Gmail/Send image
+  - Gmail/Send short text
+  - Gmail/Send text long
+  - Gmail/Send video
+  - Instagram/Add story-image
+  - Instagram/Add story-text
+  - Instagram/Add story-video
+  - Instagram/Comment a post-long text
+  - Instagram/Comment a post-short text
+  - Instagram/Direct - Send long msg
+  - Instagram/Direct - like a msg
+  - Instagram/Direct - send image
+  - Instagram/Direct - send short msg
+  - Instagram/Direct - video chat
+  - Instagram/Direct -send recording
+  - Instagram/Follow a friend
+  - Instagram/Follow back a friend
+  - Instagram/Like a comment
+  - Instagram/Like a post-image
+  - Instagram/Like a post-video
+  - Instagram/Post a video
+  - Instagram/Post an image
+  - Instagram/Story send a message
+  - Instagram/Watch video
+  - Messenger/Audio call
+  - Messenger/Long message
+  - Messenger/Send image
+  - Messenger/Send recording
+  - Messenger/Send video
+  - Messenger/Short message
+  - Messenger/Story - image
+  - Messenger/Story - text
+  - Messenger/Story - video
+  - Messenger/Video call
+  - Skype/Audio call
+  - Skype/Send file
+  - Skype/Send image
+  - Skype/Send long message
+  - Skype/Send recording
+  - Skype/Send short message
+  - Skype/Send video
+  - Skype/Video call
+  - Viber/Audio call
+  - Viber/Send contact
+  - Viber/Send image
+  - Viber/Send long msg
+  - Viber/Send recording
+  - Viber/Send short msg
+  - Viber/Send video
+  - Viber/Share location
+  - Viber/Video call
+  - WhatsApp/Audio call
+  - WhatsApp/Send contact
+  - WhatsApp/Send image
+  - WhatsApp/Send location
+  - WhatsApp/Send long msg
+  - WhatsApp/Send recording
+  - WhatsApp/Send short msg
+  - WhatsApp/Send video
+  - WhatsApp/Video call
+  - YouTube/Comment-long text
+  - YouTube/Comment-short text
+  - YouTube/Dislike a comment
+  - YouTube/Dislike a video
+  - YouTube/Like a comment
+  - YouTube/Like a video
+  - YouTube/Subscribe a channel
+  - YouTube/Upload video
+  - YouTube/Watch video

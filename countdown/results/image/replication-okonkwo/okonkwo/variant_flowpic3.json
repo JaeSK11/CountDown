@@ -1,0 +1,881 @@
+{
+  "config": {
+    "tasks": [
+      "1",
+      "2",
+      "3",
+      "4",
+      "5",
+      "6"
+    ],
+    "protocols": [
+      "grouped"
+    ],
+    "windows": [
+      15.0,
+      30.0,
+      60.0
+    ],
+    "size": 224,
+    "construction": "flowpic",
+    "channels": 3,
+    "marker": 3,
+    "epochs": 60,
+    "batch_size": 10,
+    "patience": 0,
+    "class_weight": null,
+    "model": "flow_image_cnn_baseline",
+    "seed": 42,
+    "gpu_resident_gb": 16.0,
+    "out": "runs/okonkwo/variant_flowpic3.json"
+  },
+  "tasks": {
+    "1-nonvpn-app": {
+      "report": {
+        "n_flows": 7385,
+        "n_images": 6749,
+        "classes_expected": [
+          "facebook_audio",
+          "facebook_video",
+          "hangouts_audio",
+          "hangouts_video",
+          "netflix_video",
+          "skype_audio",
+          "skype_video",
+          "vimeo_video",
+          "voipbuster_audio",
+          "youtube_video"
+        ],
+        "classes_missing": [],
+        "blank_image_fraction": 0.0,
+        "n_captures": 49,
+        "images_per_class": {
+          "facebook_audio": 1625,
+          "facebook_video": 167,
+          "hangouts_audio": 1638,
+          "hangouts_video": 430,
+          "netflix_video": 162,
+          "skype_audio": 877,
+          "skype_video": 384,
+          "vimeo_video": 168,
+          "voipbuster_audio": 979,
+          "youtube_video": 319
+        },
+        "extract_seconds": 10.5
+      },
+      "published": {
+        "accuracy": 0.93,
+        "precision": 0.97,
+        "recall": 0.96,
+        "f1": 0.96
+      },
+      "runs": {
+        "grouped": {
+          "protocol": "grouped",
+          "accuracy": 0.42953020134228187,
+          "precision": 0.6877102192923323,
+          "recall": 0.7757146620613933,
+          "macro_f1": 0.6423649867001017,
+          "n_train": 4725,
+          "n_val": 683,
+          "n_test": 1341,
+          "classes_in_test": 10,
+          "train_seconds": 34.9,
+          "confusion": [
+            [
+              8,
+              0,
+              0,
+              0,
+              0,
+              681,
+              0,
+              0,
+              0,
+              0
+            ],
+            [
+              0,
+              20,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0
+            ],
+            [
+              0,
+              0,
+              112,
+              3,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0
+            ],
+            [
+              1,
+              0,
+              0,
+              157,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0
+            ],
+            [
+              0,
+              0,
+              0,
+              0,
+              48,
+              0,
+              0,
+              0,
+              0,
+              0
+            ],
+            [
+              0,
+              0,
+              1,
+              1,
+              0,
+              71,
+              4,
+              1,
+              0,
+              3
+            ],
+            [
+              0,
+              61,
+              0,
+              0,
+              0,
+              1,
+              0,
+              1,
+              0,
+              0
+            ],
+            [
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              55,
+              0,
+              0
+            ],
+            [
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              41,
+              0
+            ],
+            [
+              2,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              5,
+              0,
+              64
+            ]
+          ],
+          "per_class": {
+            "facebook_audio": {
+              "precision": 0.7272727272727273,
+              "recall": 0.011611030478955007,
+              "f1": 0.022857142857142857,
+              "support": 689
+            },
+            "facebook_video": {
+              "precision": 0.24691358024691357,
+              "recall": 1.0,
+              "f1": 0.39603960396039606,
+              "support": 20
+            },
+            "hangouts_audio": {
+              "precision": 0.9911504424778761,
+              "recall": 0.9739130434782609,
+              "f1": 0.9824561403508771,
+              "support": 115
+            },
+            "hangouts_video": {
+              "precision": 0.9751552795031055,
+              "recall": 0.9936708860759493,
+              "f1": 0.9843260188087775,
+              "support": 158
+            },
+            "netflix_video": {
+              "precision": 1.0,
+              "recall": 1.0,
+              "f1": 1.0,
+              "support": 48
+            },
+            "skype_audio": {
+              "precision": 0.09428950863213811,
+              "recall": 0.8765432098765432,
+              "f1": 0.17026378896882494,
+              "support": 81
+            },
+            "skype_video": {
+              "precision": 0.0,
+              "recall": 0.0,
+              "f1": 0.0,
+              "support": 63
+            },
+            "vimeo_video": {
+              "precision": 0.8870967741935484,
+              "recall": 1.0,
+              "f1": 0.9401709401709402,
+              "support": 55
+            },
+            "voipbuster_audio": {
+              "precision": 1.0,
+              "recall": 1.0,
+              "f1": 1.0,
+              "support": 41
+            },
+            "youtube_video": {
+              "precision": 0.9552238805970149,
+              "recall": 0.9014084507042254,
+              "f1": 0.927536231884058,
+              "support": 71
+            }
+          }
+        }
+      },
+      "variant": {
+        "model": "flow_image_cnn_baseline",
+        "construction": "flowpic",
+        "channels": 3,
+        "size": 224
+      }
+    },
+    "2-nonvpn-traffic": {
+      "report": {
+        "n_flows": 12481,
+        "n_images": 9291,
+        "classes_expected": [
+          "chat",
+          "file_transfer",
+          "video_streaming",
+          "voip"
+        ],
+        "classes_missing": [],
+        "blank_image_fraction": 0.0,
+        "n_captures": 101,
+        "images_per_class": {
+          "chat": 1168,
+          "file_transfer": 1374,
+          "video_streaming": 1630,
+          "voip": 5119
+        },
+        "extract_seconds": 15.9
+      },
+      "published": {
+        "accuracy": 0.91,
+        "precision": 0.91,
+        "recall": 0.91,
+        "f1": 0.91
+      },
+      "runs": {
+        "grouped": {
+          "protocol": "grouped",
+          "accuracy": 0.9677601809954751,
+          "precision": 0.9447093996811904,
+          "recall": 0.9418824957978827,
+          "macro_f1": 0.9432435595876804,
+          "n_train": 6603,
+          "n_val": 920,
+          "n_test": 1768,
+          "classes_in_test": 4,
+          "train_seconds": 47.1,
+          "confusion": [
+            [
+              228,
+              5,
+              0,
+              1
+            ],
+            [
+              7,
+              164,
+              11,
+              9
+            ],
+            [
+              0,
+              19,
+              305,
+              1
+            ],
+            [
+              0,
+              4,
+              0,
+              1014
+            ]
+          ],
+          "per_class": {
+            "chat": {
+              "precision": 0.9702127659574468,
+              "recall": 0.9743589743589743,
+              "f1": 0.9722814498933902,
+              "support": 234
+            },
+            "file_transfer": {
+              "precision": 0.8541666666666666,
+              "recall": 0.8586387434554974,
+              "f1": 0.856396866840731,
+              "support": 191
+            },
+            "video_streaming": {
+              "precision": 0.9651898734177216,
+              "recall": 0.9384615384615385,
+              "f1": 0.9516380655226209,
+              "support": 325
+            },
+            "voip": {
+              "precision": 0.9892682926829268,
+              "recall": 0.9960707269155207,
+              "f1": 0.9926578560939795,
+              "support": 1018
+            }
+          }
+        }
+      },
+      "variant": {
+        "model": "flow_image_cnn_baseline",
+        "construction": "flowpic",
+        "channels": 3,
+        "size": 224
+      }
+    },
+    "3-vpn-app": {
+      "report": {
+        "n_flows": 1722,
+        "n_images": 4986,
+        "classes_expected": [
+          "email",
+          "hangouts",
+          "skype",
+          "spotify",
+          "voipbuster",
+          "youtube"
+        ],
+        "classes_missing": [],
+        "blank_image_fraction": 0.0,
+        "n_captures": 16,
+        "images_per_class": {
+          "email": 269,
+          "hangouts": 1155,
+          "skype": 1965,
+          "spotify": 439,
+          "voipbuster": 843,
+          "youtube": 315
+        },
+        "extract_seconds": 4.6
+      },
+      "published": {
+        "accuracy": 0.96,
+        "precision": 0.96,
+        "recall": 0.96,
+        "f1": 0.96
+      },
+      "runs": {
+        "grouped": {
+          "protocol": "grouped",
+          "accuracy": 0.7626208378088077,
+          "precision": 0.8566108007448789,
+          "recall": 0.7860466757634217,
+          "macro_f1": 0.789879158964305,
+          "n_train": 3594,
+          "n_val": 461,
+          "n_test": 931,
+          "classes_in_test": 2,
+          "train_seconds": 25.6,
+          "confusion": [
+            [
+              0,
+              0,
+              0,
+              0,
+              0,
+              0
+            ],
+            [
+              41,
+              327,
+              154,
+              6,
+              0,
+              2
+            ],
+            [
+              2,
+              0,
+              383,
+              6,
+              0,
+              10
+            ],
+            [
+              0,
+              0,
+              0,
+              0,
+              0,
+              0
+            ],
+            [
+              0,
+              0,
+              0,
+              0,
+              0,
+              0
+            ],
+            [
+              0,
+              0,
+              0,
+              0,
+              0,
+              0
+            ]
+          ],
+          "per_class": {
+            "email": {
+              "precision": 0.0,
+              "recall": 0.0,
+              "f1": 0.0,
+              "support": 0
+            },
+            "hangouts": {
+              "precision": 1.0,
+              "recall": 0.6169811320754717,
+              "f1": 0.7631271878646441,
+              "support": 530
+            },
+            "skype": {
+              "precision": 0.7132216014897579,
+              "recall": 0.9551122194513716,
+              "f1": 0.8166311300639659,
+              "support": 401
+            },
+            "spotify": {
+              "precision": 0.0,
+              "recall": 0.0,
+              "f1": 0.0,
+              "support": 0
+            },
+            "voipbuster": {
+              "precision": 0.0,
+              "recall": 0.0,
+              "f1": 0.0,
+              "support": 0
+            },
+            "youtube": {
+              "precision": 0.0,
+              "recall": 0.0,
+              "f1": 0.0,
+              "support": 0
+            }
+          }
+        }
+      },
+      "variant": {
+        "model": "flow_image_cnn_baseline",
+        "construction": "flowpic",
+        "channels": 3,
+        "size": 224
+      }
+    },
+    "4-vpn-traffic": {
+      "report": {
+        "n_flows": 2128,
+        "n_images": 6099,
+        "classes_expected": [
+          "chat",
+          "file_transfer",
+          "video_streaming",
+          "voip"
+        ],
+        "classes_missing": [],
+        "blank_image_fraction": 0.0,
+        "n_captures": 27,
+        "images_per_class": {
+          "chat": 1260,
+          "file_transfer": 957,
+          "video_streaming": 794,
+          "voip": 3088
+        },
+        "extract_seconds": 6.3
+      },
+      "published": {
+        "accuracy": 0.96,
+        "precision": 0.96,
+        "recall": 0.96,
+        "f1": 0.96
+      },
+      "runs": {
+        "grouped": {
+          "protocol": "grouped",
+          "accuracy": 0.9819277108433735,
+          "precision": 0.9501523208484757,
+          "recall": 0.9885681739283301,
+          "macro_f1": 0.967744039202085,
+          "n_train": 4505,
+          "n_val": 598,
+          "n_test": 996,
+          "classes_in_test": 4,
+          "train_seconds": 31.7,
+          "confusion": [
+            [
+              265,
+              2,
+              0,
+              2
+            ],
+            [
+              0,
+              39,
+              0,
+              0
+            ],
+            [
+              0,
+              1,
+              157,
+              0
+            ],
+            [
+              5,
+              4,
+              4,
+              517
+            ]
+          ],
+          "per_class": {
+            "chat": {
+              "precision": 0.9814814814814815,
+              "recall": 0.9851301115241635,
+              "f1": 0.9833024118738405,
+              "support": 269
+            },
+            "file_transfer": {
+              "precision": 0.8478260869565217,
+              "recall": 1.0,
+              "f1": 0.9176470588235294,
+              "support": 39
+            },
+            "video_streaming": {
+              "precision": 0.9751552795031055,
+              "recall": 0.9936708860759493,
+              "f1": 0.9843260188087775,
+              "support": 158
+            },
+            "voip": {
+              "precision": 0.9961464354527938,
+              "recall": 0.9754716981132076,
+              "f1": 0.9857006673021925,
+              "support": 530
+            }
+          }
+        }
+      },
+      "variant": {
+        "model": "flow_image_cnn_baseline",
+        "construction": "flowpic",
+        "channels": 3,
+        "size": 224
+      }
+    },
+    "5-tor-app": {
+      "report": {
+        "n_flows": 155,
+        "n_images": 5315,
+        "classes_expected": [
+          "facebook",
+          "skype",
+          "spotify",
+          "youtube"
+        ],
+        "classes_missing": [],
+        "blank_image_fraction": 0.0,
+        "n_captures": 20,
+        "images_per_class": {
+          "facebook": 1144,
+          "skype": 1199,
+          "spotify": 2104,
+          "youtube": 868
+        },
+        "extract_seconds": 4.5
+      },
+      "published": {
+        "accuracy": 0.91,
+        "precision": 0.92,
+        "recall": 0.91,
+        "f1": 0.91
+      },
+      "runs": {
+        "grouped": {
+          "protocol": "grouped",
+          "accuracy": 0.7233848953594176,
+          "precision": 0.45831090091869997,
+          "recall": 0.5138549057988745,
+          "macro_f1": 0.3457929826860322,
+          "n_train": 3412,
+          "n_val": 804,
+          "n_test": 1099,
+          "classes_in_test": 4,
+          "train_seconds": 25.2,
+          "confusion": [
+            [
+              0,
+              0,
+              0,
+              38
+            ],
+            [
+              186,
+              29,
+              11,
+              18
+            ],
+            [
+              3,
+              11,
+              753,
+              37
+            ],
+            [
+              0,
+              0,
+              0,
+              13
+            ]
+          ],
+          "per_class": {
+            "facebook": {
+              "precision": 0.0,
+              "recall": 0.0,
+              "f1": 0.0,
+              "support": 38
+            },
+            "skype": {
+              "precision": 0.725,
+              "recall": 0.11885245901639344,
+              "f1": 0.20422535211267606,
+              "support": 244
+            },
+            "spotify": {
+              "precision": 0.9856020942408377,
+              "recall": 0.9365671641791045,
+              "f1": 0.9604591836734694,
+              "support": 804
+            },
+            "youtube": {
+              "precision": 0.12264150943396226,
+              "recall": 1.0,
+              "f1": 0.2184873949579832,
+              "support": 13
+            }
+          }
+        }
+      },
+      "variant": {
+        "model": "flow_image_cnn_baseline",
+        "construction": "flowpic",
+        "channels": 3,
+        "size": 224
+      }
+    },
+    "6-tor-traffic": {
+      "report": {
+        "n_flows": 689,
+        "n_images": 12458,
+        "classes_expected": [
+          "audio_streaming",
+          "browsing",
+          "chat",
+          "file_transfer",
+          "p2p",
+          "video_streaming",
+          "voip"
+        ],
+        "classes_missing": [],
+        "blank_image_fraction": 0.0,
+        "n_captures": 47,
+        "images_per_class": {
+          "audio_streaming": 2104,
+          "browsing": 2202,
+          "chat": 555,
+          "file_transfer": 1044,
+          "p2p": 2527,
+          "video_streaming": 1373,
+          "voip": 2653
+        },
+        "extract_seconds": 15.8
+      },
+      "published": {
+        "accuracy": 0.91,
+        "precision": 0.93,
+        "recall": 0.91,
+        "f1": 0.91
+      },
+      "runs": {
+        "grouped": {
+          "protocol": "grouped",
+          "accuracy": 0.8204617834394905,
+          "precision": 0.7410783559165137,
+          "recall": 0.7213104887511822,
+          "macro_f1": 0.7100408562244525,
+          "n_train": 8710,
+          "n_val": 1236,
+          "n_test": 2512,
+          "classes_in_test": 7,
+          "train_seconds": 61.8,
+          "confusion": [
+            [
+              604,
+              191,
+              1,
+              0,
+              0,
+              7,
+              1
+            ],
+            [
+              10,
+              299,
+              13,
+              1,
+              5,
+              50,
+              13
+            ],
+            [
+              1,
+              83,
+              16,
+              2,
+              0,
+              7,
+              0
+            ],
+            [
+              5,
+              3,
+              1,
+              193,
+              0,
+              12,
+              2
+            ],
+            [
+              1,
+              0,
+              0,
+              0,
+              489,
+              0,
+              0
+            ],
+            [
+              3,
+              31,
+              0,
+              1,
+              1,
+              38,
+              1
+            ],
+            [
+              0,
+              1,
+              3,
+              1,
+              0,
+              0,
+              422
+            ]
+          ],
+          "per_class": {
+            "audio_streaming": {
+              "precision": 0.967948717948718,
+              "recall": 0.7512437810945274,
+              "f1": 0.84593837535014,
+              "support": 804
+            },
+            "browsing": {
+              "precision": 0.4917763157894737,
+              "recall": 0.7647058823529411,
+              "f1": 0.5985985985985987,
+              "support": 391
+            },
+            "chat": {
+              "precision": 0.47058823529411764,
+              "recall": 0.14678899082568808,
+              "f1": 0.22377622377622378,
+              "support": 109
+            },
+            "file_transfer": {
+              "precision": 0.9747474747474747,
+              "recall": 0.8935185185185185,
+              "f1": 0.9323671497584541,
+              "support": 216
+            },
+            "p2p": {
+              "precision": 0.9878787878787879,
+              "recall": 0.9979591836734694,
+              "f1": 0.9928934010152284,
+              "support": 490
+            },
+            "video_streaming": {
+              "precision": 0.3333333333333333,
+              "recall": 0.5066666666666667,
+              "f1": 0.4021164021164021,
+              "support": 75
+            },
+            "voip": {
+              "precision": 0.9612756264236902,
+              "recall": 0.9882903981264637,
+              "f1": 0.9745958429561201,
+              "support": 427
+            }
+          }
+        }
+      },
+      "variant": {
+        "model": "flow_image_cnn_baseline",
+        "construction": "flowpic",
+        "channels": 3,
+        "size": 224
+      }
+    }
+  }
+}

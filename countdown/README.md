@@ -17,7 +17,7 @@ See [`PLAN.md`](PLAN.md) for the full roadmap and [`phases/`](phases/) for per-p
 
 ---
 
-## Status: Phases 0–3 complete, Phase 4 in progress
+## Status: Phases 0–4 complete, Phase 5 next
 
 Phase 0 delivers the data layer: **any dataset → `(X, y)`**.
 
@@ -112,6 +112,19 @@ keep their paper loops; no member uses class weights. `countdown/experts/` binds
 three ensembles of `phases/ENSEMBLE-MAP.md` (E1 traffic type, E2 app-ID, E3 activity). The
 evidence behind every scorecard is copied from the gitignored `runs/` into the tracked
 [`results/`](results/INDEX.md) by `scripts/collect_results.py`.
+
+Headline scorecards (macro-F1, leak-free grouped splits; details in each `MODEL-*.md`):
+
+| member | target | baseline | recommended | `flow_gbdt` floor |
+| --- | --- | --- | --- | --- |
+| graph | CSTNET app (120), 5-fold | 0.821 | **0.865** | 0.811 |
+| bytes | ET-BERT packet corpus, seq/ack randomised | 0.566 | **0.857** | — |
+| image | ISCX-VPN traffic (4), 5 seeds | 0.864 | **0.938** | — |
+| image | MobileApp activity (92) | 0.115 | 0.264 | **0.441** |
+| sequence | `iscx_pooled` traffic (8) | 0.547 | 0.616 | **0.645** |
+
+Only the graph member beats the tabular floor on its home target; the others go into Phase 5 as
+decorrelated voters.
 
 Not yet built: calibration + stacking + router (P5), live capture (P6).
 

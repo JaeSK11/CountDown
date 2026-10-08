@@ -1,0 +1,227 @@
+{
+  "run_id": "20260920-002150-seq_cnn_baseline",
+  "created_utc": "2026-09-20T00:21:50.270917+00:00",
+  "versions": {
+    "python": "3.12.3",
+    "platform": "Linux-7.0.0-31-generic-x86_64-with-glibc2.39",
+    "numpy": "2.5.2",
+    "sklearn": "1.9.0",
+    "lightgbm": "4.7.0",
+    "pandas": "3.0.5",
+    "git": "d783864"
+  },
+  "metrics": {
+    "n": 17918,
+    "accuracy": 0.8206273021542583,
+    "macro_f1": 0.5468887529452375,
+    "macro_f1_all_classes": 0.5468887529452375,
+    "weighted_f1": 0.807972916379916,
+    "per_class": {
+      "browsing": {
+        "precision": 0.8265862203191904,
+        "recall": 0.9539532794249775,
+        "f1": 0.8857142857142857,
+        "support": 4452
+      },
+      "email": {
+        "precision": 0.8943661971830986,
+        "recall": 0.4425087108013937,
+        "f1": 0.5920745920745921,
+        "support": 287
+      },
+      "chat": {
+        "precision": 0.26199261992619927,
+        "recall": 0.35323383084577115,
+        "f1": 0.3008474576271186,
+        "support": 402
+      },
+      "audio_streaming": {
+        "precision": 0.8289473684210527,
+        "recall": 0.39375,
+        "f1": 0.5338983050847458,
+        "support": 160
+      },
+      "video_streaming": {
+        "precision": 0.3668555240793201,
+        "recall": 0.37427745664739887,
+        "f1": 0.37052932761087265,
+        "support": 692
+      },
+      "file_transfer": {
+        "precision": 0.5559322033898305,
+        "recall": 0.1940828402366864,
+        "f1": 0.28771929824561404,
+        "support": 845
+      },
+      "voip": {
+        "precision": 0.537248028045574,
+        "recall": 0.4213058419243986,
+        "f1": 0.47226502311248075,
+        "support": 1455
+      },
+      "p2p": {
+        "precision": 0.9201255314841061,
+        "recall": 0.9443116883116883,
+        "f1": 0.932061734092191,
+        "support": 9625
+      }
+    },
+    "confusion": [
+      [
+        4247,
+        0,
+        12,
+        5,
+        59,
+        17,
+        15,
+        97
+      ],
+      [
+        52,
+        127,
+        21,
+        1,
+        15,
+        4,
+        24,
+        43
+      ],
+      [
+        47,
+        2,
+        142,
+        0,
+        63,
+        14,
+        93,
+        41
+      ],
+      [
+        14,
+        0,
+        4,
+        63,
+        43,
+        2,
+        12,
+        22
+      ],
+      [
+        65,
+        2,
+        62,
+        4,
+        259,
+        45,
+        150,
+        105
+      ],
+      [
+        57,
+        5,
+        105,
+        2,
+        80,
+        164,
+        225,
+        207
+      ],
+      [
+        217,
+        6,
+        179,
+        1,
+        127,
+        38,
+        613,
+        274
+      ],
+      [
+        439,
+        0,
+        17,
+        0,
+        60,
+        11,
+        9,
+        9089
+      ]
+    ],
+    "class_names": [
+      "browsing",
+      "email",
+      "chat",
+      "audio_streaming",
+      "video_streaming",
+      "file_transfer",
+      "voip",
+      "p2p"
+    ],
+    "target": "traffic_type",
+    "n_classes": 8,
+    "baseline": {
+      "most_frequent": {
+        "accuracy": 0.24846523049447483,
+        "macro_f1": 0.049754135002235134,
+        "weighted_f1": 0.09889738097106857
+      },
+      "stratified": {
+        "accuracy": 0.26615693715816496,
+        "macro_f1": 0.11830647236349712,
+        "weighted_f1": 0.29236983588940335
+      }
+    },
+    "baseline_macro_f1": 0.049754135002235134,
+    "baseline_accuracy": 0.24846523049447483,
+    "beats_baseline": true,
+    "mean_confidence": 0.8314738857691569,
+    "tail_excluded": {
+      "min_support": 50,
+      "n_classes": 8,
+      "n_classes_dropped": 0,
+      "macro_f1": 0.5468887529452375,
+      "classes": [
+        "audio_streaming",
+        "browsing",
+        "chat",
+        "email",
+        "file_transfer",
+        "p2p",
+        "video_streaming",
+        "voip"
+      ]
+    }
+  },
+  "split": {
+    "n_train": 45960,
+    "n_test": 17918,
+    "n_groups_train": 137,
+    "n_groups_test": 75,
+    "groups_disjoint": true,
+    "classes_absent_from_test": [],
+    "classes_absent_from_train": [],
+    "train_class_counts": {
+      "browsing": 15967,
+      "email": 1012,
+      "chat": 1507,
+      "audio_streaming": 652,
+      "video_streaming": 2476,
+      "file_transfer": 4857,
+      "voip": 5805,
+      "p2p": 13684
+    },
+    "test_class_counts": {
+      "browsing": 4452,
+      "email": 287,
+      "chat": 402,
+      "audio_streaming": 160,
+      "video_streaming": 692,
+      "file_transfer": 845,
+      "voip": 1455,
+      "p2p": 9625
+    },
+    "group_key": "source_file",
+    "n_val": 6645
+  }
+}

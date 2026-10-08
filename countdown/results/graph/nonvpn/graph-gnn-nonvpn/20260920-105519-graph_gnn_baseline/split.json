@@ -1,0 +1,26 @@
+{
+  "n_train": 261175,
+  "n_test": 29023,
+  "n_groups_train": 85,
+  "n_groups_test": 29,
+  "groups_disjoint": false,
+  "classes_absent_from_test": [],
+  "classes_absent_from_train": [],
+  "train_class_counts": {
+    "chat": 9680,
+    "email": 6569,
+    "file_transfer": 61765,
+    "streaming": 3394,
+    "voip": 179767
+  },
+  "test_class_counts": {
+    "chat": 1076,
+    "email": 731,
+    "file_transfer": 6863,
+    "streaming": 378,
+    "voip": 19975
+  },
+  "group_key": "(sequential, authors')",
+  "fold": null,
+  "n_val": 0
+}

@@ -1,0 +1,23 @@
+# Readiness tiers: groups the 8 `traffic_type` classes by how long their content has to stay
+# secret, which is what decides migration priority under harvest-now-decrypt-later (Mosca:
+# exposed when secrecy lifetime + migration time > time until a quantum computer).
+#
+# This is a judgement, not something learned from data. Change it per customer; the models keep
+# their raw labels, so nothing needs retraining. Tiers are listed highest priority first.
+version: 1
+target: traffic_type
+tiers:
+  migrate_first:
+    # Documents, attachments and threads that stay sensitive for years once recorded.
+    - email
+    - file_transfer
+  migrate_next:
+    # Content that can be sensitive but mostly loses value within months.
+    - chat
+    - browsing
+    - voip
+  low_priority:
+    # Mostly public media or public files; little left to learn once decrypted.
+    - audio_streaming
+    - video_streaming
+    - p2p

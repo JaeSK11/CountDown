@@ -150,3 +150,161 @@ tbl = ablation(members, test)       # single / soft-vote / stacking × ±calibra
 ## 9. Not doing yet (explicit)
 End-to-end pcap→verdict CLI, live capture, cross-dataset experiments & paper tables → Phase 6.
 New model types → Phase 4 (frozen here).
+
+---
+
+## 10. Status and results (2026-10-09)
+
+**Built:** every module in §4, plus `ensemble/views.py`, `scripts/run_ensemble.py` and a Docker
+queue (`docker/README.md`). Tests: `test_calibration.py`, `test_stacking_oof.py`, `test_router.py`,
+`test_ensemble.py` — including the §5.3 leakage test (no row, and no capture, is ever predicted by
+a model that saw it). Suite **549/549**, in the container.
+
+**Exit criterion: met on E2 and E3, not on E1.** The verdict uses only configurations chosen
+without test labels (§10.2). Macro-F1 on the outer grouped test split, seed 42, one run each;
+runs in `results/phase5/ensemble/`.
+
+| Expert | test rows (groups) | best single | **CV-selected** ensemble | declared primary | verdict |
+| --- | --- | --- | --- | --- | --- |
+| E1 traffic type, `iscx_pooled` (8) | 17,918 (75 captures) | `flow_gbdt` **0.6654** | 3 members, vote, temperature: 0.6648 | 0.5856 | ✗ tie (−0.0006) |
+| E2 app-ID, CSTNET (120) | 9,338 (51 days) | `graph_gnn` 0.8680 | GBDT + GIN, vote, temperature: **0.8900** | 0.8726 | ✓ **+0.022** |
+| E3 activity, MobileApp (92) | 92 (92 captures) | `flow_gbdt` 0.4409 | 3 members, vote, temperature: **0.5134** | 0.3978 | ✓ +0.073, weak (below) |
+
+### 10.1 What the protocol is
+
+Per expert, one flow table and one outer split (`group_split`, the Phase-3 fold 0). On the train
+rows, each member gets **5 grouped out-of-fold (OOF) fits** (3 on MobileApp: its thinnest class
+has 3 training captures) and then a refit on all of train that scores test. Calibrators and
+combiners are fit on the OOF predictions only. Each member's OOF and test predictions are cached
+per fold under `runs/ensemble/<E>/preds-s42/`.
+
+**Deviations from the plan, and why:**
+- **The sample unit is the flow** — what Phase 6 classifies. Members with another unit are mapped
+  to it: the image member uses windows cut on each flow's own timeline (E1: one 60 s window,
+  64 px, 15 epochs at batch 256 — ~136k images; the 224-px, 15/30/60 s scorecard construction
+  would be >100 GB per flow and three copies of one image for the median ISCX flow), and
+  averages its window probabilities per flow. Its E1 number (0.483) is therefore *not* the
+  `MODEL-image.md` number, which was capture-window.
+- **E2 is GBDT + GIN, without `byte_net`.** ET-BERT's corpus carries no flow identity to join
+  on; `byte_net` joins once byte extraction from our own pcaps exists (task 4.2). E2's table is
+  the 46,284 CSTNET flows that have a graph sample (of 46,372).
+- **E3 has 3 OOF folds**, not 5 (above).
+
+### 10.2 Choosing the configuration without looking at test
+
+The ablation scores ~30 variants (single / vote / `stack_logreg` / `stack_lgbm`, ± temperature,
+every member subset). Taking the best by test would be selection on test, so the verdict uses:
+- the **declared primary** — all members, `stack_logreg`, temperature — fixed before any run; and
+- the **CV-selected** variant — highest macro-F1 when each combiner is fit on K−1 OOF folds and
+  scored on the held one, entirely inside train.
+
+**The declared primary was the wrong choice, and the CV selection caught it:** it picked the
+soft vote on all three experts, and the vote beats both stackers everywhere:
+
+| full member set, temperature | E1 | E2 | E3 |
+| --- | --- | --- | --- |
+| soft vote (OOF-F1 weights) | **0.6648** | **0.8900** | **0.5134** |
+| `stack_logreg` (primary) | 0.5856 | 0.8726 | 0.3978 |
+| `stack_lgbm` | 0.6100 | 0.5261 | 0.4199 |
+
+The logistic stacker minimises log-loss, which trades thin classes for frequent ones and so
+costs macro-F1. The 120-class LightGBM meta-learner collapses on E2 (NLL 11) with default
+parameters — 240 meta-features, classes with a handful of OOF rows. **Recommendation for
+Phase 6: the calibrated soft vote** is the default combiner; stacking stays in the ablation.
+
+### 10.3 Per expert
+
+- **E2 is the real result.** GBDT (0.832) + GIN (0.868) → 0.890 macro-F1, accuracy 0.913. The
+  two see different things — flow statistics vs payload byte graphs — which is what
+  `ENSEMBLE-MAP.md` predicted would pay off on a fine, data-rich target. 9,338 test flows.
+- **E1 gains nothing.** Every subset ties or trails the GBDT (best pair 0.6627, all three
+  0.6648). On a coarse 8-class target the sequence and per-flow image members add no
+  information the 56 flow statistics lack — consistent with the Phase-4 finding that neither
+  beats the tabular floor (`MODEL-sequence.md`). **Ship E1 as the GBDT alone**; the deep
+  members cost latency for nothing. **Done (2026-10-09):** `Expert.deploy` lists the members a
+  deployed ensemble uses — E1 deploys `flow_gbdt` alone, E2 `flow_gbdt` + `graph_gnn`, E3 all
+  three; the other members stay in `members` so this ablation reruns. `Ensemble.build` uses the
+  deploy list; a one-member ensemble is that member, calibrated.
+- **E3's gain is weak evidence.** The test set is one capture per class (92 rows), so a class's F1
+  is all or nothing and +0.073 is ~7 captures. The direction agrees with the CV score (0.4675 vs
+  0.4305), but it needs seeds or a leave-one-capture-out protocol before it is a result.
+
+### 10.4 Calibration
+
+Temperature scaling fixes the members it should: test ECE `graph_gnn` 0.069 → **0.012**,
+`flow_gbdt` 0.047 → 0.023 (E1) and 0.030 → 0.012 (E2). NLL drops or holds for every member
+except the E1/E3 image member, where ECE and NLL both rise — likely because its OOF fits saw
+less data than the refit, so a temperature learnt on OOF mis-states the refit (not tested).
+Fitted temperatures: E1 GBDT 1.68, seq 5.77, image 1.43; E2 GBDT 1.14, GIN 2.39; E3 GBDT 0.98,
+seq 1.61, image 1.04 — **on E1 and E2 every member is over-confident, the GBDT included**,
+contrary to §1's "trees under-confident"; on E3 the GBDT and image member are near 1.
+
+Two consequences: calibration barely moves macro-F1 (temperature cannot change a member's
+arg-max), and **a vote of calibrated members is itself under-confident** (E2 vote ECE 0.024 raw
+vs 0.061 calibrated). Phase 6 should fit one more temperature on the *combined* OOF output.
+
+### 10.5 Router
+
+`ensemble/router.py` is rule-based (§5.2), tested in `test_router.py`. On real Stage-1 hints:
+
+| dataset | flows | → expected expert | other |
+| --- | --- | --- | --- |
+| CSTNET (re-parsed 2026-10-09) | 46,372 | **E2 99.998 %** (`tls`) | 1 flow hinted `tor` → E1 |
+| `iscx_pooled` | 70,523 | E1 85.5 % | **14.5 % (`tls`) → E2** |
+| MobileApp | 368 | E3 100 % (capture context; no hint) | — |
+
+CSTNET's flow cache predated Phase 1 and carried no `l7_hint`; it was re-parsed with the
+Phase-1 reassembler (18 s) after backing up the old cache (`cache/cstnet/phase0-backup/`).
+`scripts/reparse_check.py` confirmed **all 46,372 flows have identical packets and identical
+`flow_stats`** — only the hint and handshake fields were added — so every Phase-4/5 CSTNET score
+stands (`results/phase5-data/reparse/`).
+
+**The open design question is ISCX's 10,189 `tls` flows** (14.5 % of `iscx_pooled`). By the
+rules they are "direct TLS" and go to E2, which labels a 2016 VPN-dataset flow with one of 120
+CSTNET websites — the cross-distribution case `ENSEMBLE-MAP.md` calls out of scope. Measured
+with `scripts/eval_routing.py` (`results/phase5-data/routing-eval/`). E2 is represented by its
+calibrated GBDT member, because GIN needs per-flow byte graphs ISCX does not have; read every
+E2 number below as a lower bound for the full ensemble.
+
+| measurement | value |
+| --- | --- |
+| E2 confidence, median: CSTNET test / ISCX `tls` | **0.998 / 0.239** |
+| AUROC of E2 confidence, CSTNET vs ISCX `tls` | **0.972** |
+| E2's top labels for ISCX `tls` flows | twimg.com 1,485 · steampowered.com 901 · deepl.com 878 · … |
+| E1 (GBDT) on its `tls` test flows / on the rest | macro-F1 **0.548** / 0.666 · accuracy 0.609 / 0.933 |
+
+Confidence-fallback threshold, chosen to keep a share of CSTNET flows in E2:
+
+| keep CSTNET in E2 | threshold | CSTNET accuracy on the kept flows | ISCX `tls` caught → E1 |
+| --- | --- | --- | --- |
+| 99 % | 0.18 | 0.936 | 33 % |
+| 95 % | 0.42 | 0.961 | 83 % |
+| **90 %** | **0.72** | **0.984** | **96 %** |
+| 80 % | 0.98 | 0.998 | 99.9 % |
+
+The options:
+
+| option | for | against |
+| --- | --- | --- |
+| **A. Route by hint (today)** | Deterministic, free, explainable | Every non-CSTNET-like TLS flow gets a confident-looking website label from a closed set of 120; no way to say "not one of these" |
+| **B. Confidence fallback** (E2, then E1 below a threshold) | Data says it works: AUROC 0.97; at a 90 %-keep threshold 96 % of the out-of-distribution flows fall back, and E2's accuracy on what it keeps rises 0.927 → 0.984. Needs no deployment metadata | Runs E2 on every TLS flow, E1 again on the fallbacks; threshold is calibration-dependent and must be re-set if E2 changes; confidence-based out-of-distribution detection can fail on shifts that look in-distribution; 10 % of real CSTNET flows lose their app label (they get a traffic type instead); measured with E2's GBDT only |
+| **C. Capture-level context** (operator says what the tap sees, as E3 already does) | Deterministic, zero inference cost, no threshold | A real tap carries mixed traffic (`DEPLOYMENT-AND-PRIMARY-DATASET.md`: passive capture on a real network), so one label per capture is wrong for most of it; needs metadata every deployment must supply |
+| **D. Route on the Phase-2 verdict** | Uses the authoritative parser instead of the advisory hint | The verdict is about the key exchange, not the traffic population, so it does not separate these flows. The one field that would — TLS version (CSTNET is all 1.3, ISCX 2016 mostly older) — is a dataset artefact: modern traffic is mostly 1.3, so on a real network it routes everything to E2 anyway |
+
+**Recommendation: B, with C as an override.** The fallback is the only option that handles mixed
+traffic without metadata, and the numbers support it. Threshold: start at the 90 %-keep point
+(0.72 on the calibrated GBDT), re-fit on the *ensemble's* calibrated output once Phase 6 has it,
+and record `route_reason` (`hint` / `fallback` / `context`) in every verdict so the trade-off
+stays auditable. Two caveats travel with it: E1 itself is weak on these flows (0.548 macro-F1 vs
+0.666 elsewhere), so falling back moves them to a better-suited model, not a good one; and the
+measurement must be repeated with GIN in the loop. Not implemented yet — this is a Phase-6
+pipeline decision.
+
+### 10.6 Left for Phase 5 / carried to Phase 6
+
+- Seeds (and, for E3, leave-one-capture-out) before quoting E2/E3 gains as stable.
+- A temperature on the combined output (§10.4).
+- `byte_net` in E2 once flow-aligned byte input exists.
+- The ISCX-TLS routing decision (§10.5): recommended confidence fallback, to implement in the
+  Phase-6 pipeline.
+- Latency of the ensembles (E2 = GBDT + a 44M-parameter GNN with on-the-fly graph building).

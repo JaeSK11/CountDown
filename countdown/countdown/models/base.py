@@ -232,32 +232,38 @@ class BaseModel(ABC):
         """
         import joblib
 
-        self._require_fitted()
-        self._require_space()
         path = Path(path)
         path.parent.mkdir(parents=True, exist_ok=True)
-        joblib.dump(
-            {
-                "countdown_model": self.name,
-                "cls": f"{type(self).__module__}.{type(self).__qualname__}",
-                "label_space": self.label_space.to_dict(),  # type: ignore[union-attr]
-                "params": self.params,
-                "feature_names": self.feature_names,
-                "trained_classes": (
-                    None if self.trained_classes_ is None else self.trained_classes_.tolist()
-                ),
-                "state": self._state(),
-            },
-            path,
-        )
+        joblib.dump(self.to_blob(), path)
         return path
+
+    def to_blob(self) -> dict[str, Any]:
+        """Everything :meth:`save` writes, as a picklable dict -- lets a wrapper (the
+        Phase-5 ``CalibratedModel``) nest its base model inside its own state."""
+        self._require_fitted()
+        self._require_space()
+        return {
+            "countdown_model": self.name,
+            "cls": f"{type(self).__module__}.{type(self).__qualname__}",
+            "label_space": self.label_space.to_dict(),  # type: ignore[union-attr]
+            "params": self.params,
+            "feature_names": self.feature_names,
+            "trained_classes": (
+                None if self.trained_classes_ is None else self.trained_classes_.tolist()
+            ),
+            "state": self._state(),
+        }
 
     @classmethod
     def load(cls, path: str | Path) -> "BaseModel":
         """Restore a model saved by :meth:`save`, resolving its class via the registry."""
         import joblib
 
-        blob = joblib.load(Path(path))
+        return cls.from_blob(joblib.load(Path(path)))
+
+    @classmethod
+    def from_blob(cls, blob: dict[str, Any]) -> "BaseModel":
+        """Inverse of :meth:`to_blob`, resolving the class via the registry."""
         # "qsentinel_model" is the pre-rename key; blobs saved before the project was
         # renamed still load.
         name = blob.get("countdown_model") or blob["qsentinel_model"]

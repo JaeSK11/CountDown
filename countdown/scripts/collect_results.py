@@ -44,6 +44,9 @@ MANIFEST: dict[str, list[str]] = {
     "graph/nontor": ["graph-gnn-nontor/*"],
     "graph/nonvpn": ["graph-gnn-nonvpn/*"],
     "graph/cstnet": ["graph-cstnet/*/*"],
+    "phase5": ["ensemble/E*/2026*/ablation.json", "ensemble/E*/2026*/ensemble.json",
+                 "ensemble/E*/2026*/routing.json"],
+    "phase5-data": ["reparse/*.json", "routing-eval/*.json"],
 }
 
 
@@ -59,6 +62,8 @@ def _headline(path: Path) -> dict:
         out = {k: d["ours"].get(k) for k in ("macro_f1", "accuracy", "n")}
     if "summary" in d and isinstance(d["summary"], dict) and "F1" in d["summary"]:
         out = {"macro_f1": d["summary"]["F1"].get("mean"), "accuracy": d["summary"]["AC"].get("mean")}
+    if isinstance(d.get("selected"), dict):        # Phase-5 ablation: the CV-selected config
+        out = {k: d["selected"].get(k) for k in ("macro_f1", "accuracy")}
     return {k: v for k, v in out.items() if v is not None}
 
 

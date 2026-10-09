@@ -1,0 +1,198 @@
+{
+  "rows": [
+    {
+      "kind": "single",
+      "members": [
+        "flow_gbdt"
+      ],
+      "combiner": "-",
+      "calibration": "none",
+      "macro_f1": 0.8323,
+      "accuracy": 0.8624,
+      "ece": 0.0298,
+      "nll": 0.5766,
+      "cv_macro_f1": 0.8123
+    },
+    {
+      "kind": "single",
+      "members": [
+        "flow_gbdt"
+      ],
+      "combiner": "-",
+      "calibration": "temperature",
+      "macro_f1": 0.8323,
+      "accuracy": 0.8624,
+      "ece": 0.0121,
+      "nll": 0.5691,
+      "cv_macro_f1": 0.8123
+    },
+    {
+      "kind": "single",
+      "members": [
+        "graph_gnn"
+      ],
+      "combiner": "-",
+      "calibration": "none",
+      "macro_f1": 0.868,
+      "accuracy": 0.8926,
+      "ece": 0.0685,
+      "nll": 0.6399,
+      "cv_macro_f1": 0.8521
+    },
+    {
+      "kind": "single",
+      "members": [
+        "graph_gnn"
+      ],
+      "combiner": "-",
+      "calibration": "temperature",
+      "macro_f1": 0.868,
+      "accuracy": 0.8926,
+      "ece": 0.0117,
+      "nll": 0.4119,
+      "cv_macro_f1": 0.8521
+    },
+    {
+      "kind": "ensemble",
+      "members": [
+        "flow_gbdt",
+        "graph_gnn"
+      ],
+      "combiner": "vote",
+      "calibration": "none",
+      "macro_f1": 0.8835,
+      "accuracy": 0.9078,
+      "ece": 0.0241,
+      "nll": 0.3936,
+      "cv_macro_f1": 0.8724
+    },
+    {
+      "kind": "ensemble",
+      "members": [
+        "flow_gbdt",
+        "graph_gnn"
+      ],
+      "combiner": "vote",
+      "calibration": "temperature",
+      "macro_f1": 0.89,
+      "accuracy": 0.9129,
+      "ece": 0.0612,
+      "nll": 0.3804,
+      "cv_macro_f1": 0.8765
+    },
+    {
+      "kind": "ensemble",
+      "members": [
+        "flow_gbdt",
+        "graph_gnn"
+      ],
+      "combiner": "stack_logreg",
+      "calibration": "none",
+      "macro_f1": 0.8801,
+      "accuracy": 0.9046,
+      "ece": 0.0485,
+      "nll": 0.5257,
+      "cv_macro_f1": 0.8557
+    },
+    {
+      "kind": "ensemble",
+      "members": [
+        "flow_gbdt",
+        "graph_gnn"
+      ],
+      "combiner": "stack_logreg",
+      "calibration": "temperature",
+      "macro_f1": 0.8726,
+      "accuracy": 0.8998,
+      "ece": 0.0413,
+      "nll": 0.4366,
+      "cv_macro_f1": 0.8484
+    },
+    {
+      "kind": "ensemble",
+      "members": [
+        "flow_gbdt",
+        "graph_gnn"
+      ],
+      "combiner": "stack_lgbm",
+      "calibration": "none",
+      "macro_f1": 0.5458,
+      "accuracy": 0.6003,
+      "ece": 0.3995,
+      "nll": 11.0352,
+      "cv_macro_f1": null
+    },
+    {
+      "kind": "ensemble",
+      "members": [
+        "flow_gbdt",
+        "graph_gnn"
+      ],
+      "combiner": "stack_lgbm",
+      "calibration": "temperature",
+      "macro_f1": 0.5261,
+      "accuracy": 0.5901,
+      "ece": 0.4097,
+      "nll": 11.3069,
+      "cv_macro_f1": null
+    }
+  ],
+  "best_single": {
+    "kind": "single",
+    "members": [
+      "graph_gnn"
+    ],
+    "combiner": "-",
+    "calibration": "none",
+    "macro_f1": 0.868,
+    "accuracy": 0.8926,
+    "ece": 0.0685,
+    "nll": 0.6399,
+    "cv_macro_f1": 0.8521
+  },
+  "primary": {
+    "kind": "ensemble",
+    "members": [
+      "flow_gbdt",
+      "graph_gnn"
+    ],
+    "combiner": "stack_logreg",
+    "calibration": "temperature",
+    "macro_f1": 0.8726,
+    "accuracy": 0.8998,
+    "ece": 0.0413,
+    "nll": 0.4366,
+    "cv_macro_f1": 0.8484
+  },
+  "selected": {
+    "kind": "ensemble",
+    "members": [
+      "flow_gbdt",
+      "graph_gnn"
+    ],
+    "combiner": "vote",
+    "calibration": "temperature",
+    "macro_f1": 0.89,
+    "accuracy": 0.9129,
+    "ece": 0.0612,
+    "nll": 0.3804,
+    "cv_macro_f1": 0.8765
+  },
+  "best_ensemble": {
+    "kind": "ensemble",
+    "members": [
+      "flow_gbdt",
+      "graph_gnn"
+    ],
+    "combiner": "vote",
+    "calibration": "temperature",
+    "macro_f1": 0.89,
+    "accuracy": 0.9129,
+    "ece": 0.0612,
+    "nll": 0.3804,
+    "cv_macro_f1": 0.8765
+  },
+  "primary_beats_best_single": true,
+  "selected_beats_best_single": true,
+  "ensemble_beats_best_single": true
+}

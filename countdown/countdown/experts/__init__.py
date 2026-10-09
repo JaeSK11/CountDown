@@ -20,6 +20,9 @@ E1 = Expert(
                    role="FlowPic view; +0.05-0.07 macro-F1 over scatter on VPN/Tor traffic type"),
     ),
     notes="Coarse, 8 classes: byte transformer / GNN would be wasted cost here.",
+    # Phase 5 (2026-10-09): no member subset beat the GBDT alone (0.6654 macro-F1; best
+    # vote 0.6648), so the deep members cost latency for nothing.  PHASE-5.md section 10.3.
+    deploy=("flow_gbdt",),
 )
 
 E2 = Expert(
@@ -33,6 +36,9 @@ E2 = Expert(
                    driver="script", script="python scripts/train_graph_gnn.py --model graph_gnn --split <cache>"),
     ),
     notes="Fine + data-rich (120 x ~475). The GBDT floor is 0.81 macro-F1 and must be beaten.",
+    # byte_net has no flow-aligned input yet (PHASE-5.md section 10.1); GBDT + GIN is what was
+    # evaluated: 0.890 calibrated vote vs 0.868 GIN alone.
+    deploy=("flow_gbdt", "graph_gnn"),
 )
 
 E3 = Expert(

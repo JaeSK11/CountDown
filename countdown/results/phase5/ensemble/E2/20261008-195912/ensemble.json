@@ -1,0 +1,66 @@
+{
+  "expert": "E2",
+  "members": [
+    "flow_gbdt",
+    "graph_gnn"
+  ],
+  "combiner": "stack_logreg",
+  "calibration": {
+    "flow_gbdt": {
+      "method": "temperature",
+      "method_used": "temperature",
+      "temperature": 1.141
+    },
+    "graph_gnn": {
+      "method": "temperature",
+      "method_used": "temperature",
+      "temperature": 2.3864
+    }
+  },
+  "weights": null,
+  "data": {
+    "expert": "E2",
+    "dataset": "cstnet",
+    "target": "app",
+    "n_classes": 120,
+    "n_rows": 46284,
+    "n_train": 36946,
+    "n_test": 9338,
+    "group_key": "capture_day",
+    "n_groups_train": 184,
+    "n_groups_test": 51,
+    "members": {
+      "flow_gbdt": {
+        "model": "flow_gbdt",
+        "view": "ArrayView",
+        "params": {}
+      },
+      "graph_gnn": {
+        "model": "graph_gnn",
+        "view": "ArrayView",
+        "params": {
+          "header_len": 40,
+          "epochs": 20,
+          "workers": 24
+        }
+      }
+    },
+    "skipped": {
+      "byte_net": "no flow-aligned input: trained by `python scripts/score_byte_net.py` on a corpus without flow identity"
+    }
+  },
+  "member_seconds": {
+    "flow_gbdt": 1618.9,
+    "graph_gnn": 5780.0
+  },
+  "args": {
+    "expert": "E2",
+    "members": null,
+    "n_folds": 5,
+    "seed": 42,
+    "max_flows": null,
+    "runs_dir": "runs/ensemble",
+    "no_subsets": false
+  },
+  "wall_seconds": 6260.8
+}

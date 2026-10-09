@@ -17,7 +17,7 @@ See [`PLAN.md`](PLAN.md) for the full roadmap and [`phases/`](phases/) for per-p
 
 ---
 
-## Status: Phases 0–4 complete, Phase 5 next
+## Status: Phases 0–5 built; Phase 5's exit criterion met on E2 and E3, not E1
 
 Phase 0 delivers the data layer: **any dataset → `(X, y)`**.
 
@@ -126,13 +126,36 @@ Headline scorecards (macro-F1, leak-free grouped splits; details in each `MODEL-
 Only the graph member beats the tabular floor on its home target; the others go into Phase 5 as
 decorrelated voters.
 
-Not yet built: calibration + stacking + router (P5), live capture (P6).
+### Phase-5 status
+
+`countdown/ensemble/` calibrates each member (temperature), stacks or votes over leakage-safe
+out-of-fold predictions, and routes each flow to one expert from its Stage-1 hint. Macro-F1 on
+the grouped test split, with the combiner chosen by cross-validation inside train
+(`phases/PHASE-5.md` §10):
+
+| expert | best single member | ensemble | |
+| --- | --- | --- | --- |
+| E2 app-ID (CSTNET, 120) | `graph_gnn` 0.868 | GBDT + GIN, calibrated soft vote **0.890** | ✓ |
+| E3 activity (MobileApp, 92) | `flow_gbdt` 0.441 | 3-member vote 0.513 | ✓ weak: 92 test rows |
+| E1 traffic type (`iscx_pooled`, 8) | `flow_gbdt` 0.665 | 3-member vote 0.665 | ✗ tie — ship the GBDT |
+
+The soft vote beat logistic and LightGBM stacking on every expert. Long jobs run in Docker
+(`docker/README.md`).
+
+Not yet built: end-to-end pipeline + live capture (P6).
 
 ## Install
 
 ```bash
 python3 -m venv .venv && .venv/bin/pip install -e ".[dev,viz]"
 .venv/bin/python -m pytest -q
+```
+
+Or, with the exact package set and a GPU, in Docker (`docker/README.md`):
+
+```bash
+docker compose -f docker/compose.yaml build
+docker compose -f docker/compose.yaml run --rm job python -m pytest -q
 ```
 
 `viz` is optional and only adds the confusion-matrix PNG; every run writes `metrics.json`
@@ -172,12 +195,20 @@ countdown/
   models/paper_baselines.py  flow_c45_paper, flow_knn_paper                        [P4]
   models/flow_image_cnn.py   flow_image_cnn_baseline (Okonkwo); flow_image_resnet.py  [P4]
   models/byte_net.py      byte_net_baseline (ET-BERT transcription)                [P4]
-  models/tfe_gnn.py       TFEGNNNet (not yet registered)                           [P4]
+  models/tfe_gnn.py       TFEGNNNet towers (SAGE or GIN); models/graph_gnn.py registers them [P4]
   training/deep.py        shared torch trainer: early stop, checkpoint/resume, AMP [P4]
   eval/splits.py          group-aware splits + the vacuous-grouping guard          [P3]
   eval/metrics.py         macro-F1 headline, per-class, Dummy baseline             [P3]
   eval/report.py          reproducible runs/<id>/ directories                      [P3]
   training/train.py       load -> split -> fit -> evaluate -> persist              [P3]
+  experts/                E1 / E2 / E3 bindings (dataset, target, members)         [P4]
+  ensemble/calibration.py temperature / isotonic, ECE, CalibratedModel             [P5]
+  ensemble/stacking.py    grouped out-of-fold predictions (leakage-safe)           [P5]
+  ensemble/combiner.py    soft vote, logistic / LightGBM stacking                  [P5]
+  ensemble/router.py      Stage-1 hint / capture context -> one expert             [P5]
+  ensemble/views.py       one flow table per expert; per-member input views        [P5]
+  ensemble/ensemble.py    Ensemble: fit (OOF + calibrate + combine), explain, save [P5]
+  eval/ablation.py        single vs vote vs stacking x calibration table           [P5]
 configs/experiments/      one YAML per Phase-3 experiment
 runs/                     per-run artifacts (gitignored)
 scripts/train.py          training CLI
@@ -186,6 +217,10 @@ scripts/summarize_datasets.py
 scripts/replicate_drapergil.py, replicate_okonkwo.py, replicate_tfegnn.py, repro_etbert.py
                           paper replications (write to runs/)                        [P4]
 scripts/build_tfegnn_cache.py  pcap -> TFE-GNN byte shards under cache/tfegnn/        [P4]
+scripts/run_ensemble.py   fit one expert's ensemble + ablation (runs/ensemble/)      [P5]
+scripts/reparse_check.py  re-parse a dataset, diff flows against the old cache       [P5]
+scripts/collect_results.py  copy scorecard evidence from runs/ into tracked results/
+docker/                   training image, compose file, GPU queue runner             [P5]
 scripts/gen_pqc_pcaps.sh  self-generated PQC/classical captures  → data/_pqc_synth/
 scripts/validate_pqc.py   parser vs tshark oracle + PQC precision/recall
 tests/

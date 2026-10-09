@@ -1,0 +1,75 @@
+{
+  "expert": "E1",
+  "members": [
+    "flow_gbdt",
+    "seq_cnn",
+    "flow_image_cnn"
+  ],
+  "combiner": "stack_logreg",
+  "calibration": {
+    "flow_gbdt": {
+      "method": "temperature",
+      "method_used": "temperature",
+      "temperature": 1.6845
+    },
+    "seq_cnn": {
+      "method": "temperature",
+      "method_used": "temperature",
+      "temperature": 5.7705
+    },
+    "flow_image_cnn": {
+      "method": "temperature",
+      "method_used": "temperature",
+      "temperature": 1.4277
+    }
+  },
+  "weights": null,
+  "data": {
+    "expert": "E1",
+    "dataset": "iscx_pooled",
+    "target": "traffic_type",
+    "n_classes": 8,
+    "n_rows": 70523,
+    "n_train": 52605,
+    "n_test": 17918,
+    "group_key": "source_file",
+    "n_groups_train": 160,
+    "n_groups_test": 75,
+    "members": {
+      "flow_gbdt": {
+        "model": "flow_gbdt",
+        "view": "ArrayView",
+        "params": {}
+      },
+      "seq_cnn": {
+        "model": "seq_cnn",
+        "view": "ArrayView",
+        "params": {}
+      },
+      "flow_image_cnn": {
+        "model": "flow_image_cnn",
+        "view": "WindowView",
+        "params": {
+          "batch_size": 256,
+          "epochs": 15
+        }
+      }
+    },
+    "skipped": {}
+  },
+  "member_seconds": {
+    "flow_gbdt": 25.6,
+    "seq_cnn": 276.0,
+    "flow_image_cnn": 85.2
+  },
+  "args": {
+    "expert": "E1",
+    "members": null,
+    "n_folds": 5,
+    "seed": 42,
+    "max_flows": null,
+    "runs_dir": "runs/ensemble",
+    "no_subsets": false
+  },
+  "wall_seconds": 514.3
+}

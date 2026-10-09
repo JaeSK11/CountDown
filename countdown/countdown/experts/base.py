@@ -61,12 +61,23 @@ class Expert:
     test_size: float = 0.2
     val_size: float = 0.1
     notes: str = ""
+    #: The members the deployed ensemble uses (Phase 5).  ``None`` = all of ``members``.
+    #: Members left out stay listed so the ablation that justified dropping them reruns.
+    deploy: tuple[str, ...] | None = None
 
     def check(self) -> None:
         if not self.members:
             raise ValueError(f"{self.name} has no members")
         for m in self.members:
             m.check()
+        names = [m.model for m in self.members]
+        unknown = [d for d in (self.deploy or ()) if d not in names]
+        if unknown:
+            raise ValueError(f"{self.name} deploys {unknown}, which are not among its members {names}")
+
+    @property
+    def deployed_members(self) -> tuple[str, ...]:
+        return tuple(self.deploy) if self.deploy else tuple(m.model for m in self.members)
 
     @property
     def default_member(self) -> MemberSpec:

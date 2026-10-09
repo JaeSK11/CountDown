@@ -1,0 +1,42 @@
+# docker compose -f countdown/docker/compose.yaml up -d gpu-queue   # start the queue daemon
+# docker compose -f countdown/docker/compose.yaml run --rm job <cmd> # one-off command
+name: countdown
+
+x-common: &common
+  image: countdown:cu130
+  build:
+    context: .
+    dockerfile: Dockerfile
+  user: "1000:1000"                    # files in runs/ stay owned by counterbitio
+  volumes:
+    - /home/counterbitio/CountDown:/home/counterbitio/CountDown
+  working_dir: /home/counterbitio/CountDown/countdown
+  shm_size: "32gb"                     # PyTorch DataLoader workers pass batches through /dev/shm
+  deploy:
+    resources:
+      reservations:
+        devices:
+          - driver: nvidia
+            count: all
+            capabilities: [gpu]
+
+services:
+  # The GPU queue as a daemon: survives session ends, terminal closes and (restart policy)
+  # reboots.  A job interrupted mid-run is put back at the head of the queue on restart.
+  gpu-queue:
+    <<: *common
+    container_name: countdown-gpu-queue
+    command: ["bash", "docker/gpu-queue-runner.sh"]
+    environment:
+      QUEUE_DAEMON: "1"
+      IN_CONTAINER: "1"
+      PY: python
+    restart: unless-stopped
+    init: true
+
+  job:
+    <<: *common
+    profiles: ["manual"]
+    environment:
+      IN_CONTAINER: "1"
+      PY: python

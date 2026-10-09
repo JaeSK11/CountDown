@@ -1,0 +1,13 @@
+{
+  "n": 368,
+  "routes": {
+    "E3": 368
+  },
+  "by_hint": {
+    "None": {
+      "E3": 368
+    }
+  },
+  "expected": "E3",
+  "share_expected": 1.0
+}

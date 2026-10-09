@@ -1,0 +1,71 @@
+{
+  "e2_gbdt_cstnet_test_acc": 0.9274,
+  "n_cstnet_test": 9384,
+  "n_iscx_tls": 10189,
+  "conf_median_cstnet": 0.9977,
+  "conf_median_iscx_tls": 0.2386,
+  "auroc_confidence_separates": 0.9716,
+  "fallback_thresholds": [
+    {
+      "keep_cstnet": 0.99,
+      "threshold": 0.1777,
+      "cstnet_acc_on_kept": 0.9355,
+      "iscx_tls_caught_by_fallback": 0.3259
+    },
+    {
+      "keep_cstnet": 0.95,
+      "threshold": 0.4239,
+      "cstnet_acc_on_kept": 0.9608,
+      "iscx_tls_caught_by_fallback": 0.8333
+    },
+    {
+      "keep_cstnet": 0.9,
+      "threshold": 0.7172,
+      "cstnet_acc_on_kept": 0.9843,
+      "iscx_tls_caught_by_fallback": 0.9642
+    },
+    {
+      "keep_cstnet": 0.8,
+      "threshold": 0.9798,
+      "cstnet_acc_on_kept": 0.9984,
+      "iscx_tls_caught_by_fallback": 0.9988
+    }
+  ],
+  "iscx_tls_top_e2_labels": {
+    "twimg.com": 1485,
+    "steampowered.com": 901,
+    "deepl.com": 878,
+    "atlassian.net": 601,
+    "nvidia.com": 528,
+    "sohu.com": 475,
+    "leetcode-cn.com": 441,
+    "twitter.com": 366
+  },
+  "e1_gbdt_on_e1_test": {
+    "tls": {
+      "n": 2155,
+      "macro_f1": 0.5477,
+      "accuracy": 0.6088
+    },
+    "non_tls": {
+      "n": 15763,
+      "macro_f1": 0.666,
+      "accuracy": 0.9331
+    },
+    "all": {
+      "n": 17918,
+      "macro_f1": 0.6654,
+      "accuracy": 0.8941
+    }
+  },
+  "e1_test_tls_class_counts": {
+    "browsing": 589,
+    "email": 182,
+    "chat": 171,
+    "audio_streaming": 55,
+    "video_streaming": 371,
+    "file_transfer": 318,
+    "voip": 469,
+    "p2p": 0
+  }
+}

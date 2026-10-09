@@ -112,3 +112,14 @@ Copied from the gitignored `runs/` by `scripts/collect_results.py` (decision D4)
 | graph/cstnet | `graph-cstnet/graph_gnn_baseline/20260920-060959-graph_gnn_baseline` | 0.8138 | 0.8435 | 9244 |
 | graph/cstnet | `graph-cstnet/graph_gnn_baseline/20260920-064631-graph_gnn_baseline` | 0.8292 | 0.8566 | 9241 |
 | graph/cstnet | `graph-cstnet/graph_gnn_baseline/20260920-072306-graph_gnn_baseline` | 0.8144 | 0.8415 | 9102 |
+| phase5 | `ensemble/E1/20261008-180421/ablation.json` | 0.6648 | 0.8933 |  |
+| phase5 | `ensemble/E2/20261008-195912/ablation.json` | 0.8900 | 0.9129 |  |
+| phase5 | `ensemble/E3/20261008-181041/ablation.json` | 0.5134 | 0.5652 |  |
+| phase5 | `ensemble/E1/20261008-180421/ensemble.json` |  |  |  |
+| phase5 | `ensemble/E2/20261008-195912/ensemble.json` |  |  |  |
+| phase5 | `ensemble/E3/20261008-181041/ensemble.json` |  |  |  |
+| phase5 | `ensemble/E1/20261008-180421/routing.json` |  |  | 70523 |
+| phase5 | `ensemble/E2/20261008-195912/routing.json` |  |  | 46372 |
+| phase5 | `ensemble/E3/20261008-181041/routing.json` |  |  | 368 |
+| phase5-data | `reparse/cstnet-20261009-005323.json` |  |  |  |
+| phase5-data | `routing-eval/20261009-010228.json` |  |  |  |

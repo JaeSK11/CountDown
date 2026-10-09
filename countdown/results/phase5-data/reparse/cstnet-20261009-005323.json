@@ -1,0 +1,30 @@
+{
+  "dataset": "cstnet",
+  "parse_seconds": 17.7,
+  "flows_old": 46372,
+  "flows_new": 46372,
+  "files_old": 46372,
+  "files_new": 46372,
+  "files_same_flow_count": 46372,
+  "files_same_packets": 46372,
+  "flow_stats_identical_same_order": true,
+  "l7_hint_new": {
+    "tls": 46371,
+    "tor": 1
+  },
+  "routing": {
+    "n": 46372,
+    "routes": {
+      "E2": 46371,
+      "E1": 1
+    },
+    "by_hint": {
+      "tls": {
+        "E2": 46371
+      },
+      "tor": {
+        "E1": 1
+      }
+    }
+  }
+}

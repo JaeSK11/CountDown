@@ -35,3 +35,13 @@ def test_configs_are_built_for_harness_members_only():
 def test_activity_expert_trains_its_default_member():
     out = get_expert("E3").train(write=False)
     assert out["metrics"]["macro_f1"] > 0.2
+
+
+def test_deployed_members_default_to_all_and_e1_ships_the_gbdt_alone():
+    assert get_expert("E1").deployed_members == ("flow_gbdt",)       # Phase 5 decision
+    assert len(get_expert("E1").members) == 3                         # still evaluated
+    assert get_expert("E2").deployed_members == ("flow_gbdt", "graph_gnn")
+    assert get_expert("E3").deployed_members == ("flow_gbdt", "seq_cnn", "flow_image_cnn")
+    from dataclasses import replace
+    with pytest.raises(ValueError, match="not among its members"):
+        replace(get_expert("E1"), deploy=("graph_gnn",)).check()

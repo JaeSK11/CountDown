@@ -1,0 +1,13 @@
+{
+  "n": 46372,
+  "routes": {
+    "E1": 46372
+  },
+  "by_hint": {
+    "None": {
+      "E1": 46372
+    }
+  },
+  "expected": "E2",
+  "share_expected": 0.0
+}

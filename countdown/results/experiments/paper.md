@@ -1,0 +1,14 @@
+# Paper tables and figures
+
+Generated from `results/experiments/` by `countdown experiments run paper`.
+
+- `tables/ablation.tex`
+- `tables/cross_dataset.tex`
+- `tables/fidelity.tex`
+- `tables/triage.tex`
+- `figures/ablation.pdf`
+- `figures/ablation.png`
+- `figures/cross_dataset.pdf`
+- `figures/cross_dataset.png`
+- `figures/exposure.pdf`
+- `figures/exposure.png`

@@ -321,3 +321,103 @@ Consequences:
 
 Caveats: one seed; GBDT on flow statistics only; the tunnelled sides are small (697 Tor flows,
 2,365 VPN flows).
+
+---
+
+## 12. 6.7 Paper tables and figures (2026-10-09)
+
+`countdown experiments run paper` (`eval/report_paper.py`) turns `results/experiments/*.json`
+into `results/paper/tables/{triage,cross_dataset,ablation,fidelity}.tex` (booktabs, scaled to
+the column; need `\usepackage{booktabs,graphicx}`) and
+`results/paper/figures/{exposure,cross_dataset,ablation}.{pdf,png}`. They read only the
+experiment JSONs, so the paper's numbers are the regenerated tables'. Byte-for-byte
+reproducible (PDF/PNG dates stripped). All four tables and three figures compile with
+`pdflatex` (TeX Live container) with no overfull boxes.
+
+Figures follow the data-viz method: verdict buckets are states, so they take the status palette
+(validated; *warning* and *serious* kept non-adjacent — ΔE 13.6 < 15 otherwise), with a legend,
+direct labels and a hatch on the ClientHello-only bucket so nothing is told apart by colour alone;
+comparisons take categorical slots 1–2. Two corrections after looking at the renders: an
+invisible bucket (10 unparsed CSTNET flows) is dropped from the legend, and the ablation labels
+use three decimals — two showed E1's tie (0.6654 vs 0.6648) as 0.67 vs 0.66.
+
+## 13. 6.3 / 6.4 Live capture (2026-10-09)
+
+```bash
+docker compose -f docker/compose.yaml run --rm job countdown live eth0 --port 443 --duration 30
+```
+
+- `sources/live.py`: a Linux `AF_PACKET` socket (no libpcap, no new dependency), Ethernet frames,
+  loopback de-duplicated, port filter in Python (kernel BPF needs libpcap: refused with a clear
+  message), optional promiscuous mode, `--duration` / `--count` limits.
+- **Idle wire:** the reassembler expires flows on the packet clock, so a quiet link would hold
+  its last flows forever. The source yields an empty-frame **heartbeat** every `timeout_ms`
+  without traffic and the reassembler runs its expiry sweep on it (`test_live.py`).
+- `Pipeline.analyze_stream`: closed flows are batched and classified at most every
+  `--batch-seconds`, the flush checked on every frame and heartbeat; JSON lines out. In `full`
+  mode a streaming `ByteCollector` (`features/byte_prep.py`) keeps each 5-tuple's first 50
+  payload packets for the graph member — byte-identical to the file extractor (tested).
+  Streaming a replayed pcap gives exactly the records `analyze` gives (tested).
+- **Privilege without touching the host:** the container runs as uid 1000, which does not
+  inherit container capabilities, so the image has a copy of the interpreter, `python-netraw`,
+  with only `cap_net_raw+ep`; the `countdown` wrapper uses it for `live` alone. Works with
+  Docker's default capability set. A `live` compose service with host networking exists for
+  real deployments (it sees all host traffic — only where monitoring is allowed).
+
+**Live demo — the first real quantum-safe flows.** In a container on Docker's bridge network (so
+the capture sees only the container's own traffic), fetching four public home pages over
+Python's HTTPS (OpenSSL 3.5.7, which offers X25519MLKEM768 first):
+
+| server | TLS | key exchange | verdict |
+| --- | --- | --- | --- |
+| www.cloudflare.com | 1.3 | **X25519MLKEM768** | quantum-safe — classification skipped |
+| www.google.com | 1.3 | **X25519MLKEM768** | quantum-safe |
+| en.wikipedia.org | 1.3 | **X25519MLKEM768** | quantum-safe |
+| github.com | 1.3 | x25519 | exposed → routed, E2 → E1 fallback |
+
+Three of four major sites negotiate a hybrid post-quantum exchange with a current client — in
+contrast to every public dataset (§10), whose captures predate deployment. This is the
+non-synthetic PQC positive §10 asked for; a larger capture of permitted traffic would turn it
+into a statistic.
+
+## 14. 6.8 Packaging (2026-10-09)
+
+**Fresh clone → `analyze`:**
+```bash
+git clone https://github.com/JaeSK11/CountDown && cd CountDown/countdown
+python3 -m venv .venv && .venv/bin/pip install -e ".[dev,deep]"   # or the Docker image
+.venv/bin/countdown models fetch                                  # model zoo, verified
+.venv/bin/countdown analyze examples/*.pcap --mode fast
+```
+
+- **Model zoo** (`pipeline/zoo.py`): the deployed experts (E1 6 MB, E2 331 MB, E3 13 MB,
+  joblib compress=3) are assets of the private GitHub release `models-v1`; `countdown models
+  fetch` downloads them with `gh` (uses its auth). They are pickles, so the repo tracks
+  `models_store.sha256` and `load_store` **refuses to unpickle any file whose hash is not in
+  it** (`--allow-unverified` for one's own export). The hash comes from git, not the server.
+  `scripts/publish_models.sh` writes the manifest and uploads a release. The models are the
+  Phase-5 refit-on-train members (§9), so their reported test scores hold for these files.
+- **Examples** (`examples/`): our three synthetic handshake captures — the only pcaps ours to
+  ship — with `expected_fast.jsonl`. `tests/test_examples.py` always checks the crypto verdicts
+  and, when the zoo verifies, the full routed output.
+
+## 15. Phase 6 status
+
+| # | task | state |
+| --- | --- | --- |
+| 6.1 | pipeline | ✅ §9 |
+| 6.2 | `countdown analyze` | ✅ §9 |
+| 6.3 | live source | ✅ §13 |
+| 6.4 | `countdown live` (+ fast mode) | ✅ §13 — live TLS flows classified, incl. real hybrid PQC |
+| 6.5 | PQC-triage + per-target | ✅ §10 |
+| 6.6 | cross-dataset + ablation + runner | ✅ §11 |
+| 6.7 | paper tables + figures | ✅ §12 |
+| 6.8 | packaging | ✅ §14 — fresh-clone check below |
+
+**Exit criterion** — `countdown analyze <pcap>` emits per-flow verdicts with five-tuple, l7, TLS
+version, cipher, KEM group, PQC verdict, traffic class and confidence ✅; `countdown experiments
+run --all` regenerates every results table deterministically ✅.
+
+Known limits carried out of Phase 6: E1 does not transfer across capture setups (§11); E1's
+predicted breakdown under-counts `file_transfer` (§10); E3's ensemble gain rests on 92 test flows;
+`byte_net` is not in E2; the deployed models are refit-on-train.

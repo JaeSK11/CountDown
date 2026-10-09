@@ -10,6 +10,7 @@ taking ~1.5 h of GIN folds with it.
 | `requirements.lock` | `pip freeze` of `.venv`, minus the editable project and the unused CUDA-12 wheels the torch upgrade left behind. |
 | `compose.yaml` | `gpu-queue` (the queue daemon) and `job` (one-off commands). Both bind-mount `/home/counterbitio/CountDown` at the same path, run as uid 1000, see all GPUs, and get a 32 GB `/dev/shm` for DataLoader workers. |
 | `gpu-queue-runner.sh` | The queue: one job at a time from `runs/gpu-queue/pending/`, lowest number first. |
+| (in the image) `python-netraw` | interpreter copy with `cap_net_raw` for `countdown live` only (below). |
 
 ## Use
 
@@ -39,6 +40,25 @@ interpreter does not exist inside the image; the host fallback still uses `.venv
 - **No GPU telemetry inside the container.** The `~/gpu-watch` PCIe/power logger needs host
   `sudo`; run it on the host. The container's queue log says `Xid: n/a`; check the host with
   `journalctl -k | grep -i 'nvrm: xid'` (plain `xid` also matches the r8169 NIC's boot line).
+
+## Live capture
+
+`countdown live <iface>` reads a raw `AF_PACKET` socket, which needs `CAP_NET_RAW`. The container
+runs as uid 1000, and a non-root process does not inherit container capabilities, so the image
+carries a **copy** of the interpreter, `python-netraw`, with the single file capability
+`cap_net_raw+ep`. The `countdown` wrapper runs only `countdown live` on it; nothing else in the
+image (and nothing on the host) gets raw sockets.
+
+```bash
+# Its own traffic only (default bridge network) -- what the 2026-10-09 demo used:
+docker compose -f docker/compose.yaml run --rm job countdown live eth0 --port 443 --duration 30
+# The host's interfaces (deployment) -- sees ALL host traffic; only where you may monitor:
+docker compose -f docker/compose.yaml run --rm live countdown live eth0 --port 443
+```
+
+`--mode fast` (the default) uses only each expert's GBDT; `--mode full` adds E2's graph member,
+fed by a streaming byte collector. Filtering is by port in Python; kernel BPF is not supported
+(it needs libpcap, which the image does not carry).
 
 ## Rebuilding the lock
 

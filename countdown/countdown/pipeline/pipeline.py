@@ -59,6 +59,7 @@ class PipelineConfig:
     include_members: bool = False            # per-member breakdown in each record
     redact: bool = False                     # drop IPs and SNI from records
     store: str | None = None                 # models_store/ directory
+    allow_unverified: bool = False           # load artifacts not in models_store.sha256
 
 
 @dataclass
@@ -71,7 +72,7 @@ class Pipeline:
         if self.config.mode not in ("full", "fast"):
             raise ValueError(f"mode must be full or fast, got {self.config.mode!r}")
         if self.experts is None:
-            self.experts = load_store(self.config.store)
+            self.experts = load_store(self.config.store, self.config.allow_unverified)
 
     # -- entry points ------------------------------------------------------------------
     def analyze_pcap(self, path: str | Path) -> list[dict[str, Any]]:
@@ -87,6 +88,51 @@ class Pipeline:
         if self._needs_bytes():
             byte_rows = byte_matrix_for_flows(path, flows)
         return self.analyze_flows(flows, byte_rows=byte_rows)
+
+    def analyze_stream(self, source: Any, on_records: Any, batch_seconds: float = 2.0) -> int:
+        """Live mode (task 6.4): classify flows as the reassembler closes them.
+
+        Closed flows are batched and handed to ``on_records`` at most every ``batch_seconds``;
+        the flush is checked on every frame *and heartbeat* the source yields, so a quiet
+        wire still delivers its last flows.  In ``full`` mode a :class:`ByteCollector` keeps
+        each 5-tuple's first payload packets for the graph member.  Returns flows classified.
+        """
+        import time
+
+        from countdown.features.byte_prep import ByteCollector
+        from countdown.flows.reassembly import Reassembler
+
+        collector = ByteCollector() if self._needs_bytes() else None
+        batch: list = []
+        rows: list[np.ndarray] = []
+        state = {"last": time.monotonic(), "n": 0}
+
+        def flush() -> None:
+            if batch:
+                byte_rows = np.stack(rows) if collector is not None else None
+                on_records(self.analyze_flows(list(batch), byte_rows=byte_rows))
+                state["n"] += len(batch)
+                batch.clear()
+                rows.clear()
+            state["last"] = time.monotonic()
+
+        def tee():
+            for raw in source:
+                if collector is not None and raw.data:
+                    collector.add(raw.linktype, raw.data)
+                if batch and time.monotonic() - state["last"] >= batch_seconds:
+                    flush()
+                yield raw
+
+        reasm = Reassembler.from_config(default_config())
+        name = getattr(source, "iface", None) or "live"
+        for flow in reasm.run(tee(), meta={"source_file": f"live:{name}"}):
+            batch.append(flow)
+            if collector is not None:
+                m = collector.take(flow_byte_key(flow))
+                rows.append(m if m is not None else np.full((50, 190), -1, dtype=np.int16))
+        flush()
+        return state["n"]
 
     def analyze_flows(self, flows: list, byte_rows: np.ndarray | None = None) -> list[dict[str, Any]]:
         """``byte_rows``: ``(len(flows), 50, 190)`` byte matrices, NaN-free int rows, with
@@ -244,13 +290,18 @@ def byte_matrix_for_flows(path: str | Path, flows: list) -> np.ndarray:
                    key=lambda i: float(flows[i].timestamps[0]) if len(flows[i].timestamps) else 0.0)
     used: set = set()
     for i in order:
-        t = flows[i].five_tuple
-        a, b = (t.src_ip, int(t.src_port)), (t.dst_ip, int(t.dst_port))
-        lo, hi = (a, b) if a <= b else (b, a)
-        key = (lo[0], lo[1], hi[0], hi[1], t.l4_proto)
+        key = flow_byte_key(flows[i])
         s = by_key.get(key)
         if s is None or key in used:
             continue
         used.add(key)
         out[i] = np.concatenate([s.header, s.payload], axis=1)
     return out
+
+
+def flow_byte_key(flow: Any) -> tuple:
+    """A flow's canonical 5-tuple in ``byte_prep``'s form (order-independent endpoints)."""
+    t = flow.five_tuple
+    a, b = (t.src_ip, int(t.src_port)), (t.dst_ip, int(t.dst_port))
+    lo, hi = (a, b) if a <= b else (b, a)
+    return (lo[0], lo[1], hi[0], hi[1], t.l4_proto)

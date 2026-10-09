@@ -40,3 +40,17 @@ services:
     environment:
       IN_CONTAINER: "1"
       PY: python
+
+  # Live capture on the HOST's interfaces (deployment). host networking means it sees every
+  # host interface and all their traffic -- run it only where you are allowed to monitor.
+  # Capture is by the image's python-netraw (cap_net_raw file capability); NET_RAW is in
+  # Docker's default set, NET_ADMIN is only needed for --promiscuous.
+  #   docker compose -f docker/compose.yaml run --rm live countdown live eth0 --port 443
+  live:
+    <<: *common
+    profiles: ["manual"]
+    network_mode: host
+    cap_add: [NET_RAW, NET_ADMIN]
+    environment:
+      IN_CONTAINER: "1"
+      PY: python

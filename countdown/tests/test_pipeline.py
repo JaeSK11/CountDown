@@ -107,11 +107,12 @@ def test_deployed_expert_round_trips_and_cli_writes_csv(experts, tmp_path, monke
                         lambda f: Verdict(label="classical", basis="negotiated", confidence=1.0))
     out = tmp_path / "v.csv"
     assert cli.main(["analyze", "x.pcap", "--out", str(out), "--store", str(tmp_path / "store"),
-                     "--no-fallback"]) == 0
+                     "--no-fallback", "--allow-unverified"]) == 0
     head, row = out.read_text().splitlines()[:2]
     assert head.startswith("flow_id,five_tuple") and "big.example" in row
     jl = tmp_path / "v.jsonl"
-    cli.main(["analyze", "x.pcap", "--out", str(jl), "--store", str(tmp_path / "store"), "--redact"])
+    cli.main(["analyze", "x.pcap", "--out", str(jl), "--store", str(tmp_path / "store"), "--redact",
+              "--allow-unverified"])
     assert json.loads(jl.read_text().splitlines()[0])["source"] is None
 
 
@@ -126,3 +127,26 @@ def test_byte_matrices_join_flows_on_the_canonical_five_tuple(two_flow_pcap):
     assert rows.shape == (len(flows), 50, 190)
     has = rows[:, 0, 0] >= 0
     assert has.any()                                    # payload-bearing flows got their bytes
+
+
+def test_a_model_file_not_in_the_manifest_is_never_unpickled(experts, tmp_path):
+    from countdown.pipeline import load_store, zoo
+
+    store = tmp_path / "store"
+    experts["E1"].save(store / "E1.joblib")
+    manifest = tmp_path / "models_store.sha256"
+    zoo.write_manifest(store, manifest)
+    assert zoo.verify(store, manifest) == {"E1.joblib": "ok"}
+    with open(store / "E1.joblib", "ab") as fh:          # tamper
+        fh.write(b"x")
+    assert zoo.verify(store, manifest) == {"E1.joblib": "mismatch"}
+    with pytest.raises(zoo.UnverifiedModel):
+        zoo.check_file(store / "E1.joblib", manifest)
+    # load_store checks against the repository manifest, which does not list a test file
+    with pytest.raises(zoo.UnverifiedModel):
+        load_store(store)
+    # Opting out loads an *intact* own export. (Never the tampered file: unpickling a corrupted
+    # compressed joblib once allocated 120 GB here before the OOM killer stopped it -- which is
+    # the case the manifest exists for.)
+    experts["E1"].save(store / "E1.joblib")
+    assert "E1" in load_store(store, allow_unverified=True)

@@ -82,11 +82,12 @@ def test_directory_source_respects_patterns(tmp_path, simple_pcap):
     assert len(DirectorySource(d).files()) == 2
 
 
-def test_live_source_is_an_importable_stub():
-    """DoD 1.3: importable, typed, and raises rather than pretending to capture."""
-    src = LiveSource("eth0", bpf="tcp port 443")
+def test_live_source_is_a_source_and_refuses_kernel_bpf():
+    """Phase 6 replaced the Phase-1 stub: still a ``Source``, never pretends to filter in the
+    kernel (no libpcap), and closing an unopened source is harmless."""
+    src = LiveSource("eth0", ports=[443])
     assert isinstance(src, Source)
-    assert (src.iface, src.bpf, src.snaplen) == ("eth0", "tcp port 443", 65535)
-    with pytest.raises(NotImplementedError, match="Phase 6"):
-        list(src)
+    assert (src.iface, src.ports, src.snaplen) == ("eth0", {443}, 65535)
+    with pytest.raises(ValueError, match="BPF"):
+        LiveSource("eth0", bpf="tcp port 443")
     src.close()  # must not raise

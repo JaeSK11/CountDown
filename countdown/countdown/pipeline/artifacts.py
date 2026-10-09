@@ -90,7 +90,7 @@ class DeployedExpert:
             "recipes": {m: vars(r) for m, r in self.recipes.items()},
             "calibrators": self.calibrators, "combiner": self.combiner,
             "fallback_threshold": self.fallback_threshold, "provenance": self.provenance,
-        }, path)
+        }, path, compress=3)
         return path
 
     @classmethod
@@ -107,13 +107,22 @@ class DeployedExpert:
         )
 
 
-def load_store(store: str | Path | None = None) -> dict[str, DeployedExpert]:
+def load_store(store: str | Path | None = None, allow_unverified: bool = False
+               ) -> dict[str, DeployedExpert]:
+    """Load every deployed expert, **after** checking each file against the repository's
+    SHA-256 manifest (``pipeline/zoo.py``): these are pickles, so an unverified file is never
+    unpickled unless ``allow_unverified`` says so."""
+    from countdown.pipeline.zoo import check_file
+
     store = Path(store) if store else DEFAULT_STORE
     out = {}
     for f in sorted(store.glob("E*.joblib")):
+        if not allow_unverified:
+            check_file(f)
         out[f.stem] = DeployedExpert.load(f)
     if not out:
-        raise FileNotFoundError(f"no deployed experts in {store}; run scripts/export_models.py")
+        raise FileNotFoundError(f"no deployed experts in {store}: `countdown models fetch` "
+                                f"(published zoo) or scripts/export_models.py (from your runs)")
     return out
 
 

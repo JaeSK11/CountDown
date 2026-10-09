@@ -10,6 +10,7 @@ run-specific paths**, so re-running on unchanged inputs reproduces the files byt
 ``ablation``        the Phase-5 ensemble ablation and per-target headline, tabulated from the
                     finished Phase-5 runs (``runs/ensemble/``) -- it re-reads their saved
                     predictions' scores; it does not re-train hours of GPU members
+``paper``           LaTeX tables + figures from the three above (``results/paper/``)
 ==================  =======================================================================
 """
 
@@ -67,8 +68,15 @@ def _ablation() -> tuple[dict, str]:
     return out, "\n".join(md) + "\n"
 
 
+def _paper() -> tuple[dict, str]:
+    from countdown.eval import report_paper
+
+    return report_paper.build()
+
+
+#: Run order matters: ``paper`` reads the other three's JSON.
 EXPERIMENTS: dict[str, Callable[[], tuple[dict, str]]] = {
-    "triage": _triage, "cross_dataset": _cross, "ablation": _ablation,
+    "triage": _triage, "cross_dataset": _cross, "ablation": _ablation, "paper": _paper,
 }
 
 

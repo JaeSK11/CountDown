@@ -261,6 +261,20 @@ class Reassembler:
                 current_source = raw.source
                 next_sweep = math.inf
 
+            if not raw.data:
+                # Heartbeat (``LiveSource`` on an idle socket): no packet, but time has passed.
+                # Run the expiry sweep on this clock so a quiet wire still closes its flows --
+                # the packet clock alone would hold them until the next frame arrives.
+                if not self.phase0_compat and math.isfinite(next_sweep) and raw.ts >= next_sweep:
+                    finished.extend(self._sweep(open_flows, raw.ts))
+                    next_sweep = raw.ts + self.sweep_interval
+                    for st_done in finished:
+                        flow = self._emit(st_done, dataset, label, label_fields, base_meta, stats)
+                        if flow is not None:
+                            yield flow
+                    finished.clear()
+                continue
+
             pkt = decode(raw.ts, raw.data, raw.linktype, stats)
             if pkt is None:
                 continue

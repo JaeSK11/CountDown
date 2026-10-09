@@ -1,0 +1,5 @@
+# SHA-256 of the deployed experts in GitHub release models-v1.
+# `countdown models verify` checks models_store/ against this; load_store refuses anything else.
+ad8f5f24f286087a162441d3b026cd32435108f124108b35b398b84022927dcb  E1.joblib
+9fce63addeb71dac7221365be7899728b15cffc841daccebdc986825373a6732  E2.joblib
+5a32e6197e169f99282084a6e043c425a49a15966a5b7894c87447b117ab3bcf  E3.joblib

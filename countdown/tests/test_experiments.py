@@ -12,7 +12,7 @@ RUNS = Path(experiments.ROOT) / "runs" / "ensemble"
 
 
 def test_registry_and_unknown_names():
-    assert set(experiments.EXPERIMENTS) == {"triage", "cross_dataset", "ablation"}
+    assert list(experiments.EXPERIMENTS) == ["triage", "cross_dataset", "ablation", "paper"]
     with pytest.raises(KeyError, match="unknown experiment"):
         experiments.run(["nope"])
 

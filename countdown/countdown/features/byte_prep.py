@@ -329,3 +329,54 @@ def extract_byte_samples(
             stats.samples_emitted += 1
 
     return samples
+
+
+class ByteCollector:
+    """Streaming counterpart of :func:`extract_byte_samples` for live capture.
+
+    Fed one ``RawPacket`` at a time, it keeps the first ``FLOW_PAD_TRUNC_LENGTH`` payload
+    packets of every canonical 5-tuple -- the only part of a flow the graph member reads --
+    and :meth:`take` hands over (and forgets) a 5-tuple's byte matrix when the reassembler
+    emits its flow.  Same splitting, addressing strip and padding as the file path, so a live
+    flow's matrix is built exactly like a cached one.  Bounded: at most ``max_keys`` 5-tuples,
+    least-recently-seen evicted first (flows the reassembler drops never get taken).
+    """
+
+    def __init__(self, max_keys: int = 50_000, strip_addressing: bool = True) -> None:
+        self.max_keys = int(max_keys)
+        self.strip_addressing = strip_addressing
+        self._flows: OrderedDict[tuple, list[tuple[bytes, bytes]]] = OrderedDict()
+
+    def add(self, linktype: int, data: bytes) -> None:
+        from countdown.flows.decode import decode_l3
+
+        try:
+            ip, _ = decode_l3(data, linktype)
+            if ip is None:
+                return
+            split = _split_packet(data, linktype, self.strip_addressing)
+            if split is None or not split[1]:
+                return
+            key = _canonical_key(ip, ip.data)
+        except Exception:
+            return
+        packets = self._flows.get(key)
+        if packets is None:
+            if len(self._flows) >= self.max_keys:
+                self._flows.popitem(last=False)
+            packets = self._flows[key] = []
+        else:
+            self._flows.move_to_end(key)
+        if len(packets) < FLOW_PAD_TRUNC_LENGTH:
+            packets.append(split)
+
+    def take(self, key: tuple) -> np.ndarray | None:
+        """``(50, 40 + 150)`` int16 for ``key`` (the canonical 5-tuple), or None if unseen."""
+        packets = self._flows.pop(key, None)
+        if not packets:
+            return None
+        s = _pack_sample(packets, {}, {})
+        return np.concatenate([s.header, s.payload], axis=1)
+
+    def __len__(self) -> int:
+        return len(self._flows)

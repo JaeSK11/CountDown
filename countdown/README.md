@@ -17,7 +17,7 @@ See [`PLAN.md`](PLAN.md) for the full roadmap and [`phases/`](phases/) for per-p
 
 ---
 
-## Status: Phases 0–5 built; Phase 6 under way (pipeline, `analyze`, `triage`, experiments done)
+## Status: Phases 0–6 complete
 
 Phase 0 delivers the data layer: **any dataset → `(X, y)`**.
 
@@ -145,8 +145,10 @@ The soft vote beat logistic and LightGBM stacking on every expert. Long jobs run
 ### Quickstart: analyze a capture
 
 ```bash
-python scripts/export_models.py                        # once: Phase-5 runs -> models_store/
+countdown models fetch                                 # once: model zoo (private release), hash-verified
+countdown analyze examples/*.pcap --mode fast          # the shipped example handshakes
 countdown analyze capture.pcap --out verdicts.csv
+countdown live eth0 --port 443                         # live (needs CAP_NET_RAW: see docker/README.md)
 ```
 
 Each flow gets its PQC verdict; a negotiated hybrid/PQC exchange is marked quantum-safe and not
@@ -162,7 +164,9 @@ byte for byte. One of them is a warning: the traffic-type model trained on one I
 campaign scores ~0.11 macro-F1 on the other (0.58 in-domain) — in-domain numbers here describe
 these capture setups, not traffic in general (`PHASE-6.md` §11).
 
-Not yet built: paper tables/figures, live capture, packaging (P6).
+Paper tables and figures: `countdown experiments run paper` -> `results/paper/`. Live capture
+of current HTTPS found the first real quantum-safe flows of the project: Cloudflare, Google and
+Wikipedia negotiate X25519MLKEM768 today (`PHASE-6.md` §13).
 
 ## Install
 
@@ -231,7 +235,10 @@ countdown/
   eval/ablation.py        single vs vote vs stacking x calibration table           [P5]
   pipeline/pipeline.py    pcap -> reassembly -> PQC verdict -> route -> classify   [P6]
   pipeline/artifacts.py   DeployedExpert (members + recipes + calibrators + vote)  [P6]
-  cli.py, __main__.py     `countdown analyze | triage` (also python -m countdown) [P6]
+  cli.py, __main__.py     `countdown analyze|triage|live|models|experiments`      [P6]
+  pipeline/zoo.py         model zoo: fetch from the release, SHA-256 manifest      [P6]
+  sources/live.py         AF_PACKET live capture with idle heartbeats              [P6]
+  eval/report_paper.py    LaTeX tables + figures -> results/paper/                 [P6]
   eval/triage.py          PQC-triage: exposure by flows/bytes + what is exposed    [P6]
   eval/cross_dataset.py   train on one capture setting, test on another            [P6]
   eval/experiments.py     `countdown experiments run` -> results/experiments/      [P6]
@@ -251,7 +258,10 @@ docker/                   training image, compose file, GPU queue runner        
 scripts/export_models.py  Phase-5 runs -> models_store/ deployed experts             [P6]
 scripts/check_pipeline_skew.py  pipeline vs Phase-5 predictions (must agree exactly) [P6]
 scripts/run_triage.py     PQC-triage tables over the labelled datasets              [P6]
-models_store/             deployed experts (gitignored)                              [P6]
+models_store/             deployed experts (gitignored; `countdown models fetch`)    [P6]
+models_store.sha256       hashes of the published zoo -- what makes a download trusted [P6]
+examples/                 our synthetic PQC handshake captures + expected output    [P6]
+scripts/publish_models.sh publish models_store/ as a release + write the manifest   [P6]
 scripts/gen_pqc_pcaps.sh  self-generated PQC/classical captures  → data/_pqc_synth/
 scripts/validate_pqc.py   parser vs tshark oracle + PQC precision/recall
 tests/

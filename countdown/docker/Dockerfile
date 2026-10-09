@@ -18,6 +18,10 @@ COPY requirements.lock /tmp/requirements.lock
 RUN pip install --extra-index-url https://download.pytorch.org/whl/cu130 -r /tmp/requirements.lock \
  && python -c "import torch, torch_geometric, lightgbm; print(torch.__version__, torch.version.cuda)"
 
+# `countdown` on PATH, as `pip install -e` gives the host venv (the project is not installed here).
+RUN printf '#!/bin/sh\nexec python -m countdown "$@"\n' > /usr/local/bin/countdown \
+ && chmod +x /usr/local/bin/countdown
+
 # The project itself comes from the bind mount; PYTHONPATH stands in for `pip install -e`.
 ENV PYTHONPATH=/home/counterbitio/CountDown/countdown \
     HOME=/tmp \

@@ -123,3 +123,4 @@ Copied from the gitignored `runs/` by `scripts/collect_results.py` (decision D4)
 | phase5 | `ensemble/E3/20261008-181041/routing.json` |  |  | 368 |
 | phase5-data | `reparse/cstnet-20261009-005323.json` |  |  |  |
 | phase5-data | `routing-eval/20261009-010228.json` |  |  |  |
+| phase6 | `pipeline-skew/20261009-011430.json` |  |  |  |

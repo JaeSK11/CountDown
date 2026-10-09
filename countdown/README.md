@@ -17,7 +17,7 @@ See [`PLAN.md`](PLAN.md) for the full roadmap and [`phases/`](phases/) for per-p
 
 ---
 
-## Status: Phases 0–5 built; Phase 5's exit criterion met on E2 and E3, not E1
+## Status: Phases 0–5 built; Phase 6 under way (pipeline + `analyze` done)
 
 Phase 0 delivers the data layer: **any dataset → `(X, y)`**.
 
@@ -142,7 +142,18 @@ the grouped test split, with the combiner chosen by cross-validation inside trai
 The soft vote beat logistic and LightGBM stacking on every expert. Long jobs run in Docker
 (`docker/README.md`).
 
-Not yet built: end-to-end pipeline + live capture (P6).
+### Quickstart: analyze a capture
+
+```bash
+python scripts/export_models.py                        # once: Phase-5 runs -> models_store/
+countdown analyze capture.pcap --out verdicts.csv
+```
+
+Each flow gets its PQC verdict; a negotiated hybrid/PQC exchange is marked quantum-safe and not
+classified, everything else is routed to one expert and labelled (`phases/PHASE-6.md` §9).
+`--mode fast` uses only the GBDTs; `--redact` drops IPs and SNI.
+
+Not yet built: PQC-triage statistics, cross-dataset tables, live capture, packaging (P6).
 
 ## Install
 
@@ -209,6 +220,9 @@ countdown/
   ensemble/views.py       one flow table per expert; per-member input views        [P5]
   ensemble/ensemble.py    Ensemble: fit (OOF + calibrate + combine), explain, save [P5]
   eval/ablation.py        single vs vote vs stacking x calibration table           [P5]
+  pipeline/pipeline.py    pcap -> reassembly -> PQC verdict -> route -> classify   [P6]
+  pipeline/artifacts.py   DeployedExpert (members + recipes + calibrators + vote)  [P6]
+  cli.py, __main__.py     `countdown analyze` (also python -m countdown)          [P6]
 configs/experiments/      one YAML per Phase-3 experiment
 runs/                     per-run artifacts (gitignored)
 scripts/train.py          training CLI
@@ -221,6 +235,9 @@ scripts/run_ensemble.py   fit one expert's ensemble + ablation (runs/ensemble/) 
 scripts/reparse_check.py  re-parse a dataset, diff flows against the old cache       [P5]
 scripts/collect_results.py  copy scorecard evidence from runs/ into tracked results/
 docker/                   training image, compose file, GPU queue runner             [P5]
+scripts/export_models.py  Phase-5 runs -> models_store/ deployed experts             [P6]
+scripts/check_pipeline_skew.py  pipeline vs Phase-5 predictions (must agree exactly) [P6]
+models_store/             deployed experts (gitignored)                              [P6]
 scripts/gen_pqc_pcaps.sh  self-generated PQC/classical captures  → data/_pqc_synth/
 scripts/validate_pqc.py   parser vs tshark oracle + PQC precision/recall
 tests/

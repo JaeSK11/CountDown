@@ -28,23 +28,11 @@ import numpy as np
 sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
 
 from countdown.ensemble import Ensemble, Router, build_expert_data  # noqa: E402
+from countdown.ensemble.views import PER_FLOW_OVERRIDES as OVERRIDES  # noqa: E402
 from countdown.eval.ablation import run_ablation, to_markdown  # noqa: E402
 from countdown.eval.report import run_id  # noqa: E402
 from countdown.experts import get_expert  # noqa: E402
 
-#: Per-flow input overrides.  The image member's 224-px default is ~600 KB per window; per
-#: flow on ISCX that is >100 GB, and a FlowPic of a 9-packet flow carries no detail a
-#: 64-px histogram loses (64 is the smallest the network's pooling stack accepts).  One
-#: 60 s window: the median ISCX flow is far shorter than 15 s, so 15/30/60 s windows would
-#: be three copies of one image.  Larger batches / fewer epochs because there are ~10^5
-#: images here, not the ~10^3 the scorecard trained on.  E3 keeps the scorecard's
-#: construction (MobileApp is one flow per capture, so per-flow = per-capture windows).
-OVERRIDES = {
-    "E1": {"flow_image_cnn": {"feature_params": {"size": 64}, "windows": [60.0],
-                              "params": {"batch_size": 256, "epochs": 15}}},
-    "E2": {"graph_gnn": {"params": {"epochs": 20, "workers": 24}}},
-    "E3": {},
-}
 #: Combiners scored by cross-validation on OOF.  A 120-class LightGBM meta-learner is
 #: minutes per fit; five more per variant is not worth it on E2.
 CV_COMBINERS = {"E1": ("vote", "stack_logreg", "stack_lgbm"), "E2": ("vote", "stack_logreg"),

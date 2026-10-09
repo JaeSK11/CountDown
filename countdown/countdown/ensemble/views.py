@@ -36,6 +36,21 @@ from countdown.schema import LabelSpace
 log = get_logger(__name__)
 
 
+#: Per-flow input overrides.  The image member's 224-px default is ~600 KB per window; per
+#: flow on ISCX that is >100 GB, and a FlowPic of a 9-packet flow carries no detail a
+#: 64-px histogram loses (64 is the smallest the network's pooling stack accepts).  One
+#: 60 s window: the median ISCX flow is far shorter than 15 s, so 15/30/60 s windows would
+#: be three copies of one image.  Larger batches / fewer epochs because there are ~10^5
+#: images here, not the ~10^3 the scorecard trained on.  E3 keeps the scorecard's
+#: construction (MobileApp is one flow per capture, so per-flow = per-capture windows).
+PER_FLOW_OVERRIDES: dict[str, dict[str, dict[str, Any]]] = {
+    "E1": {"flow_image_cnn": {"feature_params": {"size": 64}, "windows": [60.0],
+                              "params": {"batch_size": 256, "epochs": 15}}},
+    "E2": {"graph_gnn": {"params": {"epochs": 20, "workers": 24}}},
+    "E3": {},
+}
+
+
 class MemberView:
     """Fits a fresh member on rows and predicts rows.  Rows index the expert's flow table."""
 
@@ -221,26 +236,41 @@ def build_expert_data(expert: Any, members: list[str] | None = None, seed: int =
         elif spec.driver != "harness":
             skipped[spec.model] = (f"no flow-aligned input: trained by `{spec.script}` on a "
                                    f"corpus without flow identity")
-        elif windows:
-            from countdown.data.windows import windowed_dataset
-
-            # Windowing keys on flow_id, which is not unique (14 ISCX flows share one with
-            # another flow), so window row-tagged copies and map parents back by row.
-            tagged = FlowDataset([replace(f, flow_id=f"row{i}") for i, f in enumerate(flows)],
-                                 name=fds.name, default_target=fds.default_target,
-                                 config=fds.config, invalid_targets=fds.invalid_targets)
-            wds = windowed_dataset(tagged, windows=list(windows), per_flow=True)
-            parent = np.array([int(w.meta["parent"][3:]) for w in wds.flows], dtype=np.int64)
-            Xw = wds.features(spec.features, **fparams)
-            log.info("[views] %s: %d windows over %d flows, X=%s", spec.model, len(parent),
-                     len(np.unique(parent)), Xw.shape)
-            data.views[spec.model] = WindowView(Xw=Xw, parent=parent, **common)
         else:
-            X = fds.features(spec.features, **fparams)
-            data.views[spec.model] = ArrayView(X=X, **common)
+            X, parent = member_input(fds, spec.features, fparams, windows)
+            if parent is None:
+                data.views[spec.model] = ArrayView(X=X, **common)
+            else:
+                log.info("[views] %s: %d windows over %d flows, X=%s", spec.model, len(parent),
+                         len(np.unique(parent)), X.shape)
+                data.views[spec.model] = WindowView(Xw=X, parent=parent, **common)
     for name, why in skipped.items():
         log.warning("[views] %s: skipping %s -- %s", expert.name, name, why)
     return data
+
+
+def member_input(fds: Any, features: str, feature_params: dict[str, Any],
+                 windows: Any = None) -> tuple[np.ndarray, np.ndarray | None]:
+    """A member's input for every flow of ``fds``: ``(X, None)`` for one row per flow, or
+    ``(X_windows, parent_row)`` when the member reads per-flow windows.
+
+    Shared by training (``build_expert_data``) and inference (``pipeline``), so a deployed
+    member sees its input built exactly the way it was trained on.
+    """
+    from countdown.schema import FlowDataset
+
+    if not windows:
+        return fds.features(features, **feature_params), None
+    from countdown.data.windows import windowed_dataset
+
+    # Windowing keys on flow_id, which is not unique (14 ISCX flows share one with another
+    # flow), so window row-tagged copies and map parents back by row.
+    tagged = FlowDataset([replace(f, flow_id=f"row{i}") for i, f in enumerate(fds.flows)],
+                         name=fds.name, default_target=fds.default_target,
+                         config=fds.config, invalid_targets=fds.invalid_targets)
+    wds = windowed_dataset(tagged, windows=list(windows), per_flow=True)
+    parent = np.array([int(w.meta["parent"][3:]) for w in wds.flows], dtype=np.int64)
+    return wds.features(features, **feature_params), parent
 
 
 def _graph_rows(flows: list, root: Path) -> tuple[np.ndarray, np.ndarray]:

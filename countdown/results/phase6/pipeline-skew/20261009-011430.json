@@ -1,0 +1,16 @@
+{
+  "pcaps": 60,
+  "single_flow": 60,
+  "flows_per_pcap": [
+    1
+  ],
+  "pipeline_E2_acc_no_fallback": 0.933,
+  "member_top_label_agrees_with_cached": {
+    "flow_gbdt": "60/60",
+    "graph_gnn": "60/60"
+  },
+  "member_conf_abs_diff_median": {
+    "flow_gbdt": 0.0,
+    "graph_gnn": 0.0
+  }
+}

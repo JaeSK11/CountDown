@@ -47,6 +47,7 @@ MANIFEST: dict[str, list[str]] = {
     "phase5": ["ensemble/E*/2026*/ablation.json", "ensemble/E*/2026*/ensemble.json",
                  "ensemble/E*/2026*/routing.json"],
     "phase5-data": ["reparse/*.json", "routing-eval/*.json"],
+    "phase6": ["pipeline-skew/*.json"],
 }
 
 

@@ -1,0 +1,1067 @@
+{
+  "E1": {
+    "beats_best_single": false,
+    "best_single": {
+      "accuracy": 0.8941,
+      "macro_f1": 0.6654,
+      "members": [
+        "flow_gbdt"
+      ]
+    },
+    "dataset": "iscx_pooled",
+    "deployed": [
+      "flow_gbdt"
+    ],
+    "rows": [
+      {
+        "accuracy": 0.8941,
+        "calibration": "none",
+        "combiner": "-",
+        "cv_macro_f1": 0.5901,
+        "ece": 0.0468,
+        "kind": "single",
+        "macro_f1": 0.6654,
+        "members": [
+          "flow_gbdt"
+        ],
+        "nll": 0.3608
+      },
+      {
+        "accuracy": 0.8941,
+        "calibration": "temperature",
+        "combiner": "-",
+        "cv_macro_f1": 0.5901,
+        "ece": 0.023,
+        "kind": "single",
+        "macro_f1": 0.6654,
+        "members": [
+          "flow_gbdt"
+        ],
+        "nll": 0.3165
+      },
+      {
+        "accuracy": 0.8854,
+        "calibration": "none",
+        "combiner": "-",
+        "cv_macro_f1": 0.5481,
+        "ece": 0.0858,
+        "kind": "single",
+        "macro_f1": 0.6378,
+        "members": [
+          "seq_cnn"
+        ],
+        "nll": 1.1976
+      },
+      {
+        "accuracy": 0.8854,
+        "calibration": "temperature",
+        "combiner": "-",
+        "cv_macro_f1": 0.5481,
+        "ece": 0.0893,
+        "kind": "single",
+        "macro_f1": 0.6378,
+        "members": [
+          "seq_cnn"
+        ],
+        "nll": 0.4939
+      },
+      {
+        "accuracy": 0.843,
+        "calibration": "none",
+        "combiner": "-",
+        "cv_macro_f1": 0.4211,
+        "ece": 0.0641,
+        "kind": "single",
+        "macro_f1": 0.4829,
+        "members": [
+          "flow_image_cnn"
+        ],
+        "nll": 0.5902
+      },
+      {
+        "accuracy": 0.843,
+        "calibration": "temperature",
+        "combiner": "-",
+        "cv_macro_f1": 0.4211,
+        "ece": 0.1013,
+        "kind": "single",
+        "macro_f1": 0.4829,
+        "members": [
+          "flow_image_cnn"
+        ],
+        "nll": 0.6127
+      },
+      {
+        "accuracy": 0.892,
+        "calibration": "none",
+        "combiner": "vote",
+        "cv_macro_f1": 0.5894,
+        "ece": 0.036,
+        "kind": "ensemble",
+        "macro_f1": 0.6595,
+        "members": [
+          "flow_gbdt",
+          "seq_cnn",
+          "flow_image_cnn"
+        ],
+        "nll": 0.3636
+      },
+      {
+        "accuracy": 0.8933,
+        "calibration": "temperature",
+        "combiner": "vote",
+        "cv_macro_f1": 0.5947,
+        "ece": 0.087,
+        "kind": "ensemble",
+        "macro_f1": 0.6648,
+        "members": [
+          "flow_gbdt",
+          "seq_cnn",
+          "flow_image_cnn"
+        ],
+        "nll": 0.3923
+      },
+      {
+        "accuracy": 0.8553,
+        "calibration": "none",
+        "combiner": "stack_logreg",
+        "cv_macro_f1": 0.5585,
+        "ece": 0.0483,
+        "kind": "ensemble",
+        "macro_f1": 0.574,
+        "members": [
+          "flow_gbdt",
+          "seq_cnn",
+          "flow_image_cnn"
+        ],
+        "nll": 0.4168
+      },
+      {
+        "accuracy": 0.8688,
+        "calibration": "temperature",
+        "combiner": "stack_logreg",
+        "cv_macro_f1": 0.5562,
+        "ece": 0.0365,
+        "kind": "ensemble",
+        "macro_f1": 0.5856,
+        "members": [
+          "flow_gbdt",
+          "seq_cnn",
+          "flow_image_cnn"
+        ],
+        "nll": 0.3977
+      },
+      {
+        "accuracy": 0.8691,
+        "calibration": "none",
+        "combiner": "stack_lgbm",
+        "cv_macro_f1": 0.564,
+        "ece": 0.0418,
+        "kind": "ensemble",
+        "macro_f1": 0.6015,
+        "members": [
+          "flow_gbdt",
+          "seq_cnn",
+          "flow_image_cnn"
+        ],
+        "nll": 0.3805
+      },
+      {
+        "accuracy": 0.8683,
+        "calibration": "temperature",
+        "combiner": "stack_lgbm",
+        "cv_macro_f1": 0.5713,
+        "ece": 0.0426,
+        "kind": "ensemble",
+        "macro_f1": 0.61,
+        "members": [
+          "flow_gbdt",
+          "seq_cnn",
+          "flow_image_cnn"
+        ],
+        "nll": 0.3745
+      },
+      {
+        "accuracy": 0.8898,
+        "calibration": "none",
+        "combiner": "vote",
+        "cv_macro_f1": 0.5789,
+        "ece": 0.0482,
+        "kind": "ensemble",
+        "macro_f1": 0.6535,
+        "members": [
+          "flow_gbdt",
+          "seq_cnn"
+        ],
+        "nll": 0.3803
+      },
+      {
+        "accuracy": 0.894,
+        "calibration": "temperature",
+        "combiner": "vote",
+        "cv_macro_f1": 0.5883,
+        "ece": 0.0562,
+        "kind": "ensemble",
+        "macro_f1": 0.6618,
+        "members": [
+          "flow_gbdt",
+          "seq_cnn"
+        ],
+        "nll": 0.3601
+      },
+      {
+        "accuracy": 0.8577,
+        "calibration": "none",
+        "combiner": "stack_logreg",
+        "cv_macro_f1": 0.5681,
+        "ece": 0.0509,
+        "kind": "ensemble",
+        "macro_f1": 0.58,
+        "members": [
+          "flow_gbdt",
+          "seq_cnn"
+        ],
+        "nll": 0.3938
+      },
+      {
+        "accuracy": 0.8749,
+        "calibration": "temperature",
+        "combiner": "stack_logreg",
+        "cv_macro_f1": 0.5728,
+        "ece": 0.0371,
+        "kind": "ensemble",
+        "macro_f1": 0.597,
+        "members": [
+          "flow_gbdt",
+          "seq_cnn"
+        ],
+        "nll": 0.3918
+      },
+      {
+        "accuracy": 0.8737,
+        "calibration": "none",
+        "combiner": "stack_lgbm",
+        "cv_macro_f1": 0.5722,
+        "ece": 0.0373,
+        "kind": "ensemble",
+        "macro_f1": 0.6132,
+        "members": [
+          "flow_gbdt",
+          "seq_cnn"
+        ],
+        "nll": 0.3651
+      },
+      {
+        "accuracy": 0.8767,
+        "calibration": "temperature",
+        "combiner": "stack_lgbm",
+        "cv_macro_f1": 0.5566,
+        "ece": 0.0353,
+        "kind": "ensemble",
+        "macro_f1": 0.6218,
+        "members": [
+          "flow_gbdt",
+          "seq_cnn"
+        ],
+        "nll": 0.371
+      },
+      {
+        "accuracy": 0.8917,
+        "calibration": "none",
+        "combiner": "vote",
+        "cv_macro_f1": 0.5922,
+        "ece": 0.0385,
+        "kind": "ensemble",
+        "macro_f1": 0.6662,
+        "members": [
+          "flow_gbdt",
+          "flow_image_cnn"
+        ],
+        "nll": 0.3744
+      },
+      {
+        "accuracy": 0.8901,
+        "calibration": "temperature",
+        "combiner": "vote",
+        "cv_macro_f1": 0.5915,
+        "ece": 0.074,
+        "kind": "ensemble",
+        "macro_f1": 0.6627,
+        "members": [
+          "flow_gbdt",
+          "flow_image_cnn"
+        ],
+        "nll": 0.3886
+      },
+      {
+        "accuracy": 0.857,
+        "calibration": "none",
+        "combiner": "stack_logreg",
+        "cv_macro_f1": 0.5595,
+        "ece": 0.0487,
+        "kind": "ensemble",
+        "macro_f1": 0.5746,
+        "members": [
+          "flow_gbdt",
+          "flow_image_cnn"
+        ],
+        "nll": 0.4067
+      },
+      {
+        "accuracy": 0.8563,
+        "calibration": "temperature",
+        "combiner": "stack_logreg",
+        "cv_macro_f1": 0.5596,
+        "ece": 0.051,
+        "kind": "ensemble",
+        "macro_f1": 0.572,
+        "members": [
+          "flow_gbdt",
+          "flow_image_cnn"
+        ],
+        "nll": 0.4069
+      },
+      {
+        "accuracy": 0.839,
+        "calibration": "none",
+        "combiner": "stack_lgbm",
+        "cv_macro_f1": 0.5671,
+        "ece": 0.072,
+        "kind": "ensemble",
+        "macro_f1": 0.5456,
+        "members": [
+          "flow_gbdt",
+          "flow_image_cnn"
+        ],
+        "nll": 0.8954
+      },
+      {
+        "accuracy": 0.8716,
+        "calibration": "temperature",
+        "combiner": "stack_lgbm",
+        "cv_macro_f1": 0.5634,
+        "ece": 0.0415,
+        "kind": "ensemble",
+        "macro_f1": 0.6125,
+        "members": [
+          "flow_gbdt",
+          "flow_image_cnn"
+        ],
+        "nll": 0.3861
+      },
+      {
+        "accuracy": 0.8868,
+        "calibration": "none",
+        "combiner": "vote",
+        "cv_macro_f1": 0.5511,
+        "ece": 0.0461,
+        "kind": "ensemble",
+        "macro_f1": 0.6432,
+        "members": [
+          "seq_cnn",
+          "flow_image_cnn"
+        ],
+        "nll": 0.4481
+      },
+      {
+        "accuracy": 0.8846,
+        "calibration": "temperature",
+        "combiner": "vote",
+        "cv_macro_f1": 0.5575,
+        "ece": 0.1193,
+        "kind": "ensemble",
+        "macro_f1": 0.6425,
+        "members": [
+          "seq_cnn",
+          "flow_image_cnn"
+        ],
+        "nll": 0.4778
+      },
+      {
+        "accuracy": 0.8523,
+        "calibration": "none",
+        "combiner": "stack_logreg",
+        "cv_macro_f1": 0.5335,
+        "ece": 0.06,
+        "kind": "ensemble",
+        "macro_f1": 0.5723,
+        "members": [
+          "seq_cnn",
+          "flow_image_cnn"
+        ],
+        "nll": 0.4782
+      },
+      {
+        "accuracy": 0.8592,
+        "calibration": "temperature",
+        "combiner": "stack_logreg",
+        "cv_macro_f1": 0.5251,
+        "ece": 0.0318,
+        "kind": "ensemble",
+        "macro_f1": 0.5793,
+        "members": [
+          "seq_cnn",
+          "flow_image_cnn"
+        ],
+        "nll": 0.4339
+      },
+      {
+        "accuracy": 0.8533,
+        "calibration": "none",
+        "combiner": "stack_lgbm",
+        "cv_macro_f1": 0.5479,
+        "ece": 0.0385,
+        "kind": "ensemble",
+        "macro_f1": 0.5664,
+        "members": [
+          "seq_cnn",
+          "flow_image_cnn"
+        ],
+        "nll": 0.4226
+      },
+      {
+        "accuracy": 0.8552,
+        "calibration": "temperature",
+        "combiner": "stack_lgbm",
+        "cv_macro_f1": 0.5395,
+        "ece": 0.039,
+        "kind": "ensemble",
+        "macro_f1": 0.5695,
+        "members": [
+          "seq_cnn",
+          "flow_image_cnn"
+        ],
+        "nll": 0.4312
+      }
+    ],
+    "selected": {
+      "accuracy": 0.8933,
+      "calibration": "temperature",
+      "combiner": "vote",
+      "cv_macro_f1": 0.5947,
+      "macro_f1": 0.6648,
+      "members": [
+        "flow_gbdt",
+        "seq_cnn",
+        "flow_image_cnn"
+      ]
+    },
+    "target": "traffic_type"
+  },
+  "E2": {
+    "beats_best_single": true,
+    "best_single": {
+      "accuracy": 0.8926,
+      "macro_f1": 0.868,
+      "members": [
+        "graph_gnn"
+      ]
+    },
+    "dataset": "cstnet",
+    "deployed": [
+      "flow_gbdt",
+      "graph_gnn"
+    ],
+    "rows": [
+      {
+        "accuracy": 0.8624,
+        "calibration": "none",
+        "combiner": "-",
+        "cv_macro_f1": 0.8123,
+        "ece": 0.0298,
+        "kind": "single",
+        "macro_f1": 0.8323,
+        "members": [
+          "flow_gbdt"
+        ],
+        "nll": 0.5766
+      },
+      {
+        "accuracy": 0.8624,
+        "calibration": "temperature",
+        "combiner": "-",
+        "cv_macro_f1": 0.8123,
+        "ece": 0.0121,
+        "kind": "single",
+        "macro_f1": 0.8323,
+        "members": [
+          "flow_gbdt"
+        ],
+        "nll": 0.5691
+      },
+      {
+        "accuracy": 0.8926,
+        "calibration": "none",
+        "combiner": "-",
+        "cv_macro_f1": 0.8521,
+        "ece": 0.0685,
+        "kind": "single",
+        "macro_f1": 0.868,
+        "members": [
+          "graph_gnn"
+        ],
+        "nll": 0.6399
+      },
+      {
+        "accuracy": 0.8926,
+        "calibration": "temperature",
+        "combiner": "-",
+        "cv_macro_f1": 0.8521,
+        "ece": 0.0117,
+        "kind": "single",
+        "macro_f1": 0.868,
+        "members": [
+          "graph_gnn"
+        ],
+        "nll": 0.4119
+      },
+      {
+        "accuracy": 0.9078,
+        "calibration": "none",
+        "combiner": "vote",
+        "cv_macro_f1": 0.8724,
+        "ece": 0.0241,
+        "kind": "ensemble",
+        "macro_f1": 0.8835,
+        "members": [
+          "flow_gbdt",
+          "graph_gnn"
+        ],
+        "nll": 0.3936
+      },
+      {
+        "accuracy": 0.9129,
+        "calibration": "temperature",
+        "combiner": "vote",
+        "cv_macro_f1": 0.8765,
+        "ece": 0.0612,
+        "kind": "ensemble",
+        "macro_f1": 0.89,
+        "members": [
+          "flow_gbdt",
+          "graph_gnn"
+        ],
+        "nll": 0.3804
+      },
+      {
+        "accuracy": 0.9046,
+        "calibration": "none",
+        "combiner": "stack_logreg",
+        "cv_macro_f1": 0.8557,
+        "ece": 0.0485,
+        "kind": "ensemble",
+        "macro_f1": 0.8801,
+        "members": [
+          "flow_gbdt",
+          "graph_gnn"
+        ],
+        "nll": 0.5257
+      },
+      {
+        "accuracy": 0.8998,
+        "calibration": "temperature",
+        "combiner": "stack_logreg",
+        "cv_macro_f1": 0.8484,
+        "ece": 0.0413,
+        "kind": "ensemble",
+        "macro_f1": 0.8726,
+        "members": [
+          "flow_gbdt",
+          "graph_gnn"
+        ],
+        "nll": 0.4366
+      },
+      {
+        "accuracy": 0.6003,
+        "calibration": "none",
+        "combiner": "stack_lgbm",
+        "cv_macro_f1": null,
+        "ece": 0.3995,
+        "kind": "ensemble",
+        "macro_f1": 0.5458,
+        "members": [
+          "flow_gbdt",
+          "graph_gnn"
+        ],
+        "nll": 11.0352
+      },
+      {
+        "accuracy": 0.5901,
+        "calibration": "temperature",
+        "combiner": "stack_lgbm",
+        "cv_macro_f1": null,
+        "ece": 0.4097,
+        "kind": "ensemble",
+        "macro_f1": 0.5261,
+        "members": [
+          "flow_gbdt",
+          "graph_gnn"
+        ],
+        "nll": 11.3069
+      }
+    ],
+    "selected": {
+      "accuracy": 0.9129,
+      "calibration": "temperature",
+      "combiner": "vote",
+      "cv_macro_f1": 0.8765,
+      "macro_f1": 0.89,
+      "members": [
+        "flow_gbdt",
+        "graph_gnn"
+      ]
+    },
+    "target": "app"
+  },
+  "E3": {
+    "beats_best_single": true,
+    "best_single": {
+      "accuracy": 0.4891,
+      "macro_f1": 0.4409,
+      "members": [
+        "flow_gbdt"
+      ]
+    },
+    "dataset": "mobileapp",
+    "deployed": [
+      "flow_gbdt",
+      "seq_cnn",
+      "flow_image_cnn"
+    ],
+    "rows": [
+      {
+        "accuracy": 0.4891,
+        "calibration": "none",
+        "combiner": "-",
+        "cv_macro_f1": 0.4305,
+        "ece": 0.1026,
+        "kind": "single",
+        "macro_f1": 0.4409,
+        "members": [
+          "flow_gbdt"
+        ],
+        "nll": 2.1831
+      },
+      {
+        "accuracy": 0.4891,
+        "calibration": "temperature",
+        "combiner": "-",
+        "cv_macro_f1": 0.4305,
+        "ece": 0.1093,
+        "kind": "single",
+        "macro_f1": 0.4409,
+        "members": [
+          "flow_gbdt"
+        ],
+        "nll": 2.1835
+      },
+      {
+        "accuracy": 0.2717,
+        "calibration": "none",
+        "combiner": "-",
+        "cv_macro_f1": 0.1512,
+        "ece": 0.2222,
+        "kind": "single",
+        "macro_f1": 0.2098,
+        "members": [
+          "seq_cnn"
+        ],
+        "nll": 3.2235
+      },
+      {
+        "accuracy": 0.2717,
+        "calibration": "temperature",
+        "combiner": "-",
+        "cv_macro_f1": 0.1512,
+        "ece": 0.0984,
+        "kind": "single",
+        "macro_f1": 0.2098,
+        "members": [
+          "seq_cnn"
+        ],
+        "nll": 2.9089
+      },
+      {
+        "accuracy": 0.4783,
+        "calibration": "none",
+        "combiner": "-",
+        "cv_macro_f1": 0.2876,
+        "ece": 0.188,
+        "kind": "single",
+        "macro_f1": 0.3841,
+        "members": [
+          "flow_image_cnn"
+        ],
+        "nll": 2.2263
+      },
+      {
+        "accuracy": 0.4783,
+        "calibration": "temperature",
+        "combiner": "-",
+        "cv_macro_f1": 0.2876,
+        "ece": 0.1988,
+        "kind": "single",
+        "macro_f1": 0.3841,
+        "members": [
+          "flow_image_cnn"
+        ],
+        "nll": 2.2405
+      },
+      {
+        "accuracy": 0.587,
+        "calibration": "none",
+        "combiner": "vote",
+        "cv_macro_f1": 0.4633,
+        "ece": 0.2377,
+        "kind": "ensemble",
+        "macro_f1": 0.5333,
+        "members": [
+          "flow_gbdt",
+          "seq_cnn",
+          "flow_image_cnn"
+        ],
+        "nll": 1.8288
+      },
+      {
+        "accuracy": 0.5652,
+        "calibration": "temperature",
+        "combiner": "vote",
+        "cv_macro_f1": 0.4675,
+        "ece": 0.2239,
+        "kind": "ensemble",
+        "macro_f1": 0.5134,
+        "members": [
+          "flow_gbdt",
+          "seq_cnn",
+          "flow_image_cnn"
+        ],
+        "nll": 1.8611
+      },
+      {
+        "accuracy": 0.4674,
+        "calibration": "none",
+        "combiner": "stack_logreg",
+        "cv_macro_f1": 0.4448,
+        "ece": 0.1203,
+        "kind": "ensemble",
+        "macro_f1": 0.3946,
+        "members": [
+          "flow_gbdt",
+          "seq_cnn",
+          "flow_image_cnn"
+        ],
+        "nll": 2.3843
+      },
+      {
+        "accuracy": 0.4783,
+        "calibration": "temperature",
+        "combiner": "stack_logreg",
+        "cv_macro_f1": 0.4161,
+        "ece": 0.0941,
+        "kind": "ensemble",
+        "macro_f1": 0.3978,
+        "members": [
+          "flow_gbdt",
+          "seq_cnn",
+          "flow_image_cnn"
+        ],
+        "nll": 2.3323
+      },
+      {
+        "accuracy": 0.5326,
+        "calibration": "none",
+        "combiner": "stack_lgbm",
+        "cv_macro_f1": 0.4275,
+        "ece": 0.2014,
+        "kind": "ensemble",
+        "macro_f1": 0.4652,
+        "members": [
+          "flow_gbdt",
+          "seq_cnn",
+          "flow_image_cnn"
+        ],
+        "nll": 2.379
+      },
+      {
+        "accuracy": 0.4891,
+        "calibration": "temperature",
+        "combiner": "stack_lgbm",
+        "cv_macro_f1": 0.4073,
+        "ece": 0.2039,
+        "kind": "ensemble",
+        "macro_f1": 0.4199,
+        "members": [
+          "flow_gbdt",
+          "seq_cnn",
+          "flow_image_cnn"
+        ],
+        "nll": 2.56
+      },
+      {
+        "accuracy": 0.5435,
+        "calibration": "none",
+        "combiner": "vote",
+        "cv_macro_f1": 0.4212,
+        "ece": 0.1425,
+        "kind": "ensemble",
+        "macro_f1": 0.4935,
+        "members": [
+          "flow_gbdt",
+          "seq_cnn"
+        ],
+        "nll": 2.0341
+      },
+      {
+        "accuracy": 0.5326,
+        "calibration": "temperature",
+        "combiner": "vote",
+        "cv_macro_f1": 0.4271,
+        "ece": 0.1384,
+        "kind": "ensemble",
+        "macro_f1": 0.479,
+        "members": [
+          "flow_gbdt",
+          "seq_cnn"
+        ],
+        "nll": 2.0639
+      },
+      {
+        "accuracy": 0.3152,
+        "calibration": "none",
+        "combiner": "stack_logreg",
+        "cv_macro_f1": 0.3599,
+        "ece": 0.1662,
+        "kind": "ensemble",
+        "macro_f1": 0.2401,
+        "members": [
+          "flow_gbdt",
+          "seq_cnn"
+        ],
+        "nll": 3.124
+      },
+      {
+        "accuracy": 0.3152,
+        "calibration": "temperature",
+        "combiner": "stack_logreg",
+        "cv_macro_f1": 0.3542,
+        "ece": 0.2052,
+        "kind": "ensemble",
+        "macro_f1": 0.2317,
+        "members": [
+          "flow_gbdt",
+          "seq_cnn"
+        ],
+        "nll": 3.1431
+      },
+      {
+        "accuracy": 0.337,
+        "calibration": "none",
+        "combiner": "stack_lgbm",
+        "cv_macro_f1": 0.3071,
+        "ece": 0.2694,
+        "kind": "ensemble",
+        "macro_f1": 0.263,
+        "members": [
+          "flow_gbdt",
+          "seq_cnn"
+        ],
+        "nll": 3.2774
+      },
+      {
+        "accuracy": 0.3478,
+        "calibration": "temperature",
+        "combiner": "stack_lgbm",
+        "cv_macro_f1": 0.3245,
+        "ece": 0.2851,
+        "kind": "ensemble",
+        "macro_f1": 0.2906,
+        "members": [
+          "flow_gbdt",
+          "seq_cnn"
+        ],
+        "nll": 3.3864
+      },
+      {
+        "accuracy": 0.5326,
+        "calibration": "none",
+        "combiner": "vote",
+        "cv_macro_f1": 0.4664,
+        "ece": 0.1865,
+        "kind": "ensemble",
+        "macro_f1": 0.4826,
+        "members": [
+          "flow_gbdt",
+          "flow_image_cnn"
+        ],
+        "nll": 1.8348
+      },
+      {
+        "accuracy": 0.5326,
+        "calibration": "temperature",
+        "combiner": "vote",
+        "cv_macro_f1": 0.4636,
+        "ece": 0.1827,
+        "kind": "ensemble",
+        "macro_f1": 0.4826,
+        "members": [
+          "flow_gbdt",
+          "flow_image_cnn"
+        ],
+        "nll": 1.8405
+      },
+      {
+        "accuracy": 0.4565,
+        "calibration": "none",
+        "combiner": "stack_logreg",
+        "cv_macro_f1": 0.3981,
+        "ece": 0.105,
+        "kind": "ensemble",
+        "macro_f1": 0.3848,
+        "members": [
+          "flow_gbdt",
+          "flow_image_cnn"
+        ],
+        "nll": 2.1966
+      },
+      {
+        "accuracy": 0.4565,
+        "calibration": "temperature",
+        "combiner": "stack_logreg",
+        "cv_macro_f1": 0.3941,
+        "ece": 0.107,
+        "kind": "ensemble",
+        "macro_f1": 0.383,
+        "members": [
+          "flow_gbdt",
+          "flow_image_cnn"
+        ],
+        "nll": 2.2118
+      },
+      {
+        "accuracy": 0.5326,
+        "calibration": "none",
+        "combiner": "stack_lgbm",
+        "cv_macro_f1": 0.3833,
+        "ece": 0.2222,
+        "kind": "ensemble",
+        "macro_f1": 0.4594,
+        "members": [
+          "flow_gbdt",
+          "flow_image_cnn"
+        ],
+        "nll": 2.3049
+      },
+      {
+        "accuracy": 0.5217,
+        "calibration": "temperature",
+        "combiner": "stack_lgbm",
+        "cv_macro_f1": 0.3779,
+        "ece": 0.2527,
+        "kind": "ensemble",
+        "macro_f1": 0.4344,
+        "members": [
+          "flow_gbdt",
+          "flow_image_cnn"
+        ],
+        "nll": 2.4075
+      },
+      {
+        "accuracy": 0.5,
+        "calibration": "none",
+        "combiner": "vote",
+        "cv_macro_f1": 0.3802,
+        "ece": 0.2146,
+        "kind": "ensemble",
+        "macro_f1": 0.421,
+        "members": [
+          "seq_cnn",
+          "flow_image_cnn"
+        ],
+        "nll": 2.0729
+      },
+      {
+        "accuracy": 0.5652,
+        "calibration": "temperature",
+        "combiner": "vote",
+        "cv_macro_f1": 0.3717,
+        "ece": 0.3178,
+        "kind": "ensemble",
+        "macro_f1": 0.4942,
+        "members": [
+          "seq_cnn",
+          "flow_image_cnn"
+        ],
+        "nll": 2.1288
+      },
+      {
+        "accuracy": 0.3696,
+        "calibration": "none",
+        "combiner": "stack_logreg",
+        "cv_macro_f1": 0.3103,
+        "ece": 0.1903,
+        "kind": "ensemble",
+        "macro_f1": 0.2792,
+        "members": [
+          "seq_cnn",
+          "flow_image_cnn"
+        ],
+        "nll": 2.8095
+      },
+      {
+        "accuracy": 0.3696,
+        "calibration": "temperature",
+        "combiner": "stack_logreg",
+        "cv_macro_f1": 0.3027,
+        "ece": 0.2036,
+        "kind": "ensemble",
+        "macro_f1": 0.2803,
+        "members": [
+          "seq_cnn",
+          "flow_image_cnn"
+        ],
+        "nll": 2.7824
+      },
+      {
+        "accuracy": 0.413,
+        "calibration": "none",
+        "combiner": "stack_lgbm",
+        "cv_macro_f1": 0.3134,
+        "ece": 0.2899,
+        "kind": "ensemble",
+        "macro_f1": 0.3486,
+        "members": [
+          "seq_cnn",
+          "flow_image_cnn"
+        ],
+        "nll": 2.9031
+      },
+      {
+        "accuracy": 0.4239,
+        "calibration": "temperature",
+        "combiner": "stack_lgbm",
+        "cv_macro_f1": 0.3444,
+        "ece": 0.2444,
+        "kind": "ensemble",
+        "macro_f1": 0.3699,
+        "members": [
+          "seq_cnn",
+          "flow_image_cnn"
+        ],
+        "nll": 2.8095
+      }
+    ],
+    "selected": {
+      "accuracy": 0.5652,
+      "calibration": "temperature",
+      "combiner": "vote",
+      "cv_macro_f1": 0.4675,
+      "macro_f1": 0.5134,
+      "members": [
+        "flow_gbdt",
+        "seq_cnn",
+        "flow_image_cnn"
+      ]
+    },
+    "target": "activity"
+  }
+}

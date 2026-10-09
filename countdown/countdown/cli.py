@@ -101,6 +101,19 @@ def cmd_triage(args: argparse.Namespace) -> int:
     return 0
 
 
+def cmd_experiments(args: argparse.Namespace) -> int:
+    from countdown.eval import experiments
+
+    if args.action == "list":
+        for n in experiments.EXPERIMENTS:
+            print(n)
+        return 0
+    names = None if args.all or not args.names else args.names
+    for n, path in experiments.run(names).items():
+        print(f"{n:14s} -> {path}", file=sys.stderr)
+    return 0
+
+
 def main(argv: list[str] | None = None) -> int:
     ap = argparse.ArgumentParser(prog="countdown", description="Quantum-readiness triage of network traffic.")
     sub = ap.add_subparsers(dest="cmd", required=True)
@@ -126,6 +139,11 @@ def main(argv: list[str] | None = None) -> int:
     t.add_argument("--context")
     t.add_argument("--store")
     t.set_defaults(func=cmd_triage)
+    e = sub.add_parser("experiments", help="regenerate the results tables under results/experiments/")
+    e.add_argument("action", choices=("run", "list"))
+    e.add_argument("names", nargs="*", help="experiments to run (default: all)")
+    e.add_argument("--all", action="store_true")
+    e.set_defaults(func=cmd_experiments)
     args = ap.parse_args(argv)
     return args.func(args)
 

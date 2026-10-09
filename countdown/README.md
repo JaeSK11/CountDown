@@ -17,7 +17,7 @@ See [`PLAN.md`](PLAN.md) for the full roadmap and [`phases/`](phases/) for per-p
 
 ---
 
-## Status: Phases 0–5 built; Phase 6 under way (pipeline, `analyze`, `triage` done)
+## Status: Phases 0–5 built; Phase 6 under way (pipeline, `analyze`, `triage`, experiments done)
 
 Phase 0 delivers the data layer: **any dataset → `(X, y)`**.
 
@@ -157,7 +157,12 @@ classified, everything else is routed to one expert and labelled (`phases/PHASE-
 exposed or unobservable (flows and bytes) and what the exposed traffic is. On the labelled
 datasets **no flow is quantum-safe** and every observable flow is exposed (`PHASE-6.md` §10).
 
-Not yet built: cross-dataset tables, live capture, packaging (P6).
+`countdown experiments run --all` regenerates every results table (`results/experiments/`)
+byte for byte. One of them is a warning: the traffic-type model trained on one ISCX capture
+campaign scores ~0.11 macro-F1 on the other (0.58 in-domain) — in-domain numbers here describe
+these capture setups, not traffic in general (`PHASE-6.md` §11).
+
+Not yet built: paper tables/figures, live capture, packaging (P6).
 
 ## Install
 
@@ -228,6 +233,8 @@ countdown/
   pipeline/artifacts.py   DeployedExpert (members + recipes + calibrators + vote)  [P6]
   cli.py, __main__.py     `countdown analyze | triage` (also python -m countdown) [P6]
   eval/triage.py          PQC-triage: exposure by flows/bytes + what is exposed    [P6]
+  eval/cross_dataset.py   train on one capture setting, test on another            [P6]
+  eval/experiments.py     `countdown experiments run` -> results/experiments/      [P6]
   eval/tiers.py           readiness tiers (configs/readiness_tiers.yaml)           [P6]
 configs/experiments/      one YAML per Phase-3 experiment
 runs/                     per-run artifacts (gitignored)

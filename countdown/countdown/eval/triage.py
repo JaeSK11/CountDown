@@ -201,3 +201,103 @@ def to_markdown(name: str, t: dict[str, Any]) -> str:
         for k, v in t["at_risk_tiers_by_flows"].items():
             lines.append(f"| {k} | {v['n']:,} | {v['share']:.1%} | {tb.get(k, {}).get('share', 0):.1%} |")
     return "\n".join(lines) + "\n"
+
+
+# -- the research report (scripts/run_triage.py, `countdown experiments run triage`) ---------
+from pathlib import Path as _Path  # noqa: E402
+
+_ROOT = _Path(__file__).resolve().parents[2]
+
+DATASETS = [("iscxvpn", "traffic_type"), ("iscxtor", "traffic_type"),
+            ("cstnet", "app"), ("postquantumtls", "app")]
+
+
+def exposed_mask(flows) -> np.ndarray:
+    from countdown.crypto import enrich_flow, kem_registry, parse_handshake
+
+    out = []
+    for f in flows:
+        v = enrich_flow(f)
+        listed = (any(kem_registry.is_quantum_resistant(g) for g in parse_handshake(f).offered_groups)
+                  if v.basis == "offered" else None)
+        out.append(_bucket(v.label, v.basis, listed) in EXPOSED)
+    return np.array(out)
+
+
+def fidelity(name: str, tiers) -> dict:
+    """Predicted vs true class mix of the exposed test flows of one expert."""
+    from countdown.data import load
+    from countdown.ensemble.views import PER_FLOW_OVERRIDES, build_expert_data, _graph_rows
+    from countdown.experts import get_expert
+    from countdown.pipeline.artifacts import DeployedExpert
+
+    exp = DeployedExpert.load(_ROOT / "models_store" / f"{name}.joblib")
+    spec = get_expert(name)
+    data = build_expert_data(spec, members=list(exp.members), seed=42,
+                             overrides=PER_FLOW_OVERRIDES[name])
+    flows = load(spec.dataset).flows
+    if "graph_gnn" in exp.members:
+        _, keep = _graph_rows(flows, _ROOT / "cache/tfegnn/cstnet")
+        flows = [flows[i] for i in keep]
+    te = data.test_rows
+    preds = _ROOT / "runs/ensemble" / name / "preds-s42"
+    member = {m: np.load(preds / f"{m}.npz")["test"] for m in exp.members}
+    proba = exp.combine(member)
+    names = exp.label_space.names
+    mask = exposed_mask([flows[r] for r in te])
+    true = [names[i] for i in data.y[te][mask]]
+    pred = [names[i] for i in proba.argmax(1)[mask]]
+    out = {"expert": name, "test_flows": int(len(te)), "exposed_test_flows": int(mask.sum()),
+           "class_mix": breakdown_error(true, pred),
+           "accuracy_on_exposed": round(float(np.mean(np.array(true) == np.array(pred))), 4)}
+    if spec.target == "traffic_type":
+        lookup = {c: t for t, cs in tiers.items() for c in cs}
+        out["tier_mix"] = breakdown_error([lookup[c] for c in true], [lookup[c] for c in pred])
+    return out
+
+
+
+def build_report() -> tuple[dict[str, Any], str]:
+    """Ground-truth triage per dataset, the synthetic PQC captures through the pipeline, and
+    the fidelity of the predicted breakdown.  Returns ``(report, markdown)``; no timestamps,
+    so a re-run on unchanged inputs reproduces both byte for byte."""
+    from countdown.data import load
+    from countdown.eval.tiers import load_tiers
+
+    tiers = load_tiers()
+    report: dict = {"datasets": {}, "synthetic_pqc": None, "fidelity": {}}
+    md = ["# PQC triage", ""]
+    for ds_name, field in DATASETS:
+        t = triage_flows(load(ds_name).flows, label_field=field,
+                         tiers=tiers if field == "traffic_type" else None)
+        report["datasets"][ds_name] = t
+        md.append(to_markdown(ds_name, t))
+    synth = sorted((_ROOT.parent / "data" / "_pqc_synth").glob("*.pcap"))
+    if synth:
+        from countdown.pipeline import Pipeline, PipelineConfig
+
+        pipe = Pipeline(PipelineConfig(mode="fast"))
+        recs = []
+        for p in synth:
+            for r in pipe.analyze_pcap(p):
+                r["source"] = p.name
+                recs.append(r)
+        report["synthetic_pqc"] = {
+            "files": [p.name for p in synth],
+            "per_file": {p.name: [{k: r[k] for k in ("pqc_verdict", "pqc_basis", "kem_group",
+                                                     "quantum_safe", "route_reason")}
+                                  for r in recs if r["source"] == p.name] for p in synth},
+            "triage": triage_records(recs, tiers=tiers)}
+        md.append(to_markdown("_pqc_synth (self-generated, through the pipeline)",
+                              report["synthetic_pqc"]["triage"]))
+    for name in ("E1", "E2"):
+        report["fidelity"][name] = fidelity(name, tiers)
+    md += ["### Fidelity of the predicted breakdown (exposed test flows)", "",
+           "| expert | exposed test flows | accuracy | class-mix TV | worst class (gap) | tier-mix TV |",
+           "| --- | --- | --- | --- | --- | --- |"]
+    for n, f in report["fidelity"].items():
+        cm = f["class_mix"]
+        md.append(f"| {n} | {f['exposed_test_flows']:,} | {f['accuracy_on_exposed']:.3f} | "
+                  f"{cm['total_variation']:.3f} | {cm['worst_class']} ({cm['worst_gap']:+.3f}) | "
+                  f"{f.get('tier_mix', {}).get('total_variation', '—')} |")
+    return report, "\n".join(md) + "\n"

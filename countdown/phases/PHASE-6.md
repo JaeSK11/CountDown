@@ -199,7 +199,7 @@ Tests: `tests/test_pipeline.py` — quantum-safe skip, hint routing, fallback wi
 kept, context override never second-guessed, redaction, artifact round trip, CLI CSV/JSONL, the
 5-tuple byte join.
 
-**Next:** 6.6 cross-dataset, 6.7 tables, 6.3/6.4 live capture, 6.8 packaging (refit-on-all model zoo, example pcaps from `data/_pqc_synth/` — ours to ship).
+**Next:** 6.7 tables, 6.3/6.4 live capture, 6.8 packaging (refit-on-all model zoo, example pcaps from `data/_pqc_synth/` — ours to ship).
 
 ---
 
@@ -271,3 +271,53 @@ traffic that matters most. `countdown triage` prints these error figures under i
   negotiate X25519MLKEM768 with large CDNs by default) would give the first non-synthetic
   quantum-safe flows — it has to be traffic we may capture.
 - E1's `file_transfer` recall is the model work with the most triage value.
+
+---
+
+## 11. 6.6 Cross-dataset generalisation + the experiments runner (2026-10-09)
+
+```bash
+countdown experiments list
+countdown experiments run --all          # -> results/experiments/{triage,cross_dataset,ablation}.{json,md}
+```
+
+`eval/experiments.py` regenerates every results table. Outputs carry no timestamps or run paths,
+and **re-running reproduces them byte for byte** — checked on all three (`ablation` in
+`tests/test_experiments.py`). `ablation` tabulates the finished Phase-5 runs rather than
+re-training hours of GPU members; `triage` and `cross_dataset` recompute from the data (~3 min
+for all three).
+
+### Cross-dataset results (`results/experiments/cross_dataset.md`)
+
+E1's deployed member (`flow_gbdt` on `flow_stats`), traffic type, seed 42, a fixed 600 rounds on
+every side (early stopping on a grouped 10 % carve-out stopped at round 1 on ISCX-VPN and left a
+near-constant model — in-domain 0.045 — so it is off for both columns). Macro-F1 over the classes
+both sides contain; in-domain = the training side's own grouped 80/20 split on the same classes.
+
+| shift | train → test | classes | in-domain | **cross** | drop |
+| --- | --- | --- | --- | --- | --- |
+| corpus | ISCX-VPN → ISCX-Tor | 7 | 0.576 | **0.102** | −0.47 |
+| corpus | ISCX-Tor → ISCX-VPN | 7 | 0.578 | **0.113** | −0.47 |
+| tunnel | ISCX-VPN plain → VPN-tunnelled | 6 | 0.598 | **0.335** | −0.26 |
+| tunnel | ISCX-VPN tunnelled → plain | 6 | 0.681 | **0.182** | −0.50 |
+| tunnel | ISCX-Tor plain → Tor-tunnelled | 8 | 0.777 | **0.138** | −0.64 |
+| tunnel | ISCX-Tor tunnelled → plain | 8 | 0.601 | **0.078** | −0.52 |
+
+**The traffic-type model does not transfer.** Across the two ISCX capture campaigns it falls from
+~0.58 to ~0.11 — near the majority-class floor — on the same 7 classes. Plain → VPN-tunnelled
+keeps the most (0.34; `email` 0.69, `voip` 0.52 survive the tunnel), plain → Tor collapses
+(0.14). What the in-domain scores of Phases 3–5 measure is largely *this capture setup*, not
+*this kind of traffic*.
+
+Consequences:
+- Every E1 number in this repo, and the E1 breakdown `countdown triage` prints, holds for traffic
+  that resembles the training captures. On a new network, expect the cross column, not the
+  in-domain one, until the model is retrained on local labelled data.
+- This is the strongest argument yet for the deployment decision in
+  `DEPLOYMENT-AND-PRIMARY-DATASET.md` (train on what the sensor will see) and for routing on a
+  confidence fallback rather than trusting any one expert blindly.
+- Not yet measured: the same question for E2 (app-ID). It needs a second labelled website corpus;
+  CSTNET is the only one we have.
+
+Caveats: one seed; GBDT on flow statistics only; the tunnelled sides are small (697 Tor flows,
+2,365 VPN flows).

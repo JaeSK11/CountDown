@@ -1,0 +1,2223 @@
+{
+  "datasets": {
+    "cstnet": {
+      "at_risk_classes_by_bytes": {
+        "163.com": {
+          "n": 17380628,
+          "share": 0.0016
+        },
+        "51.la": {
+          "n": 2460692,
+          "share": 0.0002
+        },
+        "51cto.com": {
+          "n": 111693733,
+          "share": 0.0105
+        },
+        "acm.org": {
+          "n": 202786987,
+          "share": 0.019
+        },
+        "adobe.com": {
+          "n": 31044309,
+          "share": 0.0029
+        },
+        "alibaba.com": {
+          "n": 2349017,
+          "share": 0.0002
+        },
+        "alicdn.com": {
+          "n": 161955556,
+          "share": 0.0152
+        },
+        "alipay.com": {
+          "n": 7077761,
+          "share": 0.0007
+        },
+        "amap.com": {
+          "n": 3020717,
+          "share": 0.0003
+        },
+        "amazonaws.com": {
+          "n": 6914912,
+          "share": 0.0006
+        },
+        "ampproject.org": {
+          "n": 41660410,
+          "share": 0.0039
+        },
+        "apple.com": {
+          "n": 59016595,
+          "share": 0.0055
+        },
+        "arxiv.org": {
+          "n": 24108542,
+          "share": 0.0023
+        },
+        "asus.com": {
+          "n": 15703959,
+          "share": 0.0015
+        },
+        "atlassian.net": {
+          "n": 2082923,
+          "share": 0.0002
+        },
+        "azureedge.net": {
+          "n": 10818181,
+          "share": 0.001
+        },
+        "baidu.com": {
+          "n": 33087870,
+          "share": 0.0031
+        },
+        "bilibili.com": {
+          "n": 7635974,
+          "share": 0.0007
+        },
+        "biligame.com": {
+          "n": 178399948,
+          "share": 0.0167
+        },
+        "booking.com": {
+          "n": 7714676,
+          "share": 0.0007
+        },
+        "chia.net": {
+          "n": 727733,
+          "share": 0.0001
+        },
+        "chinatax.gov.cn": {
+          "n": 5449545,
+          "share": 0.0005
+        },
+        "cisco.com": {
+          "n": 29145326,
+          "share": 0.0027
+        },
+        "cloudflare.com": {
+          "n": 9807379,
+          "share": 0.0009
+        },
+        "cloudfront.net": {
+          "n": 4248555,
+          "share": 0.0004
+        },
+        "cnblogs.com": {
+          "n": 54746267,
+          "share": 0.0051
+        },
+        "codepen.io": {
+          "n": 19284991,
+          "share": 0.0018
+        },
+        "crazyegg.com": {
+          "n": 3615334,
+          "share": 0.0003
+        },
+        "criteo.com": {
+          "n": 7707424,
+          "share": 0.0007
+        },
+        "ctrip.com": {
+          "n": 30014527,
+          "share": 0.0028
+        },
+        "dailymotion.com": {
+          "n": 1194663026,
+          "share": 0.1121
+        },
+        "deepl.com": {
+          "n": 46937128,
+          "share": 0.0044
+        },
+        "digitaloceanspaces.com": {
+          "n": 4112141,
+          "share": 0.0004
+        },
+        "duckduckgo.com": {
+          "n": 11608216,
+          "share": 0.0011
+        },
+        "eastday.com": {
+          "n": 13794564,
+          "share": 0.0013
+        },
+        "eastmoney.com": {
+          "n": 5878201,
+          "share": 0.0006
+        },
+        "elsevier.com": {
+          "n": 5727494,
+          "share": 0.0005
+        },
+        "facebook.com": {
+          "n": 15431269,
+          "share": 0.0014
+        },
+        "feishu.cn": {
+          "n": 13212175,
+          "share": 0.0012
+        },
+        "ggpht.com": {
+          "n": 58692258,
+          "share": 0.0055
+        },
+        "github.com": {
+          "n": 36110748,
+          "share": 0.0034
+        },
+        "gitlab.com": {
+          "n": 492881420,
+          "share": 0.0462
+        },
+        "gmail.com": {
+          "n": 3270589,
+          "share": 0.0003
+        },
+        "goat.com": {
+          "n": 164010973,
+          "share": 0.0154
+        },
+        "google.com": {
+          "n": 12332402,
+          "share": 0.0012
+        },
+        "grammarly.com": {
+          "n": 18497668,
+          "share": 0.0017
+        },
+        "gravatar.com": {
+          "n": 7099716,
+          "share": 0.0007
+        },
+        "guancha.cn": {
+          "n": 18792039,
+          "share": 0.0018
+        },
+        "huanqiu.com": {
+          "n": 4248517,
+          "share": 0.0004
+        },
+        "huawei.com": {
+          "n": 385174318,
+          "share": 0.0361
+        },
+        "hubspot.com": {
+          "n": 19141798,
+          "share": 0.0018
+        },
+        "huya.com": {
+          "n": 78724243,
+          "share": 0.0074
+        },
+        "ibm.com": {
+          "n": 39420270,
+          "share": 0.0037
+        },
+        "icloud.com": {
+          "n": 8290628,
+          "share": 0.0008
+        },
+        "ieee.org": {
+          "n": 15528401,
+          "share": 0.0015
+        },
+        "instagram.com": {
+          "n": 17426266,
+          "share": 0.0016
+        },
+        "iqiyi.com": {
+          "n": 14081895,
+          "share": 0.0013
+        },
+        "jb51.net": {
+          "n": 66094890,
+          "share": 0.0062
+        },
+        "jd.com": {
+          "n": 7342622,
+          "share": 0.0007
+        },
+        "kugou.com": {
+          "n": 19513258,
+          "share": 0.0018
+        },
+        "leetcode-cn.com": {
+          "n": 152585623,
+          "share": 0.0143
+        },
+        "media.net": {
+          "n": 13396844,
+          "share": 0.0013
+        },
+        "mi.com": {
+          "n": 9048475,
+          "share": 0.0008
+        },
+        "microsoft.com": {
+          "n": 60023569,
+          "share": 0.0056
+        },
+        "mozilla.org": {
+          "n": 21305106,
+          "share": 0.002
+        },
+        "msn.com": {
+          "n": 8768904,
+          "share": 0.0008
+        },
+        "naver.com": {
+          "n": 36241345,
+          "share": 0.0034
+        },
+        "netflix.com": {
+          "n": 28121450,
+          "share": 0.0026
+        },
+        "nike.com": {
+          "n": 108532978,
+          "share": 0.0102
+        },
+        "notion.so": {
+          "n": 20908039,
+          "share": 0.002
+        },
+        "nvidia.com": {
+          "n": 1229919534,
+          "share": 0.1154
+        },
+        "office.net": {
+          "n": 103981608,
+          "share": 0.0098
+        },
+        "onlinedown.net": {
+          "n": 62321703,
+          "share": 0.0058
+        },
+        "opera.com": {
+          "n": 3819375,
+          "share": 0.0004
+        },
+        "oracle.com": {
+          "n": 1355215344,
+          "share": 0.1271
+        },
+        "outbrain.com": {
+          "n": 2239142,
+          "share": 0.0002
+        },
+        "overleaf.com": {
+          "n": 492574083,
+          "share": 0.0462
+        },
+        "paypal.com": {
+          "n": 7782982,
+          "share": 0.0007
+        },
+        "pinduoduo.com": {
+          "n": 15897429,
+          "share": 0.0015
+        },
+        "python.org": {
+          "n": 2406130,
+          "share": 0.0002
+        },
+        "qcloud.com": {
+          "n": 3605897,
+          "share": 0.0003
+        },
+        "qq.com": {
+          "n": 169151692,
+          "share": 0.0159
+        },
+        "researchgate.net": {
+          "n": 164201058,
+          "share": 0.0154
+        },
+        "runoob.com": {
+          "n": 44573821,
+          "share": 0.0042
+        },
+        "sciencedirect.com": {
+          "n": 5113982,
+          "share": 0.0005
+        },
+        "semanticscholar.org": {
+          "n": 31880491,
+          "share": 0.003
+        },
+        "sina.com.cn": {
+          "n": 84876628,
+          "share": 0.008
+        },
+        "smzdm.com": {
+          "n": 133228837,
+          "share": 0.0125
+        },
+        "snapchat.com": {
+          "n": 10329512,
+          "share": 0.001
+        },
+        "sohu.com": {
+          "n": 13601142,
+          "share": 0.0013
+        },
+        "spring.io": {
+          "n": 8174448,
+          "share": 0.0008
+        },
+        "springer.com": {
+          "n": 70109902,
+          "share": 0.0066
+        },
+        "squarespace.com": {
+          "n": 10856773,
+          "share": 0.001
+        },
+        "statcounter.com": {
+          "n": 4607235,
+          "share": 0.0004
+        },
+        "steampowered.com": {
+          "n": 13699597,
+          "share": 0.0013
+        },
+        "t.co": {
+          "n": 4413654,
+          "share": 0.0004
+        },
+        "taboola.com": {
+          "n": 75962472,
+          "share": 0.0071
+        },
+        "teads.tv": {
+          "n": 6618436,
+          "share": 0.0006
+        },
+        "thepaper.cn": {
+          "n": 104536698,
+          "share": 0.0098
+        },
+        "tiktok.com": {
+          "n": 2240492,
+          "share": 0.0002
+        },
+        "toutiao.com": {
+          "n": 3098699,
+          "share": 0.0003
+        },
+        "twimg.com": {
+          "n": 231838423,
+          "share": 0.0218
+        },
+        "twitter.com": {
+          "n": 29192159,
+          "share": 0.0027
+        },
+        "unity3d.com": {
+          "n": 4664940,
+          "share": 0.0004
+        },
+        "v2ex.com": {
+          "n": 34710191,
+          "share": 0.0033
+        },
+        "vivo.com.cn": {
+          "n": 403468918,
+          "share": 0.0379
+        },
+        "vk.com": {
+          "n": 33499166,
+          "share": 0.0031
+        },
+        "vmware.com": {
+          "n": 585788704,
+          "share": 0.055
+        },
+        "walmart.com": {
+          "n": 3946718,
+          "share": 0.0004
+        },
+        "weibo.com": {
+          "n": 193274695,
+          "share": 0.0181
+        },
+        "wikimedia.org": {
+          "n": 53905294,
+          "share": 0.0051
+        },
+        "wikipedia.org": {
+          "n": 86973996,
+          "share": 0.0082
+        },
+        "wp.com": {
+          "n": 34346788,
+          "share": 0.0032
+        },
+        "xiaomi.com": {
+          "n": 127374824,
+          "share": 0.0119
+        },
+        "ximalaya.com": {
+          "n": 3540691,
+          "share": 0.0003
+        },
+        "yahoo.com": {
+          "n": 21683143,
+          "share": 0.002
+        },
+        "yandex.ru": {
+          "n": 54764469,
+          "share": 0.0051
+        },
+        "youtube.com": {
+          "n": 26643356,
+          "share": 0.0025
+        },
+        "yy.com": {
+          "n": 66498498,
+          "share": 0.0062
+        },
+        "zhihu.com": {
+          "n": 73293571,
+          "share": 0.0069
+        }
+      },
+      "at_risk_classes_by_flows": {
+        "163.com": {
+          "n": 491,
+          "share": 0.0106
+        },
+        "51.la": {
+          "n": 139,
+          "share": 0.003
+        },
+        "51cto.com": {
+          "n": 433,
+          "share": 0.0094
+        },
+        "acm.org": {
+          "n": 305,
+          "share": 0.0066
+        },
+        "adobe.com": {
+          "n": 228,
+          "share": 0.0049
+        },
+        "alibaba.com": {
+          "n": 306,
+          "share": 0.0066
+        },
+        "alicdn.com": {
+          "n": 484,
+          "share": 0.0105
+        },
+        "alipay.com": {
+          "n": 467,
+          "share": 0.0101
+        },
+        "amap.com": {
+          "n": 500,
+          "share": 0.0108
+        },
+        "amazonaws.com": {
+          "n": 475,
+          "share": 0.0103
+        },
+        "ampproject.org": {
+          "n": 476,
+          "share": 0.0103
+        },
+        "apple.com": {
+          "n": 494,
+          "share": 0.0107
+        },
+        "arxiv.org": {
+          "n": 425,
+          "share": 0.0092
+        },
+        "asus.com": {
+          "n": 402,
+          "share": 0.0087
+        },
+        "atlassian.net": {
+          "n": 159,
+          "share": 0.0034
+        },
+        "azureedge.net": {
+          "n": 496,
+          "share": 0.0107
+        },
+        "baidu.com": {
+          "n": 483,
+          "share": 0.0104
+        },
+        "bilibili.com": {
+          "n": 494,
+          "share": 0.0107
+        },
+        "biligame.com": {
+          "n": 497,
+          "share": 0.0107
+        },
+        "booking.com": {
+          "n": 173,
+          "share": 0.0037
+        },
+        "chia.net": {
+          "n": 16,
+          "share": 0.0003
+        },
+        "chinatax.gov.cn": {
+          "n": 494,
+          "share": 0.0107
+        },
+        "cisco.com": {
+          "n": 494,
+          "share": 0.0107
+        },
+        "cloudflare.com": {
+          "n": 449,
+          "share": 0.0097
+        },
+        "cloudfront.net": {
+          "n": 498,
+          "share": 0.0108
+        },
+        "cnblogs.com": {
+          "n": 496,
+          "share": 0.0107
+        },
+        "codepen.io": {
+          "n": 331,
+          "share": 0.0072
+        },
+        "crazyegg.com": {
+          "n": 155,
+          "share": 0.0033
+        },
+        "criteo.com": {
+          "n": 475,
+          "share": 0.0103
+        },
+        "ctrip.com": {
+          "n": 489,
+          "share": 0.0106
+        },
+        "dailymotion.com": {
+          "n": 490,
+          "share": 0.0106
+        },
+        "deepl.com": {
+          "n": 151,
+          "share": 0.0033
+        },
+        "digitaloceanspaces.com": {
+          "n": 497,
+          "share": 0.0107
+        },
+        "duckduckgo.com": {
+          "n": 475,
+          "share": 0.0103
+        },
+        "eastday.com": {
+          "n": 172,
+          "share": 0.0037
+        },
+        "eastmoney.com": {
+          "n": 495,
+          "share": 0.0107
+        },
+        "elsevier.com": {
+          "n": 257,
+          "share": 0.0056
+        },
+        "facebook.com": {
+          "n": 495,
+          "share": 0.0107
+        },
+        "feishu.cn": {
+          "n": 481,
+          "share": 0.0104
+        },
+        "ggpht.com": {
+          "n": 493,
+          "share": 0.0107
+        },
+        "github.com": {
+          "n": 493,
+          "share": 0.0107
+        },
+        "gitlab.com": {
+          "n": 256,
+          "share": 0.0055
+        },
+        "gmail.com": {
+          "n": 498,
+          "share": 0.0108
+        },
+        "goat.com": {
+          "n": 134,
+          "share": 0.0029
+        },
+        "google.com": {
+          "n": 473,
+          "share": 0.0102
+        },
+        "grammarly.com": {
+          "n": 218,
+          "share": 0.0047
+        },
+        "gravatar.com": {
+          "n": 494,
+          "share": 0.0107
+        },
+        "guancha.cn": {
+          "n": 498,
+          "share": 0.0108
+        },
+        "huanqiu.com": {
+          "n": 399,
+          "share": 0.0086
+        },
+        "huawei.com": {
+          "n": 138,
+          "share": 0.003
+        },
+        "hubspot.com": {
+          "n": 401,
+          "share": 0.0087
+        },
+        "huya.com": {
+          "n": 496,
+          "share": 0.0107
+        },
+        "ibm.com": {
+          "n": 174,
+          "share": 0.0038
+        },
+        "icloud.com": {
+          "n": 491,
+          "share": 0.0106
+        },
+        "ieee.org": {
+          "n": 497,
+          "share": 0.0107
+        },
+        "instagram.com": {
+          "n": 216,
+          "share": 0.0047
+        },
+        "iqiyi.com": {
+          "n": 487,
+          "share": 0.0105
+        },
+        "jb51.net": {
+          "n": 463,
+          "share": 0.01
+        },
+        "jd.com": {
+          "n": 498,
+          "share": 0.0108
+        },
+        "kugou.com": {
+          "n": 485,
+          "share": 0.0105
+        },
+        "leetcode-cn.com": {
+          "n": 472,
+          "share": 0.0102
+        },
+        "media.net": {
+          "n": 400,
+          "share": 0.0086
+        },
+        "mi.com": {
+          "n": 163,
+          "share": 0.0035
+        },
+        "microsoft.com": {
+          "n": 487,
+          "share": 0.0105
+        },
+        "mozilla.org": {
+          "n": 494,
+          "share": 0.0107
+        },
+        "msn.com": {
+          "n": 478,
+          "share": 0.0103
+        },
+        "naver.com": {
+          "n": 494,
+          "share": 0.0107
+        },
+        "netflix.com": {
+          "n": 417,
+          "share": 0.009
+        },
+        "nike.com": {
+          "n": 485,
+          "share": 0.0105
+        },
+        "notion.so": {
+          "n": 489,
+          "share": 0.0106
+        },
+        "nvidia.com": {
+          "n": 398,
+          "share": 0.0086
+        },
+        "office.net": {
+          "n": 397,
+          "share": 0.0086
+        },
+        "onlinedown.net": {
+          "n": 208,
+          "share": 0.0045
+        },
+        "opera.com": {
+          "n": 367,
+          "share": 0.0079
+        },
+        "oracle.com": {
+          "n": 179,
+          "share": 0.0039
+        },
+        "outbrain.com": {
+          "n": 191,
+          "share": 0.0041
+        },
+        "overleaf.com": {
+          "n": 490,
+          "share": 0.0106
+        },
+        "paypal.com": {
+          "n": 143,
+          "share": 0.0031
+        },
+        "pinduoduo.com": {
+          "n": 488,
+          "share": 0.0105
+        },
+        "python.org": {
+          "n": 500,
+          "share": 0.0108
+        },
+        "qcloud.com": {
+          "n": 497,
+          "share": 0.0107
+        },
+        "qq.com": {
+          "n": 497,
+          "share": 0.0107
+        },
+        "researchgate.net": {
+          "n": 406,
+          "share": 0.0088
+        },
+        "runoob.com": {
+          "n": 443,
+          "share": 0.0096
+        },
+        "sciencedirect.com": {
+          "n": 153,
+          "share": 0.0033
+        },
+        "semanticscholar.org": {
+          "n": 176,
+          "share": 0.0038
+        },
+        "sina.com.cn": {
+          "n": 491,
+          "share": 0.0106
+        },
+        "smzdm.com": {
+          "n": 492,
+          "share": 0.0106
+        },
+        "snapchat.com": {
+          "n": 486,
+          "share": 0.0105
+        },
+        "sohu.com": {
+          "n": 495,
+          "share": 0.0107
+        },
+        "spring.io": {
+          "n": 160,
+          "share": 0.0035
+        },
+        "springer.com": {
+          "n": 276,
+          "share": 0.006
+        },
+        "squarespace.com": {
+          "n": 119,
+          "share": 0.0026
+        },
+        "statcounter.com": {
+          "n": 260,
+          "share": 0.0056
+        },
+        "steampowered.com": {
+          "n": 469,
+          "share": 0.0101
+        },
+        "t.co": {
+          "n": 494,
+          "share": 0.0107
+        },
+        "taboola.com": {
+          "n": 459,
+          "share": 0.0099
+        },
+        "teads.tv": {
+          "n": 491,
+          "share": 0.0106
+        },
+        "thepaper.cn": {
+          "n": 140,
+          "share": 0.003
+        },
+        "tiktok.com": {
+          "n": 118,
+          "share": 0.0025
+        },
+        "toutiao.com": {
+          "n": 486,
+          "share": 0.0105
+        },
+        "twimg.com": {
+          "n": 493,
+          "share": 0.0107
+        },
+        "twitter.com": {
+          "n": 283,
+          "share": 0.0061
+        },
+        "unity3d.com": {
+          "n": 473,
+          "share": 0.0102
+        },
+        "v2ex.com": {
+          "n": 135,
+          "share": 0.0029
+        },
+        "vivo.com.cn": {
+          "n": 493,
+          "share": 0.0107
+        },
+        "vk.com": {
+          "n": 222,
+          "share": 0.0048
+        },
+        "vmware.com": {
+          "n": 194,
+          "share": 0.0042
+        },
+        "walmart.com": {
+          "n": 430,
+          "share": 0.0093
+        },
+        "weibo.com": {
+          "n": 500,
+          "share": 0.0108
+        },
+        "wikimedia.org": {
+          "n": 356,
+          "share": 0.0077
+        },
+        "wikipedia.org": {
+          "n": 311,
+          "share": 0.0067
+        },
+        "wp.com": {
+          "n": 429,
+          "share": 0.0093
+        },
+        "xiaomi.com": {
+          "n": 206,
+          "share": 0.0045
+        },
+        "ximalaya.com": {
+          "n": 340,
+          "share": 0.0073
+        },
+        "yahoo.com": {
+          "n": 493,
+          "share": 0.0107
+        },
+        "yandex.ru": {
+          "n": 477,
+          "share": 0.0103
+        },
+        "youtube.com": {
+          "n": 492,
+          "share": 0.0106
+        },
+        "yy.com": {
+          "n": 490,
+          "share": 0.0106
+        },
+        "zhihu.com": {
+          "n": 485,
+          "share": 0.0105
+        }
+      },
+      "bytes": 10690289703,
+      "exposed_share_bytes": 0.9971,
+      "exposed_share_flows": 0.9982,
+      "flows": 46372,
+      "kem_groups": {
+        "curveSM2": 279,
+        "secp256r1": 2765,
+        "secp384r1": 80,
+        "secp521r1": 182,
+        "x25519": 42983
+      },
+      "label_field": "app",
+      "observable_share": 0.9984,
+      "tls_versions": {
+        "1.3": 46299
+      },
+      "verdict_by_bytes": {
+        "at_risk": {
+          "n": 10659079277,
+          "share": 0.9971
+        },
+        "not_observable": {
+          "n": 30681551,
+          "share": 0.0029
+        },
+        "unknown": {
+          "n": 528875,
+          "share": 0.0
+        }
+      },
+      "verdict_by_flows": {
+        "at_risk": {
+          "n": 46289,
+          "share": 0.9982
+        },
+        "not_observable": {
+          "n": 73,
+          "share": 0.0016
+        },
+        "unknown": {
+          "n": 10,
+          "share": 0.0002
+        }
+      },
+      "verdict_detail": {
+        "classical/negotiated": 46289,
+        "not_observable/none": 73,
+        "unknown/negotiated": 10
+      }
+    },
+    "iscxtor": {
+      "at_risk_classes_by_bytes": {
+        "audio_streaming": {
+          "n": 43817070,
+          "share": 0.0194
+        },
+        "browsing": {
+          "n": 299275045,
+          "share": 0.1328
+        },
+        "chat": {
+          "n": 1742252,
+          "share": 0.0008
+        },
+        "email": {
+          "n": 198927504,
+          "share": 0.0883
+        },
+        "file_transfer": {
+          "n": 36736,
+          "share": 0.0
+        },
+        "p2p": {
+          "n": 1772516,
+          "share": 0.0008
+        },
+        "video_streaming": {
+          "n": 1701261721,
+          "share": 0.755
+        },
+        "voip": {
+          "n": 6544044,
+          "share": 0.0029
+        }
+      },
+      "at_risk_classes_by_flows": {
+        "audio_streaming": {
+          "n": 12,
+          "share": 0.0021
+        },
+        "browsing": {
+          "n": 4731,
+          "share": 0.809
+        },
+        "chat": {
+          "n": 67,
+          "share": 0.0115
+        },
+        "email": {
+          "n": 140,
+          "share": 0.0239
+        },
+        "file_transfer": {
+          "n": 2,
+          "share": 0.0003
+        },
+        "p2p": {
+          "n": 12,
+          "share": 0.0021
+        },
+        "video_streaming": {
+          "n": 739,
+          "share": 0.1264
+        },
+        "voip": {
+          "n": 145,
+          "share": 0.0248
+        }
+      },
+      "at_risk_tiers_by_bytes": {
+        "low_priority": {
+          "n": 1746851307,
+          "share": 0.7752
+        },
+        "migrate_first": {
+          "n": 198964240,
+          "share": 0.0883
+        },
+        "migrate_next": {
+          "n": 307561341,
+          "share": 0.1365
+        }
+      },
+      "at_risk_tiers_by_flows": {
+        "low_priority": {
+          "n": 763,
+          "share": 0.1305
+        },
+        "migrate_first": {
+          "n": 142,
+          "share": 0.0243
+        },
+        "migrate_next": {
+          "n": 4943,
+          "share": 0.8452
+        }
+      },
+      "bytes": 22740112239,
+      "exposed_share_bytes": 0.0991,
+      "exposed_share_flows": 0.1074,
+      "flows": 54429,
+      "kem_groups": {
+        "None": 540,
+        "secp256r1": 3125,
+        "secp384r1": 32,
+        "secp521r1": 2
+      },
+      "label_field": "traffic_type",
+      "observable_share": 0.1074,
+      "tls_versions": {
+        "1.0": 17,
+        "1.1": 1428,
+        "1.2": 4403
+      },
+      "verdict_by_bytes": {
+        "at_risk": {
+          "n": 894620088,
+          "share": 0.0393
+        },
+        "at_risk_ceiling": {
+          "n": 1358756800,
+          "share": 0.0598
+        },
+        "not_observable": {
+          "n": 20486735351,
+          "share": 0.9009
+        }
+      },
+      "verdict_by_flows": {
+        "at_risk": {
+          "n": 3699,
+          "share": 0.068
+        },
+        "at_risk_ceiling": {
+          "n": 2149,
+          "share": 0.0395
+        },
+        "not_observable": {
+          "n": 48581,
+          "share": 0.8926
+        }
+      },
+      "verdict_detail": {
+        "classical/negotiated": 3699,
+        "classical/offered": 2149,
+        "not_observable/none": 48581
+      }
+    },
+    "iscxvpn": {
+      "at_risk_classes_by_bytes": {
+        "audio_streaming": {
+          "n": 3675561,
+          "share": 0.0004
+        },
+        "chat": {
+          "n": 13911117,
+          "share": 0.0013
+        },
+        "email": {
+          "n": 2647568,
+          "share": 0.0003
+        },
+        "file_transfer": {
+          "n": 9190408227,
+          "share": 0.8877
+        },
+        "p2p": {
+          "n": 362286,
+          "share": 0.0
+        },
+        "video_streaming": {
+          "n": 1098326769,
+          "share": 0.1061
+        },
+        "voip": {
+          "n": 43901572,
+          "share": 0.0042
+        }
+      },
+      "at_risk_classes_by_flows": {
+        "audio_streaming": {
+          "n": 60,
+          "share": 0.0239
+        },
+        "chat": {
+          "n": 250,
+          "share": 0.0998
+        },
+        "email": {
+          "n": 320,
+          "share": 0.1277
+        },
+        "file_transfer": {
+          "n": 430,
+          "share": 0.1716
+        },
+        "p2p": {
+          "n": 8,
+          "share": 0.0032
+        },
+        "video_streaming": {
+          "n": 610,
+          "share": 0.2434
+        },
+        "voip": {
+          "n": 828,
+          "share": 0.3304
+        }
+      },
+      "at_risk_tiers_by_bytes": {
+        "low_priority": {
+          "n": 1102364616,
+          "share": 0.1065
+        },
+        "migrate_first": {
+          "n": 9193055795,
+          "share": 0.8879
+        },
+        "migrate_next": {
+          "n": 57812689,
+          "share": 0.0056
+        }
+      },
+      "at_risk_tiers_by_flows": {
+        "low_priority": {
+          "n": 678,
+          "share": 0.2706
+        },
+        "migrate_first": {
+          "n": 750,
+          "share": 0.2993
+        },
+        "migrate_next": {
+          "n": 1078,
+          "share": 0.4302
+        }
+      },
+      "bytes": 26998836984,
+      "exposed_share_bytes": 0.3835,
+      "exposed_share_flows": 0.1557,
+      "flows": 16094,
+      "kem_groups": {
+        "None": 784,
+        "secp256r1": 647,
+        "secp384r1": 120,
+        "secp521r1": 3
+      },
+      "label_field": "traffic_type",
+      "observable_share": 0.1557,
+      "tls_versions": {
+        "1.0": 67,
+        "1.1": 27,
+        "1.2": 2412
+      },
+      "verdict_by_bytes": {
+        "at_risk": {
+          "n": 7622237462,
+          "share": 0.2823
+        },
+        "at_risk_ceiling": {
+          "n": 2730995638,
+          "share": 0.1012
+        },
+        "not_observable": {
+          "n": 16645603884,
+          "share": 0.6165
+        }
+      },
+      "verdict_by_flows": {
+        "at_risk": {
+          "n": 1554,
+          "share": 0.0966
+        },
+        "at_risk_ceiling": {
+          "n": 952,
+          "share": 0.0592
+        },
+        "not_observable": {
+          "n": 13588,
+          "share": 0.8443
+        }
+      },
+      "verdict_detail": {
+        "classical/negotiated": 1554,
+        "classical/offered": 952,
+        "not_observable/none": 13588
+      }
+    },
+    "postquantumtls": {
+      "at_risk_classes_by_bytes": {
+        "app.android.qrscanner": {
+          "n": 6894590,
+          "share": 0.0017
+        },
+        "com.VectorUpGames.TallManRun": {
+          "n": 26085705,
+          "share": 0.0065
+        },
+        "com.amazon.avod.thirdpartyclient": {
+          "n": 6917106,
+          "share": 0.0017
+        },
+        "com.amazon.mShop.android.shopping": {
+          "n": 27160560,
+          "share": 0.0067
+        },
+        "com.amelosinteractive.snake": {
+          "n": 29815601,
+          "share": 0.0074
+        },
+        "com.anime.magic.princess.doll.avatar.dressup.games": {
+          "n": 28576679,
+          "share": 0.0071
+        },
+        "com.bereal.ft": {
+          "n": 636574,
+          "share": 0.0002
+        },
+        "com.block.juggle": {
+          "n": 9808519,
+          "share": 0.0024
+        },
+        "com.bonial.kaufda": {
+          "n": 33799149,
+          "share": 0.0084
+        },
+        "com.booking": {
+          "n": 3616538,
+          "share": 0.0009
+        },
+        "com.boombitgames.Dartsy": {
+          "n": 4188956,
+          "share": 0.001
+        },
+        "com.bpfit.bloodpressure.health": {
+          "n": 3334662,
+          "share": 0.0008
+        },
+        "com.cdtg.ragdoll.playground": {
+          "n": 36362918,
+          "share": 0.009
+        },
+        "com.chess": {
+          "n": 4807485,
+          "share": 0.0012
+        },
+        "com.crazy.block.robo.monster.cliffs.craft": {
+          "n": 12565187,
+          "share": 0.0031
+        },
+        "com.crazy.rainbow.building.pixelart.mini.pro.craft": {
+          "n": 16720526,
+          "share": 0.0041
+        },
+        "com.cww.cubecraft": {
+          "n": 23717489,
+          "share": 0.0059
+        },
+        "com.disney.disneyplus": {
+          "n": 2603150,
+          "share": 0.0006
+        },
+        "com.dreamgames.royalmatch": {
+          "n": 74841502,
+          "share": 0.0185
+        },
+        "com.duolingo": {
+          "n": 36231228,
+          "share": 0.009
+        },
+        "com.ea.gp.fifamobile": {
+          "n": 179077094,
+          "share": 0.0443
+        },
+        "com.ebay.kleinanzeigen": {
+          "n": 14338579,
+          "share": 0.0035
+        },
+        "com.fct.global": {
+          "n": 13453504,
+          "share": 0.0033
+        },
+        "com.fretopvp.org": {
+          "n": 2717990,
+          "share": 0.0007
+        },
+        "com.gamma.scan": {
+          "n": 1007777,
+          "share": 0.0002
+        },
+        "com.gamovation.mahjongclub": {
+          "n": 15396487,
+          "share": 0.0038
+        },
+        "com.google.android.apps.translate": {
+          "n": 1318107,
+          "share": 0.0003
+        },
+        "com.hookvpn.vpn": {
+          "n": 2456483,
+          "share": 0.0006
+        },
+        "com.igg.android.lordsmobile": {
+          "n": 551535360,
+          "share": 0.1364
+        },
+        "com.instagram.android": {
+          "n": 5283965,
+          "share": 0.0013
+        },
+        "com.kaufland.Kaufland": {
+          "n": 26324387,
+          "share": 0.0065
+        },
+        "com.kayac.DrawFight": {
+          "n": 49929952,
+          "share": 0.0124
+        },
+        "com.kb.gearclicker": {
+          "n": 32386184,
+          "share": 0.008
+        },
+        "com.kiloo.subwaysurf": {
+          "n": 3377566,
+          "share": 0.0008
+        },
+        "com.king.candycrushsaga": {
+          "n": 33954271,
+          "share": 0.0084
+        },
+        "com.king.farmheroessaga": {
+          "n": 8709256,
+          "share": 0.0022
+        },
+        "com.kitkagames.fallbuddies": {
+          "n": 11444561,
+          "share": 0.0028
+        },
+        "com.lemon.lvoverseas": {
+          "n": 59015882,
+          "share": 0.0146
+        },
+        "com.lidl.eci.lidlplus": {
+          "n": 26482848,
+          "share": 0.0066
+        },
+        "com.lszenlamzr.parkingjam": {
+          "n": 30140832,
+          "share": 0.0075
+        },
+        "com.lutech.applock": {
+          "n": 13514009,
+          "share": 0.0033
+        },
+        "com.makeovergame.studio": {
+          "n": 52622703,
+          "share": 0.013
+        },
+        "com.matteljv.uno": {
+          "n": 5356068,
+          "share": 0.0013
+        },
+        "com.miracle.savethedoge.an": {
+          "n": 35508513,
+          "share": 0.0088
+        },
+        "com.moonfrog.ludo.club": {
+          "n": 33101500,
+          "share": 0.0082
+        },
+        "com.myklarnamobile": {
+          "n": 12412746,
+          "share": 0.0031
+        },
+        "com.netflix.mediaclient": {
+          "n": 5031394,
+          "share": 0.0012
+        },
+        "com.paypal.android.p2pmobile": {
+          "n": 1401846,
+          "share": 0.0003
+        },
+        "com.playrix.fishdomdd.gplay": {
+          "n": 53516554,
+          "share": 0.0132
+        },
+        "com.playrix.gardenscapes": {
+          "n": 112583315,
+          "share": 0.0278
+        },
+        "com.playrix.homescapes": {
+          "n": 37200530,
+          "share": 0.0092
+        },
+        "com.playrix.township": {
+          "n": 305746327,
+          "share": 0.0756
+        },
+        "com.pranksounds.appglobaltd": {
+          "n": 68841371,
+          "share": 0.017
+        },
+        "com.puzzle.find.differences": {
+          "n": 31248332,
+          "share": 0.0077
+        },
+        "com.redlinegames.attackhole": {
+          "n": 36966523,
+          "share": 0.0091
+        },
+        "com.roblox.client": {
+          "n": 62512952,
+          "share": 0.0155
+        },
+        "com.sec.android.easyMover": {
+          "n": 207097,
+          "share": 0.0001
+        },
+        "com.shenzo.vpn.free": {
+          "n": 7906296,
+          "share": 0.002
+        },
+        "com.sivona.stormshot.e": {
+          "n": 235204837,
+          "share": 0.0582
+        },
+        "com.smoke.lighter.simulator": {
+          "n": 61681338,
+          "share": 0.0153
+        },
+        "com.snakeattack.game": {
+          "n": 38426713,
+          "share": 0.0095
+        },
+        "com.snapchat.android": {
+          "n": 76220215,
+          "share": 0.0189
+        },
+        "com.spotify.music": {
+          "n": 11892374,
+          "share": 0.0029
+        },
+        "com.starfinanz.mobile.android.pushtan": {
+          "n": 30012,
+          "share": 0.0
+        },
+        "com.storm.beauty.makeover": {
+          "n": 68240401,
+          "share": 0.0169
+        },
+        "com.storm.beauty.makeover.nail": {
+          "n": 60047990,
+          "share": 0.0149
+        },
+        "com.superplaystudios.dicedreams": {
+          "n": 139853407,
+          "share": 0.0346
+        },
+        "com.teacapps.barcodescanner": {
+          "n": 1525724,
+          "share": 0.0004
+        },
+        "com.tg.ysrgb.gp": {
+          "n": 464616699,
+          "share": 0.1149
+        },
+        "com.tripledot.triple.tile.match.pair.game.three.master.object": {
+          "n": 14386770,
+          "share": 0.0036
+        },
+        "com.tripledot.woodoku": {
+          "n": 12769997,
+          "share": 0.0032
+        },
+        "com.valuephone.vpnetto": {
+          "n": 10516481,
+          "share": 0.0026
+        },
+        "com.vincentb.MobControl": {
+          "n": 26612509,
+          "share": 0.0066
+        },
+        "com.wemagineai.voila": {
+          "n": 14904108,
+          "share": 0.0037
+        },
+        "com.whatsapp": {
+          "n": 1146151,
+          "share": 0.0003
+        },
+        "com.wordgame.newcross.android.de": {
+          "n": 20955337,
+          "share": 0.0052
+        },
+        "com.youmusic.magictiles": {
+          "n": 27445929,
+          "share": 0.0068
+        },
+        "com.zhiliaoapp.musically": {
+          "n": 168637536,
+          "share": 0.0417
+        },
+        "com.zzkko": {
+          "n": 21698672,
+          "share": 0.0054
+        },
+        "de.cellular.ottohybrid": {
+          "n": 19155551,
+          "share": 0.0047
+        },
+        "de.check24.check24": {
+          "n": 15660315,
+          "share": 0.0039
+        },
+        "de.dm.meindm.android": {
+          "n": 6022419,
+          "share": 0.0015
+        },
+        "de.elster.elstersecure.app": {
+          "n": 1184584,
+          "share": 0.0003
+        },
+        "de.mcdonalds.mcdonaldsinfoapp": {
+          "n": 8921208,
+          "share": 0.0022
+        },
+        "de.prosiebensat1digital.seventv": {
+          "n": 158579930,
+          "share": 0.0392
+        },
+        "de.rewe.app.mobile": {
+          "n": 4656407,
+          "share": 0.0012
+        },
+        "de.zalando.mobile": {
+          "n": 13275491,
+          "share": 0.0033
+        },
+        "net.dezor.browser": {
+          "n": 610755,
+          "share": 0.0002
+        },
+        "net.fileminer.android": {
+          "n": 5019838,
+          "share": 0.0012
+        },
+        "org.telegram.messenger": {
+          "n": 258936,
+          "share": 0.0001
+        }
+      },
+      "at_risk_classes_by_flows": {
+        "app.android.qrscanner": {
+          "n": 97,
+          "share": 0.0075
+        },
+        "com.VectorUpGames.TallManRun": {
+          "n": 429,
+          "share": 0.033
+        },
+        "com.amazon.avod.thirdpartyclient": {
+          "n": 124,
+          "share": 0.0095
+        },
+        "com.amazon.mShop.android.shopping": {
+          "n": 137,
+          "share": 0.0105
+        },
+        "com.amelosinteractive.snake": {
+          "n": 136,
+          "share": 0.0104
+        },
+        "com.anime.magic.princess.doll.avatar.dressup.games": {
+          "n": 228,
+          "share": 0.0175
+        },
+        "com.bereal.ft": {
+          "n": 15,
+          "share": 0.0012
+        },
+        "com.block.juggle": {
+          "n": 201,
+          "share": 0.0154
+        },
+        "com.bonial.kaufda": {
+          "n": 65,
+          "share": 0.005
+        },
+        "com.booking": {
+          "n": 55,
+          "share": 0.0042
+        },
+        "com.boombitgames.Dartsy": {
+          "n": 83,
+          "share": 0.0064
+        },
+        "com.bpfit.bloodpressure.health": {
+          "n": 92,
+          "share": 0.0071
+        },
+        "com.cdtg.ragdoll.playground": {
+          "n": 120,
+          "share": 0.0092
+        },
+        "com.chess": {
+          "n": 118,
+          "share": 0.0091
+        },
+        "com.crazy.block.robo.monster.cliffs.craft": {
+          "n": 135,
+          "share": 0.0104
+        },
+        "com.crazy.rainbow.building.pixelart.mini.pro.craft": {
+          "n": 75,
+          "share": 0.0058
+        },
+        "com.cww.cubecraft": {
+          "n": 134,
+          "share": 0.0103
+        },
+        "com.disney.disneyplus": {
+          "n": 57,
+          "share": 0.0044
+        },
+        "com.dreamgames.royalmatch": {
+          "n": 23,
+          "share": 0.0018
+        },
+        "com.duolingo": {
+          "n": 77,
+          "share": 0.0059
+        },
+        "com.ea.gp.fifamobile": {
+          "n": 139,
+          "share": 0.0107
+        },
+        "com.ebay.kleinanzeigen": {
+          "n": 205,
+          "share": 0.0157
+        },
+        "com.fct.global": {
+          "n": 103,
+          "share": 0.0079
+        },
+        "com.fretopvp.org": {
+          "n": 40,
+          "share": 0.0031
+        },
+        "com.gamma.scan": {
+          "n": 27,
+          "share": 0.0021
+        },
+        "com.gamovation.mahjongclub": {
+          "n": 109,
+          "share": 0.0084
+        },
+        "com.google.android.apps.translate": {
+          "n": 47,
+          "share": 0.0036
+        },
+        "com.hookvpn.vpn": {
+          "n": 57,
+          "share": 0.0044
+        },
+        "com.igg.android.lordsmobile": {
+          "n": 9,
+          "share": 0.0007
+        },
+        "com.instagram.android": {
+          "n": 37,
+          "share": 0.0028
+        },
+        "com.kaufland.Kaufland": {
+          "n": 110,
+          "share": 0.0084
+        },
+        "com.kayac.DrawFight": {
+          "n": 395,
+          "share": 0.0303
+        },
+        "com.kb.gearclicker": {
+          "n": 652,
+          "share": 0.0501
+        },
+        "com.kiloo.subwaysurf": {
+          "n": 72,
+          "share": 0.0055
+        },
+        "com.king.candycrushsaga": {
+          "n": 917,
+          "share": 0.0704
+        },
+        "com.king.farmheroessaga": {
+          "n": 101,
+          "share": 0.0078
+        },
+        "com.kitkagames.fallbuddies": {
+          "n": 76,
+          "share": 0.0058
+        },
+        "com.lemon.lvoverseas": {
+          "n": 41,
+          "share": 0.0031
+        },
+        "com.lidl.eci.lidlplus": {
+          "n": 57,
+          "share": 0.0044
+        },
+        "com.lszenlamzr.parkingjam": {
+          "n": 295,
+          "share": 0.0227
+        },
+        "com.lutech.applock": {
+          "n": 66,
+          "share": 0.0051
+        },
+        "com.makeovergame.studio": {
+          "n": 385,
+          "share": 0.0296
+        },
+        "com.matteljv.uno": {
+          "n": 90,
+          "share": 0.0069
+        },
+        "com.miracle.savethedoge.an": {
+          "n": 258,
+          "share": 0.0198
+        },
+        "com.moonfrog.ludo.club": {
+          "n": 103,
+          "share": 0.0079
+        },
+        "com.myklarnamobile": {
+          "n": 56,
+          "share": 0.0043
+        },
+        "com.netflix.mediaclient": {
+          "n": 59,
+          "share": 0.0045
+        },
+        "com.paypal.android.p2pmobile": {
+          "n": 52,
+          "share": 0.004
+        },
+        "com.playrix.fishdomdd.gplay": {
+          "n": 77,
+          "share": 0.0059
+        },
+        "com.playrix.gardenscapes": {
+          "n": 47,
+          "share": 0.0036
+        },
+        "com.playrix.homescapes": {
+          "n": 39,
+          "share": 0.003
+        },
+        "com.playrix.township": {
+          "n": 34,
+          "share": 0.0026
+        },
+        "com.pranksounds.appglobaltd": {
+          "n": 430,
+          "share": 0.033
+        },
+        "com.puzzle.find.differences": {
+          "n": 281,
+          "share": 0.0216
+        },
+        "com.redlinegames.attackhole": {
+          "n": 369,
+          "share": 0.0283
+        },
+        "com.roblox.client": {
+          "n": 450,
+          "share": 0.0346
+        },
+        "com.sec.android.easyMover": {
+          "n": 8,
+          "share": 0.0006
+        },
+        "com.shenzo.vpn.free": {
+          "n": 78,
+          "share": 0.006
+        },
+        "com.sivona.stormshot.e": {
+          "n": 44,
+          "share": 0.0034
+        },
+        "com.smoke.lighter.simulator": {
+          "n": 292,
+          "share": 0.0224
+        },
+        "com.snakeattack.game": {
+          "n": 475,
+          "share": 0.0365
+        },
+        "com.snapchat.android": {
+          "n": 52,
+          "share": 0.004
+        },
+        "com.spotify.music": {
+          "n": 37,
+          "share": 0.0028
+        },
+        "com.starfinanz.mobile.android.pushtan": {
+          "n": 4,
+          "share": 0.0003
+        },
+        "com.storm.beauty.makeover": {
+          "n": 279,
+          "share": 0.0214
+        },
+        "com.storm.beauty.makeover.nail": {
+          "n": 303,
+          "share": 0.0233
+        },
+        "com.superplaystudios.dicedreams": {
+          "n": 123,
+          "share": 0.0094
+        },
+        "com.teacapps.barcodescanner": {
+          "n": 33,
+          "share": 0.0025
+        },
+        "com.tg.ysrgb.gp": {
+          "n": 28,
+          "share": 0.0022
+        },
+        "com.tripledot.triple.tile.match.pair.game.three.master.object": {
+          "n": 155,
+          "share": 0.0119
+        },
+        "com.tripledot.woodoku": {
+          "n": 171,
+          "share": 0.0131
+        },
+        "com.valuephone.vpnetto": {
+          "n": 108,
+          "share": 0.0083
+        },
+        "com.vincentb.MobControl": {
+          "n": 214,
+          "share": 0.0164
+        },
+        "com.wemagineai.voila": {
+          "n": 85,
+          "share": 0.0065
+        },
+        "com.whatsapp": {
+          "n": 9,
+          "share": 0.0007
+        },
+        "com.wordgame.newcross.android.de": {
+          "n": 135,
+          "share": 0.0104
+        },
+        "com.youmusic.magictiles": {
+          "n": 269,
+          "share": 0.0207
+        },
+        "com.zhiliaoapp.musically": {
+          "n": 177,
+          "share": 0.0136
+        },
+        "com.zzkko": {
+          "n": 57,
+          "share": 0.0044
+        },
+        "de.cellular.ottohybrid": {
+          "n": 163,
+          "share": 0.0125
+        },
+        "de.check24.check24": {
+          "n": 206,
+          "share": 0.0158
+        },
+        "de.dm.meindm.android": {
+          "n": 104,
+          "share": 0.008
+        },
+        "de.elster.elstersecure.app": {
+          "n": 10,
+          "share": 0.0008
+        },
+        "de.mcdonalds.mcdonaldsinfoapp": {
+          "n": 185,
+          "share": 0.0142
+        },
+        "de.prosiebensat1digital.seventv": {
+          "n": 318,
+          "share": 0.0244
+        },
+        "de.rewe.app.mobile": {
+          "n": 57,
+          "share": 0.0044
+        },
+        "de.zalando.mobile": {
+          "n": 48,
+          "share": 0.0037
+        },
+        "net.dezor.browser": {
+          "n": 21,
+          "share": 0.0016
+        },
+        "net.fileminer.android": {
+          "n": 68,
+          "share": 0.0052
+        },
+        "org.telegram.messenger": {
+          "n": 16,
+          "share": 0.0012
+        }
+      },
+      "bytes": 4679144254,
+      "exposed_share_bytes": 0.864,
+      "exposed_share_flows": 0.8261,
+      "flows": 15759,
+      "kem_groups": {
+        "None": 149,
+        "secp256r1": 696,
+        "secp384r1": 19,
+        "secp521r1": 1,
+        "x25519": 9578
+      },
+      "label_field": "app",
+      "observable_share": 0.8261,
+      "tls_versions": {
+        "1.2": 2478,
+        "1.3": 10540
+      },
+      "verdict_by_bytes": {
+        "at_risk": {
+          "n": 3716446041,
+          "share": 0.7943
+        },
+        "at_risk_ceiling": {
+          "n": 326425878,
+          "share": 0.0698
+        },
+        "not_observable": {
+          "n": 636272335,
+          "share": 0.136
+        }
+      },
+      "verdict_by_flows": {
+        "at_risk": {
+          "n": 10443,
+          "share": 0.6627
+        },
+        "at_risk_ceiling": {
+          "n": 2575,
+          "share": 0.1634
+        },
+        "not_observable": {
+          "n": 2741,
+          "share": 0.1739
+        }
+      },
+      "verdict_detail": {
+        "classical/negotiated": 10443,
+        "classical/offered": 2575,
+        "not_observable/none": 2741
+      }
+    }
+  },
+  "fidelity": {
+    "E1": {
+      "accuracy_on_exposed": 0.7057,
+      "class_mix": {
+        "n": 1468,
+        "total_variation": 0.1267,
+        "worst_class": "file_transfer",
+        "worst_gap": -0.0804
+      },
+      "expert": "E1",
+      "exposed_test_flows": 1468,
+      "test_flows": 17918,
+      "tier_mix": {
+        "n": 1468,
+        "total_variation": 0.109,
+        "worst_class": "migrate_next",
+        "worst_gap": 0.109
+      }
+    },
+    "E2": {
+      "accuracy_on_exposed": 0.9147,
+      "class_mix": {
+        "n": 9316,
+        "total_variation": 0.0277,
+        "worst_class": "nvidia.com",
+        "worst_gap": -0.0029
+      },
+      "expert": "E2",
+      "exposed_test_flows": 9316,
+      "test_flows": 9338
+    }
+  },
+  "synthetic_pqc": {
+    "files": [
+      "classical_x25519.pcap",
+      "downgrade_offered_pqc.pcap",
+      "hybrid_x25519mlkem768.pcap"
+    ],
+    "per_file": {
+      "classical_x25519.pcap": [
+        {
+          "kem_group": "x25519",
+          "pqc_basis": "negotiated",
+          "pqc_verdict": "classical",
+          "quantum_safe": false,
+          "route_reason": "fallback"
+        }
+      ],
+      "downgrade_offered_pqc.pcap": [
+        {
+          "kem_group": "x25519",
+          "pqc_basis": "negotiated",
+          "pqc_verdict": "classical",
+          "quantum_safe": false,
+          "route_reason": "fallback"
+        }
+      ],
+      "hybrid_x25519mlkem768.pcap": [
+        {
+          "kem_group": "X25519MLKEM768",
+          "pqc_basis": "negotiated",
+          "pqc_verdict": "hybrid",
+          "quantum_safe": true,
+          "route_reason": "skipped:quantum_safe"
+        }
+      ]
+    },
+    "triage": {
+      "at_risk_classes_by_bytes": {},
+      "at_risk_classes_by_flows": {},
+      "at_risk_classes_by_target": {
+        "traffic_type": {
+          "at_risk_classes_by_bytes": {
+            "chat": {
+              "n": 10584,
+              "share": 1.0
+            }
+          },
+          "at_risk_classes_by_flows": {
+            "chat": {
+              "n": 2,
+              "share": 1.0
+            }
+          },
+          "at_risk_tiers_by_bytes": {
+            "migrate_next": {
+              "n": 10584,
+              "share": 1.0
+            }
+          },
+          "at_risk_tiers_by_flows": {
+            "migrate_next": {
+              "n": 2,
+              "share": 1.0
+            }
+          },
+          "bytes": 10584,
+          "exposed_share_bytes": 1.0,
+          "exposed_share_flows": 1.0,
+          "flows": 2
+        }
+      },
+      "bytes": 16393,
+      "exposed_share_bytes": 0.6456,
+      "exposed_share_flows": 0.6667,
+      "flows": 3,
+      "kem_groups": {
+        "X25519MLKEM768": 1,
+        "x25519": 2
+      },
+      "observable_share": 1.0,
+      "tls_versions": {
+        "1.3": 3
+      },
+      "verdict_by_bytes": {
+        "at_risk": {
+          "n": 10584,
+          "share": 0.6456
+        },
+        "quantum_safe": {
+          "n": 5809,
+          "share": 0.3544
+        }
+      },
+      "verdict_by_flows": {
+        "at_risk": {
+          "n": 2,
+          "share": 0.6667
+        },
+        "quantum_safe": {
+          "n": 1,
+          "share": 0.3333
+        }
+      },
+      "verdict_detail": {
+        "classical/negotiated": 2,
+        "hybrid/negotiated": 1
+      }
+    }
+  }
+}

@@ -1,0 +1,310 @@
+{
+  "model": "flow_gbdt on flow_stats (E1's deployed member)",
+  "pairs": [
+    {
+      "cross": {
+        "accuracy": 0.0804,
+        "macro_f1": 0.1019,
+        "n": 28432,
+        "per_class_f1": {
+          "audio_streaming": 0.0159,
+          "chat": 0.0299,
+          "email": 0.0738,
+          "file_transfer": 0.1522,
+          "p2p": 0.0,
+          "video_streaming": 0.3677,
+          "voip": 0.0737
+        }
+      },
+      "drop": 0.4745,
+      "excluded_test_only": [
+        "browsing"
+      ],
+      "excluded_train_only": [],
+      "id": "vpn->tor",
+      "in_domain": {
+        "accuracy": 0.6353,
+        "macro_f1": 0.5764,
+        "n": 3137,
+        "per_class_f1": {
+          "audio_streaming": 0.2535,
+          "chat": 0.7697,
+          "email": 0.754,
+          "file_transfer": 0.365,
+          "video_streaming": 0.5856,
+          "voip": 0.7307
+        }
+      },
+      "n_test": 54429,
+      "n_train": 16094,
+      "shared_classes": [
+        "email",
+        "chat",
+        "audio_streaming",
+        "video_streaming",
+        "file_transfer",
+        "voip",
+        "p2p"
+      ],
+      "shift": "corpus",
+      "test": "ISCX-Tor",
+      "test_captures": 95,
+      "train": "ISCX-VPN",
+      "train_captures": 140
+    },
+    {
+      "cross": {
+        "accuracy": 0.1089,
+        "macro_f1": 0.1129,
+        "n": 16094,
+        "per_class_f1": {
+          "audio_streaming": 0.0475,
+          "chat": 0.066,
+          "email": 0.0718,
+          "file_transfer": 0.0133,
+          "p2p": 0.0522,
+          "video_streaming": 0.3759,
+          "voip": 0.1635
+        }
+      },
+      "drop": 0.4652,
+      "excluded_test_only": [],
+      "excluded_train_only": [
+        "browsing"
+      ],
+      "id": "tor->vpn",
+      "in_domain": {
+        "accuracy": 0.983,
+        "macro_f1": 0.5781,
+        "n": 10026,
+        "per_class_f1": {
+          "audio_streaming": 0.9418,
+          "chat": 0.2623,
+          "email": 0.7059,
+          "file_transfer": 0.25,
+          "p2p": 0.9985,
+          "video_streaming": 0.2292,
+          "voip": 0.659
+        }
+      },
+      "n_test": 16094,
+      "n_train": 54429,
+      "shared_classes": [
+        "email",
+        "chat",
+        "audio_streaming",
+        "video_streaming",
+        "file_transfer",
+        "voip",
+        "p2p"
+      ],
+      "shift": "corpus",
+      "test": "ISCX-VPN",
+      "test_captures": 140,
+      "train": "ISCX-Tor",
+      "train_captures": 95
+    },
+    {
+      "cross": {
+        "accuracy": 0.4144,
+        "macro_f1": 0.3351,
+        "n": 2365,
+        "per_class_f1": {
+          "audio_streaming": 0.0,
+          "chat": 0.0928,
+          "email": 0.6859,
+          "file_transfer": 0.3468,
+          "video_streaming": 0.3616,
+          "voip": 0.5234
+        }
+      },
+      "drop": 0.2627,
+      "excluded_test_only": [
+        "p2p"
+      ],
+      "excluded_train_only": [],
+      "id": "nonvpn->vpn",
+      "in_domain": {
+        "accuracy": 0.6595,
+        "macro_f1": 0.5978,
+        "n": 2746,
+        "per_class_f1": {
+          "audio_streaming": 0.2951,
+          "chat": 0.833,
+          "email": 0.7711,
+          "file_transfer": 0.2746,
+          "video_streaming": 0.6667,
+          "voip": 0.7467
+        }
+      },
+      "n_test": 2620,
+      "n_train": 13474,
+      "shared_classes": [
+        "email",
+        "chat",
+        "audio_streaming",
+        "video_streaming",
+        "file_transfer",
+        "voip"
+      ],
+      "shift": "tunnel",
+      "test": "ISCX-VPN tunnelled",
+      "test_captures": 31,
+      "train": "ISCX-VPN plain",
+      "train_captures": 109
+    },
+    {
+      "cross": {
+        "accuracy": 0.4145,
+        "macro_f1": 0.1815,
+        "n": 13474,
+        "per_class_f1": {
+          "audio_streaming": 0.0462,
+          "chat": 0.0082,
+          "email": 0.2888,
+          "file_transfer": 0.0548,
+          "video_streaming": 0.1007,
+          "voip": 0.5901
+        }
+      },
+      "drop": 0.4999,
+      "excluded_test_only": [],
+      "excluded_train_only": [
+        "p2p"
+      ],
+      "id": "vpn->nonvpn",
+      "in_domain": {
+        "accuracy": 0.7119,
+        "macro_f1": 0.6814,
+        "n": 538,
+        "per_class_f1": {
+          "chat": 0.3252,
+          "email": 0.9489,
+          "file_transfer": 0.6313,
+          "voip": 0.8204
+        }
+      },
+      "n_test": 13474,
+      "n_train": 2620,
+      "shared_classes": [
+        "email",
+        "chat",
+        "audio_streaming",
+        "video_streaming",
+        "file_transfer",
+        "voip"
+      ],
+      "shift": "tunnel",
+      "test": "ISCX-VPN plain",
+      "test_captures": 109,
+      "train": "ISCX-VPN tunnelled",
+      "train_captures": 31
+    },
+    {
+      "cross": {
+        "accuracy": 0.2224,
+        "macro_f1": 0.138,
+        "n": 697,
+        "per_class_f1": {
+          "audio_streaming": 0.0,
+          "browsing": 0.1155,
+          "chat": 0.3846,
+          "email": 0.0,
+          "file_transfer": 0.0,
+          "p2p": 0.3481,
+          "video_streaming": 0.0741,
+          "voip": 0.1818
+        }
+      },
+      "drop": 0.6386,
+      "excluded_test_only": [],
+      "excluded_train_only": [],
+      "id": "nontor->tor",
+      "in_domain": {
+        "accuracy": 0.9908,
+        "macro_f1": 0.7766,
+        "n": 14336,
+        "per_class_f1": {
+          "audio_streaming": 0.9674,
+          "browsing": 0.9916,
+          "chat": 0.2456,
+          "email": 0.7184,
+          "p2p": 0.9999,
+          "voip": 0.7364
+        }
+      },
+      "n_test": 697,
+      "n_train": 53732,
+      "shared_classes": [
+        "browsing",
+        "email",
+        "chat",
+        "audio_streaming",
+        "video_streaming",
+        "file_transfer",
+        "voip",
+        "p2p"
+      ],
+      "shift": "tunnel",
+      "test": "ISCX-Tor tunnelled",
+      "test_captures": 51,
+      "train": "ISCX-Tor plain",
+      "train_captures": 44
+    },
+    {
+      "cross": {
+        "accuracy": 0.3202,
+        "macro_f1": 0.0781,
+        "n": 53732,
+        "per_class_f1": {
+          "audio_streaming": 0.0064,
+          "browsing": 0.0083,
+          "chat": 0.0613,
+          "email": 0.0,
+          "file_transfer": 0.001,
+          "p2p": 0.5224,
+          "video_streaming": 0.0234,
+          "voip": 0.0017
+        }
+      },
+      "drop": 0.5225,
+      "excluded_test_only": [],
+      "excluded_train_only": [],
+      "id": "tor->nontor",
+      "in_domain": {
+        "accuracy": 0.6818,
+        "macro_f1": 0.6006,
+        "n": 66,
+        "per_class_f1": {
+          "audio_streaming": 0.8333,
+          "browsing": 0.2667,
+          "chat": 0.5,
+          "email": 0.0,
+          "file_transfer": 1.0,
+          "p2p": 0.4828,
+          "video_streaming": 0.8333,
+          "voip": 0.8889
+        }
+      },
+      "n_test": 53732,
+      "n_train": 697,
+      "shared_classes": [
+        "browsing",
+        "email",
+        "chat",
+        "audio_streaming",
+        "video_streaming",
+        "file_transfer",
+        "voip",
+        "p2p"
+      ],
+      "shift": "tunnel",
+      "test": "ISCX-Tor plain",
+      "test_captures": 44,
+      "train": "ISCX-Tor tunnelled",
+      "train_captures": 51
+    }
+  ],
+  "seed": 42,
+  "target": "traffic_type"
+}

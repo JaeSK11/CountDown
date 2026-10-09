@@ -1,0 +1,46 @@
+{
+  "dataset": "postquantumtls",
+  "parse_seconds": 8.5,
+  "flows_old": 15759,
+  "flows_new": 15759,
+  "files_old": 90,
+  "files_new": 90,
+  "files_same_flow_count": 90,
+  "files_same_packets": 90,
+  "flow_stats_identical_same_order": true,
+  "l7_hint_new": {
+    "tls": 13959,
+    "quic": 973,
+    "tcp": 380,
+    "udp": 317,
+    "opaque": 128,
+    "tunnel_wireguard": 2
+  },
+  "routing": {
+    "n": 15759,
+    "routes": {
+      "E2": 14932,
+      "E1": 827
+    },
+    "by_hint": {
+      "opaque": {
+        "E1": 128
+      },
+      "quic": {
+        "E2": 973
+      },
+      "tcp": {
+        "E1": 380
+      },
+      "tls": {
+        "E2": 13959
+      },
+      "tunnel_wireguard": {
+        "E1": 2
+      },
+      "udp": {
+        "E1": 317
+      }
+    }
+  }
+}

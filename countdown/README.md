@@ -17,7 +17,7 @@ See [`PLAN.md`](PLAN.md) for the full roadmap and [`phases/`](phases/) for per-p
 
 ---
 
-## Status: Phases 0–5 built; Phase 6 under way (pipeline + `analyze` done)
+## Status: Phases 0–5 built; Phase 6 under way (pipeline, `analyze`, `triage` done)
 
 Phase 0 delivers the data layer: **any dataset → `(X, y)`**.
 
@@ -153,7 +153,11 @@ Each flow gets its PQC verdict; a negotiated hybrid/PQC exchange is marked quant
 classified, everything else is routed to one expert and labelled (`phases/PHASE-6.md` §9).
 `--mode fast` uses only the GBDTs; `--redact` drops IPs and SNI.
 
-Not yet built: PQC-triage statistics, cross-dataset tables, live capture, packaging (P6).
+`countdown triage capture.pcap` adds the PQC-triage summary: how much traffic is quantum-safe,
+exposed or unobservable (flows and bytes) and what the exposed traffic is. On the labelled
+datasets **no flow is quantum-safe** and every observable flow is exposed (`PHASE-6.md` §10).
+
+Not yet built: cross-dataset tables, live capture, packaging (P6).
 
 ## Install
 
@@ -222,7 +226,9 @@ countdown/
   eval/ablation.py        single vs vote vs stacking x calibration table           [P5]
   pipeline/pipeline.py    pcap -> reassembly -> PQC verdict -> route -> classify   [P6]
   pipeline/artifacts.py   DeployedExpert (members + recipes + calibrators + vote)  [P6]
-  cli.py, __main__.py     `countdown analyze` (also python -m countdown)          [P6]
+  cli.py, __main__.py     `countdown analyze | triage` (also python -m countdown) [P6]
+  eval/triage.py          PQC-triage: exposure by flows/bytes + what is exposed    [P6]
+  eval/tiers.py           readiness tiers (configs/readiness_tiers.yaml)           [P6]
 configs/experiments/      one YAML per Phase-3 experiment
 runs/                     per-run artifacts (gitignored)
 scripts/train.py          training CLI
@@ -237,6 +243,7 @@ scripts/collect_results.py  copy scorecard evidence from runs/ into tracked resu
 docker/                   training image, compose file, GPU queue runner             [P5]
 scripts/export_models.py  Phase-5 runs -> models_store/ deployed experts             [P6]
 scripts/check_pipeline_skew.py  pipeline vs Phase-5 predictions (must agree exactly) [P6]
+scripts/run_triage.py     PQC-triage tables over the labelled datasets              [P6]
 models_store/             deployed experts (gitignored)                              [P6]
 scripts/gen_pqc_pcaps.sh  self-generated PQC/classical captures  → data/_pqc_synth/
 scripts/validate_pqc.py   parser vs tshark oracle + PQC precision/recall

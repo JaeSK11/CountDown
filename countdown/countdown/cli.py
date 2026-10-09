@@ -20,8 +20,8 @@ from collections import Counter
 from pathlib import Path
 from typing import Any
 
-FIELDS = ["flow_id", "five_tuple", "proto", "start", "packets", "l7", "tls_version", "cipher",
-          "kem_group", "sni", "pqc_verdict", "pqc_basis", "pqc_confidence", "quantum_safe",
+FIELDS = ["flow_id", "five_tuple", "proto", "start", "packets", "bytes", "l7", "tls_version", "cipher",
+          "kem_group", "sni", "pqc_verdict", "pqc_basis", "pqc_confidence", "quantum_safe", "pqc_listed",
           "at_risk", "expert", "route_reason", "target", "traffic_class", "confidence",
           "fallback_from"]
 
@@ -80,6 +80,27 @@ def cmd_analyze(args: argparse.Namespace) -> int:
     return 0
 
 
+def cmd_triage(args: argparse.Namespace) -> int:
+    """analyze + the PQC-triage summary, from the pipeline's predicted classes."""
+    from countdown.eval.tiers import load_tiers
+    from countdown.eval.triage import classes_markdown, to_markdown, triage_records
+    from countdown.pipeline import Pipeline, PipelineConfig
+
+    pipe = Pipeline(PipelineConfig(mode=args.mode, context=args.context, store=args.store))
+    records = [r for p in args.pcap for r in pipe.analyze_pcap(p)]
+    t = triage_records(records, tiers=load_tiers())
+    md = [to_markdown(f"{len(args.pcap)} capture(s)", t)]
+    for target, sub in t["at_risk_classes_by_target"].items():
+        md.append(classes_markdown(f"Exposed flows classified as {target} (predicted)", sub))
+    md.append("_Class mixes are model predictions. Measured error of the mix on held-out data "
+              "(total variation): traffic_type 0.127, app 0.028 -- see PHASE-6.md section 10._")
+    text = "\n".join(md)
+    if args.out:
+        Path(args.out).write_text(json.dumps(t, indent=2, default=str) if args.out.endswith(".json") else text)
+    print(text)
+    return 0
+
+
 def main(argv: list[str] | None = None) -> int:
     ap = argparse.ArgumentParser(prog="countdown", description="Quantum-readiness triage of network traffic.")
     sub = ap.add_subparsers(dest="cmd", required=True)
@@ -98,6 +119,13 @@ def main(argv: list[str] | None = None) -> int:
     a.add_argument("--redact", action="store_true", help="drop IPs, SNI and file paths")
     a.add_argument("--store", help="deployed-experts directory (default countdown/models_store)")
     a.set_defaults(func=cmd_analyze)
+    t = sub.add_parser("triage", help="pcap(s) -> PQC-triage summary (exposure + what is exposed)")
+    t.add_argument("pcap", nargs="+")
+    t.add_argument("--out", help="write the summary (.json for the raw numbers, else markdown)")
+    t.add_argument("--mode", choices=("full", "fast"), default="full")
+    t.add_argument("--context")
+    t.add_argument("--store")
+    t.set_defaults(func=cmd_triage)
     args = ap.parse_args(argv)
     return args.func(args)
 

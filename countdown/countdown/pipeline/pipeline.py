@@ -36,6 +36,14 @@ from countdown.pipeline.artifacts import DeployedExpert, load_store
 
 log = get_logger(__name__)
 
+def _pq_names() -> set[str]:
+    from countdown.crypto import kem_registry
+
+    return {g.name for c, g in kem_registry.all_groups().items()
+            if kem_registry.is_quantum_resistant(c)}
+
+
+_PQ_NAMES = _pq_names()
 FALLBACK_FROM = "E2"
 FALLBACK_TO = "E1"
 QUANTUM_SAFE = ("hybrid", "pqc")
@@ -200,6 +208,7 @@ class Pipeline:
             "proto": f.five_tuple.l4_proto,
             "start": float(f.timestamps[0]) if len(f.timestamps) else None,
             "packets": int(len(f.timestamps)),
+            "bytes": int(np.asarray(f.sizes).sum()),
             "l7": f.l7_hint,
             "tls_version": f.tls_version,
             "cipher": f.cipher_suite,
@@ -209,6 +218,8 @@ class Pipeline:
             "pqc_basis": v.basis,
             "pqc_confidence": v.confidence,
             "quantum_safe": bool(v.is_quantum_resistant),
+            # Does the ClientHello list any post-quantum group at all (HRR could select it)?
+            "pqc_listed": any(g in _PQ_NAMES for g in crypto.get("offered_groups") or []),
             "at_risk": bool(v.is_at_risk),
             "expert": None, "route_reason": "skipped:quantum_safe" if v.is_quantum_resistant else None,
             "target": None, "traffic_class": None, "confidence": None,

@@ -199,5 +199,75 @@ Tests: `tests/test_pipeline.py` — quantum-safe skip, hint routing, fallback wi
 kept, context override never second-guessed, redaction, artifact round trip, CLI CSV/JSONL, the
 5-tuple byte join.
 
-**Next:** 6.5 PQC-triage statistics (the headline research output) over the datasets with
-handshakes; then 6.6 cross-dataset, 6.7 tables, 6.3/6.4 live capture, 6.8 packaging (refit-on-all model zoo, example pcaps from `data/_pqc_synth/` — ours to ship).
+**Next:** 6.6 cross-dataset, 6.7 tables, 6.3/6.4 live capture, 6.8 packaging (refit-on-all model zoo, example pcaps from `data/_pqc_synth/` — ours to ship).
+
+---
+
+## 10. 6.5 PQC-triage statistics (2026-10-09)
+
+```bash
+python scripts/run_triage.py                 # research tables -> runs/triage/<id>/ (results/phase6/)
+countdown triage capture.pcap [...]          # an operator's capture, from predicted classes
+```
+
+`eval/triage.py` puts every flow in one bucket by its verdict **and** the strength of the
+evidence, and counts flows and bytes (harvest-now-decrypt-later is about what can be stored):
+
+| bucket | meaning |
+| --- | --- |
+| `quantum_safe` | negotiated hybrid / PQC |
+| `at_risk` | negotiated classical |
+| `at_risk_ceiling` | only the ClientHello seen, and **no** post-quantum group even listed in `supported_groups` — no server choice can make it safe |
+| `pqc_offered_undecided` | a post-quantum group offered or listed (a HelloRetryRequest could still pick it), outcome unseen |
+| `not_observable` | tunnel or no handshake — a fact about the capture, never counted as exposed |
+| `unknown` | a handshake that would not parse |
+
+**Exposed** = `at_risk` + `at_risk_ceiling`. The exposed flows are then broken down by class, and
+by readiness tier (`configs/readiness_tiers.yaml`) for traffic types.
+
+### Results (ground-truth labels; `results/phase6/triage/`)
+
+| dataset | flows | handshake observable | **exposed** flows / bytes | quantum-safe | TLS versions seen |
+| --- | --- | --- | --- | --- | --- |
+| CSTNET-TLS1.3 (2021 crawl) | 46,372 | 99.8 % | **99.8 % / 99.7 %** | 0 | 1.3 only |
+| PostQuantumTLS (Android apps, 2023) | 15,759 | 82.6 % | **82.6 % / 86.4 %** | 0 | 1.3 (81 %), 1.2 |
+| ISCX-VPN (2016) | 16,094 | 15.6 % | **15.6 % / 38.4 %** | 0 | 1.2, 1.0, 1.1 |
+| ISCX-Tor (2016) | 54,429 | 10.7 % | **10.7 % / 9.9 %** | 0 | 1.2, 1.1, 1.0 |
+| `_pqc_synth` (ours, via the pipeline) | 3 | 100 % | 2 of 3 | **1** (X25519MLKEM768) | 1.3 |
+
+1. **No public dataset contains a single post-quantum handshake.** That includes
+   PostQuantumTLS: its 90 captures (the complete Zenodo archive, re-parsed with the Phase-1
+   reassembler on 2026-10-09, flows identical to the old cache) offer only classical groups —
+   checked on raw codepoints, and the registry knows the draft Kyber codepoints too. Every
+   observable flow in the corpus is exposed. The only PQC positives are our three synthetic
+   captures, which behave correctly (hybrid → quantum-safe; the downgrade capture, where the
+   client offered ML-KEM and the server chose x25519, → `at_risk`).
+2. **Flows and bytes disagree, and bytes are what an adversary stores.** ISCX-VPN:
+   `file_transfer` is 17 % of exposed flows but **89 % of exposed bytes**; by tier,
+   `migrate_first` is 30 % of exposed flows and **89 % of exposed bytes**. ISCX-Tor: browsing is
+   81 % of exposed flows, video 76 % of exposed bytes. Any priority list built on flow counts
+   alone would rank the wrong traffic first.
+3. **Tunnels hide most of ISCX** (84–89 % not observable): the outer VPN/Tor handshake is not
+   the inner one. Those flows are reported, not guessed.
+4. CSTNET's exposed groups: x25519 93 %, secp256r1 6 %, curveSM2 279 flows.
+
+### Fidelity of the predicted breakdown
+
+`countdown triage` reports *predicted* classes, so the mix it prints has an error. Measured on the
+exposed flows of each expert's test fold (deployed models, Phase-5 cached test predictions):
+
+| expert | exposed test flows | accuracy | class-mix total variation | worst class | tier-mix TV |
+| --- | --- | --- | --- | --- | --- |
+| E1 traffic type | 1,468 | 0.706 | **0.127** | `file_transfer` under-counted by 8.0 pts | 0.109 (`migrate_next` +10.9 pts) |
+| E2 app | 9,316 | 0.915 | **0.028** | `nvidia.com` −0.3 pts | — |
+
+E2's website mix is trustworthy. E1's is not yet: it under-counts `file_transfer`, a
+`migrate_first` class, and over-counts `migrate_next` by 11 points — the error runs against the
+traffic that matters most. `countdown triage` prints these error figures under its tables.
+
+### What 6.5 changes next
+
+- Real PQC positives are the gap. A capture of current browser traffic (Chrome and Firefox
+  negotiate X25519MLKEM768 with large CDNs by default) would give the first non-synthetic
+  quantum-safe flows — it has to be traffic we may capture.
+- E1's `file_transfer` recall is the model work with the most triage value.

@@ -31,7 +31,7 @@ from countdown.crypto.pqc_verdict import (
     LABEL_UNKNOWN,
     VERDICT_LABELS,
 )
-from countdown.crypto.tls_parser import Handshake
+from countdown.crypto.tls_parser import Handshake, parse_tls_handshake
 from countdown.schema import FiveTuple, Flow
 
 REPO = Path(__file__).resolve().parent.parent
@@ -347,3 +347,25 @@ def test_anchor_offered_pqc_but_negotiated_classical():
         assert not v.is_quantum_resistant
         return
     pytest.fail("no flow recovered from the generated capture")
+
+
+def test_tls12_ecdhe_suite_with_ske_outside_the_window_is_classical():
+    """Phase 7 census: a > 8 KB TLS 1.2 chain pushes the ServerKeyExchange out of the window.
+    The selected 1.2 ECDHE suite still proves a classical exchange; the curve stays unknown."""
+    from tests.test_tls_parser import client_hello, msg, rec, server_hello, vec
+
+    sh = server_hello(suite=0xC02F, tls13=False, key_share=False)
+    cert = rec(msg(0x0B, vec(vec(b"\x30\x82" + b"\x00" * 9000, 3), 3)))[:8192 - len(sh)]
+    hs = parse_tls_handshake(client_hello(groups=(0x11EC, 0x001D)), sh + cert)
+    hs.had_bytes = True
+    v = pqc_verdict(hs)
+    assert (v.label, v.basis, v.group) == ("classical", "negotiated", None)
+    assert v.is_at_risk and not v.is_quantum_resistant
+
+
+def test_truncated_tls13_server_hello_keeps_tls13():
+    from tests.test_tls_parser import server_hello
+
+    full = server_hello(group=0x11EC, suite=0x1301)
+    hs = parse_tls_handshake(None, full[:5 + 4 + 2 + 32 + 33 + 2 + 1])   # cut before extensions
+    assert hs.tls_version == "1.3"

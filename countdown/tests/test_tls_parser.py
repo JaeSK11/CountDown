@@ -268,3 +268,19 @@ def test_kex_family_from_cipher_suite(suite, family):
 def test_unknown_cipher_suite_yields_no_family():
     assert kex_family(0xABCD) is None
     assert "unknown" in cipher_suite_name(0xABCD)
+
+
+def test_tls12_server_answering_a_tls13_client_is_tls12():
+    """A 1.3-capable ClientHello, a 1.2 ServerHello (no supported_versions), then the 1.2
+    ServerKeyExchange: the curve is negotiated, not offered (Phase-7 census regression)."""
+    ske = msg(0x0C, b"\x03" + struct.pack(">H", 0x0017) + vec(b"\x04" + b"\x55" * 64, 1)
+              + struct.pack(">H", 0x0401) + vec(b"\x77" * 64, 2))
+    sh = server_hello(suite=0xC02F, tls13=False, key_share=False)
+    hs = parse_tls_handshake(client_hello(groups=(0x11EC, 0x001D, 0x0017)), sh + rec(ske))
+    assert hs.tls_version == "1.2"
+    assert hs.server_kex_group == 0x0017
+    from countdown.crypto import pqc_verdict
+
+    hs.had_bytes = True          # stamped by parse_handshake on a real flow
+    v = pqc_verdict(hs)
+    assert (v.label, v.basis, v.group_name) == ("classical", "negotiated", "secp256r1")

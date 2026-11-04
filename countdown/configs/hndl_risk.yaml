@@ -1,0 +1,38 @@
+# Harvest-now-decrypt-later (HNDL) risk score: weights for countdown/risk.py (Phase 7, task 7.2).
+#
+# Like readiness_tiers.yaml, this is a judgement, not something learned from data: change it per
+# customer.  The score is 0-100 per flow:
+#
+#   score = 100 * exposure * sensitivity * volume * key_transport   (clamped to 100)
+#
+# exposure     how certain it is that a recording of this flow decrypts with a quantum computer
+# sensitivity  how long the content stays worth decrypting (Mosca's "x"), from the readiness tier
+# volume       how much an adversary gets: floor + (1 - floor) * min(1, log10(bytes) / log10(saturate))
+# key_transport  RSA key transport: no forward secrecy, so one broken RSA key opens every
+#              recorded session made with it -- a multiplier, not a separate score
+#
+# Flows whose handshake could not be seen get no score ("unassessed"), never a guess.
+version: 1
+
+exposure:
+  at_risk: 1.0                  # classical exchange the server negotiated
+  at_risk_ceiling: 0.9          # client offered only classical groups; reply unseen
+  pqc_offered_undecided: 0.4    # a post-quantum group was offered; outcome unseen
+  quantum_safe: 0.0             # negotiated hybrid / ML-KEM
+
+sensitivity:                    # by readiness tier (configs/readiness_tiers.yaml)
+  migrate_first: 1.0
+  migrate_next: 0.6
+  low_priority: 0.3
+  unrated: 0.6                  # targets without tiers (app, activity) or no class at all
+
+volume:
+  floor: 0.5
+  saturate_bytes: 10000000      # 10 MB counts as a full recording
+
+key_transport_multiplier: 1.25
+
+levels:                         # lower bounds, highest first
+  high: 60
+  medium: 30
+  low: 1

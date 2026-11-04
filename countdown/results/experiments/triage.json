@@ -1117,7 +1117,7 @@
       "exposed_share_flows": 0.1074,
       "flows": 54429,
       "kem_groups": {
-        "None": 540,
+        "None": 2315,
         "secp256r1": 3125,
         "secp384r1": 32,
         "secp521r1": 2
@@ -1125,18 +1125,18 @@
       "label_field": "traffic_type",
       "observable_share": 0.1074,
       "tls_versions": {
-        "1.0": 17,
-        "1.1": 1428,
-        "1.2": 4403
+        "1.0": 119,
+        "1.1": 1409,
+        "1.2": 4320
       },
       "verdict_by_bytes": {
         "at_risk": {
-          "n": 894620088,
-          "share": 0.0393
+          "n": 2252985085,
+          "share": 0.0991
         },
         "at_risk_ceiling": {
-          "n": 1358756800,
-          "share": 0.0598
+          "n": 391803,
+          "share": 0.0
         },
         "not_observable": {
           "n": 20486735351,
@@ -1145,12 +1145,12 @@
       },
       "verdict_by_flows": {
         "at_risk": {
-          "n": 3699,
-          "share": 0.068
+          "n": 5474,
+          "share": 0.1006
         },
         "at_risk_ceiling": {
-          "n": 2149,
-          "share": 0.0395
+          "n": 374,
+          "share": 0.0069
         },
         "not_observable": {
           "n": 48581,
@@ -1158,8 +1158,8 @@
         }
       },
       "verdict_detail": {
-        "classical/negotiated": 3699,
-        "classical/offered": 2149,
+        "classical/negotiated": 5474,
+        "classical/offered": 374,
         "not_observable/none": 48581
       }
     },
@@ -1257,7 +1257,7 @@
       "exposed_share_flows": 0.1557,
       "flows": 16094,
       "kem_groups": {
-        "None": 784,
+        "None": 1573,
         "secp256r1": 647,
         "secp384r1": 120,
         "secp521r1": 3
@@ -1265,18 +1265,18 @@
       "label_field": "traffic_type",
       "observable_share": 0.1557,
       "tls_versions": {
-        "1.0": 67,
+        "1.0": 92,
         "1.1": 27,
-        "1.2": 2412
+        "1.2": 2387
       },
       "verdict_by_bytes": {
         "at_risk": {
-          "n": 7622237462,
-          "share": 0.2823
+          "n": 7917974457,
+          "share": 0.2933
         },
         "at_risk_ceiling": {
-          "n": 2730995638,
-          "share": 0.1012
+          "n": 2435258643,
+          "share": 0.0902
         },
         "not_observable": {
           "n": 16645603884,
@@ -1285,12 +1285,12 @@
       },
       "verdict_by_flows": {
         "at_risk": {
-          "n": 1554,
-          "share": 0.0966
+          "n": 2343,
+          "share": 0.1456
         },
         "at_risk_ceiling": {
-          "n": 952,
-          "share": 0.0592
+          "n": 163,
+          "share": 0.0101
         },
         "not_observable": {
           "n": 13588,
@@ -1298,8 +1298,8 @@
         }
       },
       "verdict_detail": {
-        "classical/negotiated": 1554,
-        "classical/offered": 952,
+        "classical/negotiated": 2343,
+        "classical/offered": 163,
         "not_observable/none": 13588
       }
     },
@@ -2033,26 +2033,26 @@
       "exposed_share_flows": 0.8261,
       "flows": 15759,
       "kem_groups": {
-        "None": 149,
-        "secp256r1": 696,
-        "secp384r1": 19,
+        "None": 1308,
+        "secp256r1": 1801,
+        "secp384r1": 31,
         "secp521r1": 1,
-        "x25519": 9578
+        "x25519": 9856
       },
       "label_field": "app",
       "observable_share": 0.8261,
       "tls_versions": {
-        "1.2": 2478,
-        "1.3": 10540
+        "1.2": 4460,
+        "1.3": 8558
       },
       "verdict_by_bytes": {
         "at_risk": {
-          "n": 3716446041,
-          "share": 0.7943
+          "n": 4042314959,
+          "share": 0.8639
         },
         "at_risk_ceiling": {
-          "n": 326425878,
-          "share": 0.0698
+          "n": 556960,
+          "share": 0.0001
         },
         "not_observable": {
           "n": 636272335,
@@ -2061,12 +2061,12 @@
       },
       "verdict_by_flows": {
         "at_risk": {
-          "n": 10443,
-          "share": 0.6627
+          "n": 12997,
+          "share": 0.8247
         },
         "at_risk_ceiling": {
-          "n": 2575,
-          "share": 0.1634
+          "n": 21,
+          "share": 0.0013
         },
         "not_observable": {
           "n": 2741,
@@ -2074,29 +2074,69 @@
         }
       },
       "verdict_detail": {
-        "classical/negotiated": 10443,
-        "classical/offered": 2575,
+        "classical/negotiated": 12997,
+        "classical/offered": 21,
         "not_observable/none": 2741
       }
     }
   },
   "fidelity": {
     "E1": {
-      "accuracy_on_exposed": 0.7057,
+      "accuracy_on_exposed": 0.718,
       "class_mix": {
         "n": 1468,
-        "total_variation": 0.1267,
-        "worst_class": "file_transfer",
-        "worst_gap": -0.0804
+        "total_variation": 0.1199,
+        "worst_class": "voip",
+        "worst_gap": 0.1015
       },
+      "class_mix_bytes": {
+        "n": 1468,
+        "total_variation": 0.0909,
+        "worst_class": "chat",
+        "worst_gap": 0.0519
+      },
+      "decision_bias": true,
       "expert": "E1",
       "exposed_test_flows": 1468,
       "test_flows": 17918,
       "tier_mix": {
         "n": 1468,
-        "total_variation": 0.109,
+        "total_variation": 0.1158,
         "worst_class": "migrate_next",
-        "worst_gap": 0.109
+        "worst_gap": 0.1158
+      },
+      "tier_mix_bytes": {
+        "n": 1468,
+        "total_variation": 0.0172,
+        "worst_class": "low_priority",
+        "worst_gap": -0.0172
+      },
+      "without_bias": {
+        "accuracy_on_exposed": 0.7057,
+        "class_mix": {
+          "n": 1468,
+          "total_variation": 0.1267,
+          "worst_class": "file_transfer",
+          "worst_gap": -0.0804
+        },
+        "class_mix_bytes": {
+          "n": 1468,
+          "total_variation": 0.1272,
+          "worst_class": "chat",
+          "worst_gap": 0.0645
+        },
+        "tier_mix": {
+          "n": 1468,
+          "total_variation": 0.109,
+          "worst_class": "migrate_next",
+          "worst_gap": 0.109
+        },
+        "tier_mix_bytes": {
+          "n": 1468,
+          "total_variation": 0.0513,
+          "worst_class": "migrate_first",
+          "worst_gap": -0.0513
+        }
       }
     },
     "E2": {
@@ -2107,6 +2147,13 @@
         "worst_class": "nvidia.com",
         "worst_gap": -0.0029
       },
+      "class_mix_bytes": {
+        "n": 9316,
+        "total_variation": 0.0561,
+        "worst_class": "nvidia.com",
+        "worst_gap": -0.0108
+      },
+      "decision_bias": false,
       "expert": "E2",
       "exposed_test_flows": 9316,
       "test_flows": 9338
@@ -2154,14 +2201,22 @@
         "traffic_type": {
           "at_risk_classes_by_bytes": {
             "chat": {
-              "n": 10584,
-              "share": 1.0
+              "n": 7102,
+              "share": 0.671
+            },
+            "voip": {
+              "n": 3482,
+              "share": 0.329
             }
           },
           "at_risk_classes_by_flows": {
             "chat": {
-              "n": 2,
-              "share": 1.0
+              "n": 1,
+              "share": 0.5
+            },
+            "voip": {
+              "n": 1,
+              "share": 0.5
             }
           },
           "at_risk_tiers_by_bytes": {

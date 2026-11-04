@@ -20,6 +20,10 @@ Per flow, in order -- the thesis of the project:
 
 ``mode="fast"`` keeps only each expert's GBDT (no GPU, no byte graphs) and uses the
 threshold exported for that member set.
+
+5. **Phase 7** -- an expert with a per-class decision bias (``configs/decision_bias.yaml``,
+   E1 only: ``ensemble/decision.py``) has it applied to the combined probabilities; every record gets the certificate verdict (``auth_verdict``, ``cert_key``)
+   and a harvest-now-decrypt-later score with mitigation codes (``countdown/risk.py``).
 """
 
 from __future__ import annotations
@@ -31,6 +35,7 @@ from typing import Any
 import numpy as np
 
 from countdown.config import default_config, get_logger
+from countdown.ensemble.decision import apply_bias, bias_for
 from countdown.ensemble.router import Router
 from countdown.pipeline.artifacts import DeployedExpert, load_store
 
@@ -60,6 +65,7 @@ class PipelineConfig:
     redact: bool = False                     # drop IPs and SNI from records
     store: str | None = None                 # models_store/ directory
     allow_unverified: bool = False           # load artifacts not in models_store.sha256
+    decision_bias: bool = True               # per-class biases from configs/decision_bias.yaml
 
 
 @dataclass
@@ -67,6 +73,8 @@ class Pipeline:
     config: PipelineConfig = field(default_factory=PipelineConfig)
     experts: dict[str, DeployedExpert] | None = None
     router: Router = field(default_factory=Router)
+    _tier_of: dict[str, str] | None = field(default=None, init=False, repr=False)
+    _biases: dict[str, np.ndarray | None] = field(default_factory=dict, init=False, repr=False)
 
     def __post_init__(self) -> None:
         if self.config.mode not in ("full", "fast"):
@@ -173,9 +181,31 @@ class Pipeline:
         for name, idx in rest.items():
             for i, label, conf, members in self._run(name, flows, idx, byte_rows):
                 self._fill(records[i], name, label, conf, members)
+        self._assess_risk(flows, records)
         return records
 
     # -- internals ---------------------------------------------------------------------
+    def _assess_risk(self, flows: list, records: list[dict[str, Any]]) -> None:
+        """Phase 7: HNDL score + mitigation codes (``countdown/risk.py``), after Stage 4 so the
+        predicted traffic type can set the sensitivity through its readiness tier."""
+        from countdown.risk import assess
+
+        if self._tier_of is None:
+            from countdown.eval.tiers import load_tiers
+
+            self._tier_of = {c: t for t, cs in load_tiers().items() for c in cs}
+        for f, rec in zip(flows, records):
+            tier = (self._tier_of.get(rec["traffic_class"])
+                    if rec.get("target") == "traffic_type" else None)
+            rec.update(assess(rec, f.meta.get("crypto"), tier))
+
+    def _bias(self, exp: DeployedExpert) -> np.ndarray | None:
+        if not self.config.decision_bias:
+            return None
+        if exp.name not in self._biases:
+            self._biases[exp.name] = bias_for(exp.name, exp.label_space.names)
+        return self._biases[exp.name]
+
     def _needs_bytes(self) -> bool:
         return self.config.mode == "full" and any(
             r.features == "byte_matrix"
@@ -238,6 +268,9 @@ class Pipeline:
                 cnt[cnt == 0] = 1.0
                 member_proba[m] = out / cnt[:, None]
         final = exp.combine(member_proba)
+        bias = self._bias(exp)
+        if bias is not None:
+            final = apply_bias(final, bias)
         names = exp.label_space.names
         per = {}
         for m, p in member_proba.items():
@@ -267,6 +300,9 @@ class Pipeline:
             # Does the ClientHello list any post-quantum group at all (HRR could select it)?
             "pqc_listed": any(g in _PQ_NAMES for g in crypto.get("offered_groups") or []),
             "at_risk": bool(v.is_at_risk),
+            # Phase 7: the certificate chain, readable before TLS 1.3 only (crypto/x509.py).
+            "auth_verdict": crypto.get("auth", {}).get("label"),
+            "cert_key": crypto.get("auth", {}).get("leaf_key"),
             "expert": None, "route_reason": "skipped:quantum_safe" if v.is_quantum_resistant else None,
             "target": None, "traffic_class": None, "confidence": None,
         }

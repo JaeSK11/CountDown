@@ -6,12 +6,12 @@
 
 ## Terminology: pipeline stages vs build phases
 
-The runtime **pipeline has 4 stages**; the **build roadmap has 7 phases**. The ML ensemble
+The runtime **pipeline has 4 stages**; the **build roadmap has 8 phases** (P0–P7). The ML ensemble
 (the "which model for which group" work) is **Pipeline Stage 4**, built across **Phases 3–5**.
 
 ```
 PIPELINE:   [1 Ingest] → [2 Crypto detect] → [3 PQC verdict] → [4 ML ensemble]
-BUILD:      P0 setup · P1(stage1) · P2(stages2-3) · P3-P5(stage4) · P6 integrate/eval
+BUILD:      P0 setup · P1(stage1) · P2(stages2-3) · P3-P5(stage4) · P6 integrate/eval · P7 follow-ups
 ```
 
 Key invariant: **Stages 2–3 are deterministic parsing (no ML).** ML is only Stage 4.
@@ -86,6 +86,14 @@ traffic (VPN/Tor) gets verdict = "crypto not observable" and routes straight to 
 - `eval/experiments.py` — cross-dataset experiments, reproducible tables, PQC-triage statistics.
 - `sources/live.py` — real-time capture (scapy/pyshark).
 - **Exit:** one command runs the whole pipeline; experiment tables reproduce.
+
+## Phase 7 — Certificates, HNDL risk, E1 `file_transfer`, PQC census  → Stages 2–4 + reporting
+**Deliverable:** the Phase-6 follow-ups (`phases/PHASE-7.md`)
+- `crypto/x509.py` — TLS 1.2 certificate chain + ServerKeyExchange signature → authentication verdict.
+- `risk.py` — harvest-now-decrypt-later score + mitigation codes per flow; in `countdown triage`.
+- `ensemble/decision.py` — E1 per-class decision bias fit on out-of-fold predictions (no retraining).
+- `scripts/pqc_census.py` — passive census of the Tranco top 1,000, checked against the client.
+- **Exit:** new fields in every record; census statistic with passive-vs-client agreement; tables regenerated.
 
 ---
 

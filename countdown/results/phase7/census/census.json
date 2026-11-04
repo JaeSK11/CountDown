@@ -1,0 +1,89 @@
+{
+  "meta": {
+    "sites": 1000,
+    "tranco_list": "746WX",
+    "date": "2026-11-04",
+    "openssl": "3.5.7",
+    "records_captured": 1734
+  },
+  "profiles": {
+    "tls13": {
+      "probed": 1000,
+      "handshake_ok": 759,
+      "captured": 758,
+      "verdicts": {
+        "hybrid": 455,
+        "classical": 303
+      },
+      "quantum_safe": 455,
+      "quantum_safe_share": 0.6003,
+      "kem_groups": {
+        "X25519MLKEM768": 455,
+        "x25519": 216,
+        "secp256r1": 61,
+        "null": 13,
+        "secp521r1": 8,
+        "secp384r1": 5
+      },
+      "protocols": {
+        "1.3": 638,
+        "1.2": 121
+      },
+      "passive_group_vs_client": {
+        "match": 745,
+        "curve_not_captured": 6,
+        "wrong": 0,
+        "n": 751
+      }
+    },
+    "tls12": {
+      "probed": 1000,
+      "handshake_ok": 760,
+      "captured": 759,
+      "verdicts": {
+        "classical": 759
+      },
+      "quantum_safe": 0,
+      "quantum_safe_share": 0.0,
+      "kem_groups": {
+        "x25519": 623,
+        "secp256r1": 88,
+        "null": 32,
+        "secp521r1": 9,
+        "secp384r1": 7
+      },
+      "protocols": {
+        "1.2": 760
+      },
+      "passive_group_vs_client": {
+        "match": 727,
+        "curve_not_captured": 25,
+        "wrong": 0,
+        "n": 752
+      },
+      "auth_verdicts": {
+        "classical": 759
+      },
+      "cert_keys": {
+        "RSA-2048": 465,
+        "secp256r1": 264,
+        "RSA-4096": 15,
+        "secp384r1": 9,
+        "RSA-3072": 3
+      },
+      "passive_cert_key_matches_client": [
+        756,
+        756
+      ],
+      "rsa_key_transport": 7,
+      "completed_only_without_pq_client_hello": [
+        "chinamobile.com",
+        "manutouch.com.cn",
+        "shifen.com",
+        "userapi.com",
+        "visa.cn",
+        "ys7.com"
+      ]
+    }
+  }
+}

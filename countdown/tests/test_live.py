@@ -88,3 +88,25 @@ def test_bpf_is_refused_and_missing_privilege_is_explained():
     except PermissionError as exc:
         assert "CAP_NET_RAW" in str(exc)
     # (with the capability -- e.g. the container's python-netraw -- it simply captures)
+
+
+def test_stop_event_ends_the_capture(monkeypatch):
+    import socket
+    import threading
+
+    class _Quiet:
+        def recvfrom(self, n):
+            raise socket.timeout
+
+        def close(self):
+            pass
+
+    stop = threading.Event()
+    src = LiveSource("lo", timeout_ms=1, stop=stop)
+    monkeypatch.setattr(src, "_open", lambda: _Quiet())
+    beats = 0
+    for raw in src:
+        beats += 1
+        if beats == 3:
+            stop.set()
+    assert beats == 3

@@ -17,7 +17,8 @@ Three structural facts drive the design:
   ServerHello (plaintext, ``0x16``), then ChangeCipherSpec (``0x14``), then the rest of
   the handshake wrapped in ``0x17`` *application_data* records.  Concatenating only
   ``0x16`` payloads therefore excludes the encrypted messages for free -- and is why
-  Certificate/CertificateVerify (and thus PQC *signatures*) are simply not observable.
+  Certificate/CertificateVerify (and thus PQC *signatures*) are simply not observable in
+  1.3.  In TLS 1.2 they are still ``0x16`` plaintext, so the chain is read (``x509.py``).
 * **HelloRetryRequest is a ServerHello.**  It reuses the ServerHello message type and is
   distinguished only by a magic ``random`` value, and its ``key_share`` carries a bare
   2-byte *selected_group* instead of a KeyShareEntry.  Parsing it as a normal ServerHello
@@ -245,6 +246,13 @@ class Handshake:
     # -- signatures --------------------------------------------------------------------
     sig_algs: list[int] = field(default_factory=list)
     sig_algs_cert: list[int] = field(default_factory=list)
+
+    # -- certificates (plaintext before TLS 1.3 only; Phase 7) -------------------------
+    server_certs: list = field(default_factory=list)      # x509.CertInfo, leaf first
+    server_certs_truncated: bool = False
+    client_certs: list = field(default_factory=list)      # TLS 1.2 client authentication
+    ske_sig_scheme: int | None = None        # SignatureScheme the 1.2 ServerKeyExchange used
+    cert_request_sig_algs: list[int] = field(default_factory=list)  # 1.2 CertificateRequest
 
     # -- context -----------------------------------------------------------------------
     sni: str | None = None
@@ -508,32 +516,57 @@ def _parse_server_hello(body: bytes, hs: Handshake) -> None:
         hs.cipher_suite = suite
     r.u8()                          # legacy_compression_method
     # The ServerHello's supported_versions extension is what actually names TLS 1.3;
-    # legacy_version is pinned at 0x0303 there.  Fall back to legacy for TLS 1.2 and below.
-    if hs.tls_version is None or not hs.saw_client_hello:
-        hs.tls_version = hs.legacy_version
+    # legacy_version is pinned at 0x0303 there.  The server's choice always replaces the
+    # version the ClientHello offered: a TLS 1.2 server answering a 1.3-capable client sends
+    # no supported_versions, and keeping the client's "1.3" stopped the parse before the 1.2
+    # ServerKeyExchange -- a negotiated curve reported as merely offered (found by the
+    # Phase-7 census, PHASE-7.md section 6.3).
+    hs.tls_version = hs.legacy_version
     if r.remaining >= 2:
         _parse_extensions(r, hs, is_server=True, is_hrr=is_hrr)
     if hs.tls_version is None:
         hs.tls_version = hs.legacy_version
+    if kex_family(hs.cipher_suite) == KEX_TLS13:
+        # A ServerHello cut before its supported_versions still names a 1.3-only suite.
+        hs.tls_version = "1.3"
     hs.saw_server_hello = True
 
 
 def _parse_server_key_exchange(body: bytes, hs: Handshake) -> None:
-    """TLS 1.2 ECDHE ServerKeyExchange -- the only place 1.2 names its curve.
+    """TLS 1.2 ServerKeyExchange -- the only place 1.2 names its curve, and the one signature
+    a passive observer sees the server actually *make*.
 
-    Parsed only when the negotiated suite is ECDHE: for DHE the same bytes are ``dh_p``,
-    and reading a prime's first two bytes as a named-curve codepoint would be nonsense.
+    The curve is read only when the negotiated suite is ECDHE: for DHE the same bytes are
+    ``dh_p``, and reading a prime's first two bytes as a named-curve codepoint would be
+    nonsense.  The trailing ``SignatureAndHashAlgorithm`` exists only in TLS 1.2 (1.0/1.1 sign
+    with an implicit MD5+SHA-1), so it is read only there.
     """
-    if hs.kex_family != KEX_ECDHE:
+    r = _Reader(body)
+    if hs.kex_family == KEX_ECDHE:
+        curve_type = r.u8()
+        if curve_type != 3:  # 3 = named_curve; 1/2 are deprecated explicit curves
+            hs.note(f"TLS1.2 ServerKeyExchange uses curve_type {curve_type}, not named_curve")
+            return
+        group = r.u16()
+        if not kem_registry.is_grease(group):
+            hs.server_kex_group = group
+        r.vector(1)                                  # the server's ECDH public point
+    elif hs.kex_family == KEX_DHE:
+        r.vector(2), r.vector(2), r.vector(2)        # dh_p, dh_g, dh_Ys
+    else:
+        return
+    if hs.tls_version == "1.2" and r.remaining >= 4:
+        hs.ske_sig_scheme = r.u16()
+
+
+def _parse_certificate_request(body: bytes, hs: Handshake) -> None:
+    """TLS 1.2 CertificateRequest: the server asks for client authentication and lists the
+    signature schemes it will accept from the client."""
+    if hs.tls_version != "1.2":
         return
     r = _Reader(body)
-    curve_type = r.u8()
-    if curve_type != 3:  # 3 = named_curve; 1/2 are deprecated explicit curves
-        hs.note(f"TLS1.2 ServerKeyExchange uses curve_type {curve_type}, not named_curve")
-        return
-    group = r.u16()
-    if not kem_registry.is_grease(group):
-        hs.server_kex_group = group
+    r.vector(1)                                      # certificate_types
+    hs.cert_request_sig_algs = kem_registry.strip_grease(_u16_list(r.vector(2)))
 
 
 # -- entry points -----------------------------------------------------------------------
@@ -546,6 +579,10 @@ def parse_message_stream(stream: bytes, hs: Handshake) -> bool:
     parsing is identical to TCP's.
     """
     found = False
+    # Which side sent this stream is settled by the Hello in it, never by the caller (see
+    # ``parse_tls_stream``): a Certificate after a ServerHello is the server's chain, one
+    # after a ClientHello is a client-authentication chain.
+    stream_side: str | None = None
     for msg_type, body, complete in iter_handshake_messages(stream):
         if not complete:
             hs.truncated = True
@@ -553,9 +590,11 @@ def parse_message_stream(stream: bytes, hs: Handshake) -> bool:
             if msg_type == HS_CLIENT_HELLO:
                 _parse_client_hello(body, hs)
                 found = True
+                stream_side = stream_side or "client"
             elif msg_type == HS_SERVER_HELLO:
                 _parse_server_hello(body, hs)
                 found = True
+                stream_side = "server"
                 # In TLS 1.3 nothing after a *real* ServerHello is readable; in 1.2 we
                 # continue for the ServerKeyExchange.
                 #
@@ -568,6 +607,16 @@ def parse_message_stream(stream: bytes, hs: Handshake) -> bool:
                     break
                 if hs.saw_hello_retry_request and hs.negotiated_group is not None:
                     break  # the post-retry ServerHello has now been read
+            elif msg_type == HS_CERTIFICATE and stream_side is not None:
+                from countdown.crypto.x509 import parse_certificate_message
+
+                certs, cut = parse_certificate_message(body, complete)
+                if stream_side == "server":
+                    hs.server_certs, hs.server_certs_truncated = certs, cut
+                else:
+                    hs.client_certs = certs
+            elif msg_type == HS_CERTIFICATE_REQUEST:
+                _parse_certificate_request(body, hs)
             elif msg_type == HS_SERVER_KEY_EXCHANGE:
                 # kex_family must be resolved from the selected suite first.
                 if hs.kex_family is None:

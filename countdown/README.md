@@ -6,7 +6,7 @@ ensemble of ML models.
 
 ```
 PIPELINE:   [1 Ingest] → [2 Crypto detect] → [3 PQC verdict] → [4 ML ensemble]
-BUILD:      P0 setup · P1(stage1) · P2(stages2-3) · P3-P5(stage4) · P6 integrate/eval
+BUILD:      P0 setup · P1(stage1) · P2(stages2-3) · P3-P5(stage4) · P6 integrate/eval · P7 follow-ups
 ```
 
 Key invariant: **stages 2–3 are deterministic parsing, no ML.** Quantum-resistance is read
@@ -17,7 +17,7 @@ See [`PLAN.md`](PLAN.md) for the full roadmap and [`phases/`](phases/) for per-p
 
 ---
 
-## Status: Phases 0–6 complete
+## Status: Phases 0–7 complete (Phase 7: `phases/PHASE-7.md`)
 
 Phase 0 delivers the data layer: **any dataset → `(X, y)`**.
 
@@ -167,6 +167,17 @@ these capture setups, not traffic in general (`PHASE-6.md` §11).
 Paper tables and figures: `countdown experiments run paper` -> `results/paper/`. Live capture
 of current HTTPS found the first real quantum-safe flows of the project: Cloudflare, Google and
 Wikipedia negotiate X25519MLKEM768 today (`PHASE-6.md` §13).
+
+**Phase 7** (`phases/PHASE-7.md`):
+- Every record now carries the TLS 1.2 certificate verdict (`auth_verdict`, `cert_key`), a
+  harvest-now-decrypt-later score and the mitigation codes that would remove the exposure
+  (`hndl_score`, `hndl_level`, `mitigations`). `countdown triage` ranks the changes by the bytes
+  they cover.
+- E1 applies a per-class decision bias (`configs/decision_bias.yaml`; `--no-decision-bias` turns
+  it off).
+- A passive census of the Tranco top 1,000 (`scripts/pqc_census.py`) found **60 % of responding
+  sites negotiate X25519MLKEM768**, with no wrong passive verdicts against the client's own
+  report.
 
 ## Install
 

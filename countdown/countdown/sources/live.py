@@ -73,6 +73,10 @@ class LiveSource(Source):
         Idle time after which a heartbeat is yielded so flow expiry keeps running.
     duration / max_packets:
         Stop after this many seconds / captured frames (None = run until interrupted).
+    stop:
+        An object with ``is_set()`` (e.g. ``threading.Event``): stop cleanly once it is set,
+        checked on every frame and heartbeat.  For a capture driven by the same process
+        (``scripts/pqc_census.py``), where the end is "when the probes are done".
     """
 
     multi_capture = False
@@ -87,6 +91,7 @@ class LiveSource(Source):
         duration: float | None = None,
         max_packets: int | None = None,
         bpf: str | None = None,
+        stop: object | None = None,
     ) -> None:
         if bpf:
             raise ValueError("kernel BPF filters are not supported (no libpcap in the image); "
@@ -98,6 +103,7 @@ class LiveSource(Source):
         self.timeout_ms = int(timeout_ms)
         self.duration = duration
         self.max_packets = max_packets
+        self.stop = stop
         self.packets = 0
         self._sock: socket.socket | None = None
 
@@ -127,6 +133,8 @@ class LiveSource(Source):
                 if t_end is not None and time.time() >= t_end:
                     return
                 if self.max_packets is not None and self.packets >= self.max_packets:
+                    return
+                if self.stop is not None and self.stop.is_set():
                     return
                 try:
                     data, addr = self._sock.recvfrom(self.snaplen)

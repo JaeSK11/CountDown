@@ -1,0 +1,70 @@
+{
+  "expert": "E1",
+  "dataset": "iscx_pooled",
+  "classes": [
+    "browsing",
+    "email",
+    "chat",
+    "audio_streaming",
+    "video_streaming",
+    "file_transfer",
+    "voip",
+    "p2p"
+  ],
+  "bias": {
+    "browsing": -1.1562,
+    "email": 0.0938,
+    "chat": 0.3438,
+    "audio_streaming": -0.9062,
+    "video_streaming": 0.3438,
+    "file_transfer": 0.5938,
+    "voip": 0.5938,
+    "p2p": 0.0938
+  },
+  "fit_on": "out-of-fold predictions of the train split (52605 flows)",
+  "objective": "macro-F1 (flows), coordinate ascent, grid -3..3 step 0.25",
+  "oof": {
+    "before": {
+      "macro_f1": 0.5901,
+      "macro_f1_bytes": 0.526,
+      "file_transfer_recall": 0.049,
+      "file_transfer_recall_bytes": 0.6363,
+      "class_mix_tv": 0.08,
+      "class_mix_tv_bytes": 0.2772,
+      "file_transfer_gap_pts": -6.78,
+      "file_transfer_gap_pts_bytes": -16.18
+    },
+    "after": {
+      "macro_f1": 0.6166,
+      "macro_f1_bytes": 0.5649,
+      "file_transfer_recall": 0.2049,
+      "file_transfer_recall_bytes": 0.8058,
+      "class_mix_tv": 0.0778,
+      "class_mix_tv_bytes": 0.173,
+      "file_transfer_gap_pts": -4.71,
+      "file_transfer_gap_pts_bytes": -4.85
+    }
+  },
+  "test": {
+    "before": {
+      "macro_f1": 0.6654,
+      "macro_f1_bytes": 0.7548,
+      "file_transfer_recall": 0.4663,
+      "file_transfer_recall_bytes": 0.9555,
+      "class_mix_tv": 0.0164,
+      "class_mix_tv_bytes": 0.0747,
+      "file_transfer_gap_pts": -0.43,
+      "file_transfer_gap_pts_bytes": 1.09
+    },
+    "after": {
+      "macro_f1": 0.6747,
+      "macro_f1_bytes": 0.7727,
+      "file_transfer_recall": 0.4935,
+      "file_transfer_recall_bytes": 0.9632,
+      "class_mix_tv": 0.0228,
+      "class_mix_tv_bytes": 0.0748,
+      "file_transfer_gap_pts": 0.01,
+      "file_transfer_gap_pts_bytes": 1.72
+    }
+  }
+}

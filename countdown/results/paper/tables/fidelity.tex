@@ -3,15 +3,15 @@
 \begin{table}[t]
 \centering
 \small
-\caption{Fidelity of the predicted breakdown of exposed traffic (total-variation distance between predicted and true class mix on held-out flows).}
+\caption{Fidelity of the predicted breakdown of exposed traffic (total-variation distance between predicted and true class mix on held-out flows, by flows / by bytes).}
 \label{tab:fidelity}
 \resizebox{\linewidth}{!}{%
 \begin{tabular}{lrrrlr}
 \toprule
 Expert & Exposed flows & Accuracy & Class-mix TV & Worst class & Tier-mix TV \\
 \midrule
-E1 & 1,468 & 0.706 & 0.127 & file\_transfer (-8.0 pts) & 0.109 \\
-E2 & 9,316 & 0.915 & 0.028 & nvidia.com (-0.3 pts) & — \\
+E1 & 1,468 & 0.718 & 0.120 / 0.091 & voip (+10.2 pts) & 0.116 / 0.017 \\
+E2 & 9,316 & 0.915 & 0.028 / 0.056 & nvidia.com (-0.3 pts) & — \\
 \bottomrule
 \end{tabular}}
 \end{table}

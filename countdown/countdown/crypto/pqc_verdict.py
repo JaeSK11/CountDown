@@ -67,6 +67,7 @@ CONF_NEGOTIATED = 1.0        # server's own selection, read from a complete Serv
 CONF_NEGOTIATED_TRUNCATED = 0.9   # ...but the window was cut; group read before the cut
 CONF_HRR = 0.85              # HelloRetryRequest only: server demanded a group, exchange unconfirmed
 CONF_TLS12_SKE = 0.95        # TLS 1.2 ServerKeyExchange named_curve
+CONF_TLS12_SUITE = 0.9       # TLS 1.2 ECDHE suite selected, curve outside the window (Phase 7)
 CONF_OFFERED = 0.5           # client's willingness; the server may well have declined
 CONF_OFFERED_TRUNCATED = 0.4
 CONF_NONE = 0.0
@@ -222,6 +223,19 @@ def pqc_verdict(hs: Handshake) -> Verdict:
             reason=f"TLS 1.2 {hs.kex_family} key exchange; no post-quantum option exists "
                    f"for this cipher suite",
             evidence=_evidence(hs, ext="cipher_suite", kex_family=hs.kex_family),
+        )
+    # An ECDHE 1.2 suite whose ServerKeyExchange fell outside the window (a TLS 1.2 chain of
+    # more than ~8 KB pushes it out -- common on large sites, PHASE-7.md section 6.3).  The curve
+    # is unknown but the exchange is not: the hybrid ML-KEM groups are defined for TLS 1.3
+    # only, and the server's choice of a 1.2 suite is positive evidence, not an absence.
+    if hs.saw_server_hello and hs.kex_family in ("ECDHE", "ECDH") and hs.cipher_suite is not None:
+        return Verdict(
+            label=LABEL_CLASSICAL, basis=BASIS_NEGOTIATED, group=None,
+            group_name=None, confidence=CONF_TLS12_SUITE,
+            reason=f"server selected a TLS 1.2 {hs.kex_family} suite; its curve was not in the "
+                   "captured window, but no post-quantum key exchange exists below TLS 1.3",
+            evidence=_evidence(hs, ext="cipher_suite", kex_family=hs.kex_family,
+                               offered_groups=[kem_registry.name_of(g) for g in hs.offered_groups]),
         )
 
     # -- 5. client side only: offered groups, explicitly weaker --------------------------

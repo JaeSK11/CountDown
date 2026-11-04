@@ -89,11 +89,15 @@ def enrich_flow(flow: "Flow") -> Verdict:
 
     Populates the four fields ``schema.Flow`` reserved for Phase 2 -- ``tls_version``,
     ``cipher_suite``, ``kem_group``, ``pqc_verdict`` -- and puts the fuller detail
-    (basis, confidence, offered groups, SNI, ALPN, evidence) under ``flow.meta['crypto']``
+    (basis, confidence, offered groups, SNI, ALPN, evidence, and the Phase-7 authentication
+    verdict from the certificate chain) under ``flow.meta['crypto']``
     so the flow schema stays stable while the evidence stays auditable.
     """
+    from countdown.crypto.x509 import auth_verdict
+
     hs = parse_handshake(flow)
     verdict = pqc_verdict(hs)
+    auth = auth_verdict(hs)
 
     flow.tls_version = hs.tls_version
     flow.cipher_suite = hs.cipher_suite_name
@@ -117,5 +121,7 @@ def enrich_flow(flow: "Flow") -> Verdict:
         "truncated": hs.truncated,
         "kex_family": hs.kex_family,
         "evidence": verdict.evidence,
+        # Phase 7: who could be impersonated -- kept beside, never inside, the KEM verdict.
+        "auth": auth.as_dict(),
     }
     return verdict

@@ -153,11 +153,17 @@ def triage_records(records: Sequence[dict[str, Any]], flows_bytes: Sequence[int]
     return out
 
 
-def breakdown_error(true_cls: Sequence[Any], pred_cls: Sequence[Any]) -> dict[str, Any]:
+def breakdown_error(true_cls: Sequence[Any], pred_cls: Sequence[Any],
+                    weights: Sequence[float] | None = None) -> dict[str, Any]:
     """How far a predicted class *mix* is from the true one: total-variation distance between
-    the two distributions (0 = identical mix, 1 = disjoint), plus the largest per-class gap."""
-    t, p = Counter(map(str, true_cls)), Counter(map(str, pred_cls))
-    n = max(len(true_cls), 1)
+    the two distributions (0 = identical mix, 1 = disjoint), plus the largest per-class gap.
+    ``weights`` (e.g. bytes per flow) weights each flow; the default counts flows."""
+    w = [1.0] * len(true_cls) if weights is None else [float(x) for x in weights]
+    t, p = Counter(), Counter()
+    for tc, pc, wi in zip(map(str, true_cls), map(str, pred_cls), w):
+        t[tc] += wi
+        p[pc] += wi
+    n = sum(w) or 1.0
     keys = set(t) | set(p)
     gaps = {k: (p[k] - t[k]) / n for k in keys}
     worst = max(gaps, key=lambda k: abs(gaps[k])) if gaps else None
@@ -231,6 +237,8 @@ def fidelity(name: str, tiers) -> dict:
     from countdown.experts import get_expert
     from countdown.pipeline.artifacts import DeployedExpert
 
+    from countdown.ensemble.decision import apply_bias, bias_for
+
     exp = DeployedExpert.load(_ROOT / "models_store" / f"{name}.joblib")
     spec = get_expert(name)
     data = build_expert_data(spec, members=list(exp.members), seed=42,
@@ -242,17 +250,32 @@ def fidelity(name: str, tiers) -> dict:
     te = data.test_rows
     preds = _ROOT / "runs/ensemble" / name / "preds-s42"
     member = {m: np.load(preds / f"{m}.npz")["test"] for m in exp.members}
-    proba = exp.combine(member)
+    raw = exp.combine(member)
     names = exp.label_space.names
+    bias = bias_for(name, names)
+    proba = raw if bias is None else apply_bias(raw, bias)
     mask = exposed_mask([flows[r] for r in te])
+    nbytes = [float(np.asarray(flows[r].sizes).sum()) for r in te[mask]]
     true = [names[i] for i in data.y[te][mask]]
     pred = [names[i] for i in proba.argmax(1)[mask]]
     out = {"expert": name, "test_flows": int(len(te)), "exposed_test_flows": int(mask.sum()),
+           "decision_bias": bias is not None,
            "class_mix": breakdown_error(true, pred),
+           "class_mix_bytes": breakdown_error(true, pred, nbytes),
            "accuracy_on_exposed": round(float(np.mean(np.array(true) == np.array(pred))), 4)}
+    if bias is not None:
+        plain = [names[i] for i in raw.argmax(1)[mask]]
+        out["without_bias"] = {"class_mix": breakdown_error(true, plain),
+                               "class_mix_bytes": breakdown_error(true, plain, nbytes),
+                               "accuracy_on_exposed": round(float(np.mean(np.array(true) == np.array(plain))), 4)}
     if spec.target == "traffic_type":
         lookup = {c: t for t, cs in tiers.items() for c in cs}
-        out["tier_mix"] = breakdown_error([lookup[c] for c in true], [lookup[c] for c in pred])
+        tt = [lookup[c] for c in true]
+        out["tier_mix"] = breakdown_error(tt, [lookup[c] for c in pred])
+        out["tier_mix_bytes"] = breakdown_error(tt, [lookup[c] for c in pred], nbytes)
+        if bias is not None:
+            out["without_bias"]["tier_mix"] = breakdown_error(tt, [lookup[c] for c in plain])
+            out["without_bias"]["tier_mix_bytes"] = breakdown_error(tt, [lookup[c] for c in plain], nbytes)
     return out
 
 
@@ -293,11 +316,24 @@ def build_report() -> tuple[dict[str, Any], str]:
     for name in ("E1", "E2"):
         report["fidelity"][name] = fidelity(name, tiers)
     md += ["### Fidelity of the predicted breakdown (exposed test flows)", "",
-           "| expert | exposed test flows | accuracy | class-mix TV | worst class (gap) | tier-mix TV |",
+           "TV = total-variation distance between predicted and true mix, by flows / by bytes. "
+           "Deployed decision rule (E1 with its per-class decision bias).", "",
+           "| expert | exposed test flows | accuracy | class-mix TV (flows / bytes) | worst class by flows (gap) "
+           "| tier-mix TV (flows / bytes) |",
            "| --- | --- | --- | --- | --- | --- |"]
     for n, f in report["fidelity"].items():
-        cm = f["class_mix"]
+        cm, cb = f["class_mix"], f["class_mix_bytes"]
+        tm, tb = f.get("tier_mix"), f.get("tier_mix_bytes")
+        tier = f"{tm['total_variation']:.3f} / {tb['total_variation']:.3f}" if tm else "—"
         md.append(f"| {n} | {f['exposed_test_flows']:,} | {f['accuracy_on_exposed']:.3f} | "
-                  f"{cm['total_variation']:.3f} | {cm['worst_class']} ({cm['worst_gap']:+.3f}) | "
-                  f"{f.get('tier_mix', {}).get('total_variation', '—')} |")
+                  f"{cm['total_variation']:.3f} / {cb['total_variation']:.3f} | "
+                  f"{cm['worst_class']} ({cm['worst_gap']:+.3f}) | {tier} |")
+    for n, f in report["fidelity"].items():
+        if "without_bias" in f:
+            wb = f["without_bias"]
+            tier = (f", tier-mix TV {wb['tier_mix']['total_variation']:.3f} / "
+                    f"{wb['tier_mix_bytes']['total_variation']:.3f}" if "tier_mix" in wb else "")
+            md.append(f"\n{n} without its decision bias: accuracy {wb['accuracy_on_exposed']:.3f}, class-mix TV "
+                      f"{wb['class_mix']['total_variation']:.3f} / {wb['class_mix_bytes']['total_variation']:.3f}, "
+                      f"worst {wb['class_mix']['worst_class']} ({wb['class_mix']['worst_gap']:+.3f}){tier}.")
     return report, "\n".join(md) + "\n"

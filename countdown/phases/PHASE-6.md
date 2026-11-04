@@ -235,6 +235,11 @@ by readiness tier (`configs/readiness_tiers.yaml`) for traffic types.
 | ISCX-Tor (2016) | 54,429 | 10.7 % | **10.7 % / 9.9 %** | 0 | 1.2, 1.1, 1.0 |
 | `_pqc_synth` (ours, via the pipeline) | 3 | 100 % | 2 of 3 | **1** (X25519MLKEM768) | 1.3 |
 
+> **Corrected in Phase 7** (`PHASE-7.md` §6.3): two parser fixes leave every exposed share
+> unchanged but move flows from `at_risk_ceiling` to `at_risk`. PostQuantumTLS is **1.3 66 %,
+> 1.2 34 %** (not 81 %); its at_risk_ceiling share is 0.1 % (was 16.3 %). The regenerated
+> numbers are in `results/experiments/triage.md`.
+
 1. **No public dataset contains a single post-quantum handshake.** That includes
    PostQuantumTLS: its 90 captures (the complete Zenodo archive, re-parsed with the Phase-1
    reassembler on 2026-10-09, flows identical to the old cache) offer only classical groups —
@@ -417,6 +422,10 @@ python3 -m venv .venv && .venv/bin/pip install -e ".[dev,deep]"   # or the Docke
 **Exit criterion** — `countdown analyze <pcap>` emits per-flow verdicts with five-tuple, l7, TLS
 version, cipher, KEM group, PQC verdict, traffic class and confidence ✅; `countdown experiments
 run --all` regenerates every results table deterministically ✅.
+
+Follow-ups done in **Phase 7** (`PHASE-7.md`): certificate chains (§7 future work), HNDL
+scoring with mitigations (§7), E1's `file_transfer` under-count (byte-weighted tier error
+5.1 → 1.7 pts; the per-flow error remains), and a 1,000-site PQC census (§10).
 
 Known limits carried out of Phase 6: E1 does not transfer across capture setups (§11); E1's
 predicted breakdown under-counts `file_transfer` (§10); E3's ensemble gain rests on 92 test flows;

@@ -22,8 +22,8 @@ from typing import Any
 
 FIELDS = ["flow_id", "five_tuple", "proto", "start", "packets", "bytes", "l7", "tls_version", "cipher",
           "kem_group", "sni", "pqc_verdict", "pqc_basis", "pqc_confidence", "quantum_safe", "pqc_listed",
-          "at_risk", "expert", "route_reason", "target", "traffic_class", "confidence",
-          "fallback_from"]
+          "at_risk", "auth_verdict", "cert_key", "expert", "route_reason", "target", "traffic_class",
+          "confidence", "hndl_score", "hndl_level", "mitigations", "fallback_from"]
 
 
 def _write(records: list[dict[str, Any]], out: str | None, fmt: str | None) -> None:
@@ -68,7 +68,8 @@ def cmd_analyze(args: argparse.Namespace) -> int:
                          fallback_threshold=args.fallback_threshold,
                          classify_quantum_safe=args.classify_quantum_safe,
                          include_members=args.members, redact=args.redact, store=args.store,
-                         allow_unverified=args.allow_unverified)
+                         allow_unverified=args.allow_unverified,
+                         decision_bias=not args.no_decision_bias)
     pipe = Pipeline(cfg)
     records = []
     for p in args.pcap:
@@ -82,19 +83,25 @@ def cmd_analyze(args: argparse.Namespace) -> int:
 
 
 def cmd_triage(args: argparse.Namespace) -> int:
-    """analyze + the PQC-triage summary, from the pipeline's predicted classes."""
+    """analyze + the PQC-triage summary, from the pipeline's predicted classes, and the
+    harvest-now-decrypt-later risk levels with what to change first (Phase 7)."""
     from countdown.eval.tiers import load_tiers
     from countdown.eval.triage import classes_markdown, to_markdown, triage_records
     from countdown.pipeline import Pipeline, PipelineConfig
 
     pipe = Pipeline(PipelineConfig(mode=args.mode, context=args.context, store=args.store))
     records = [r for p in args.pcap for r in pipe.analyze_pcap(p)]
+    from countdown.risk import summarise, summary_markdown
+
     t = triage_records(records, tiers=load_tiers())
-    md = [to_markdown(f"{len(args.pcap)} capture(s)", t)]
+    t["hndl"] = summarise(records)
+    md = [to_markdown(f"{len(args.pcap)} capture(s)", t), summary_markdown(t["hndl"])]
     for target, sub in t["at_risk_classes_by_target"].items():
         md.append(classes_markdown(f"Exposed flows classified as {target} (predicted)", sub))
     md.append("_Class mixes are model predictions. Measured error of the mix on held-out data "
-              "(total variation): traffic_type 0.127, app 0.028 -- see PHASE-6.md section 10._")
+              "(total variation, by flows / by bytes): traffic_type 0.120 / 0.091, app 0.028 / 0.056 "
+              "-- see PHASE-7.md section 5. HNDL scores take their sensitivity from these predicted "
+              "classes._")
     text = "\n".join(md)
     if args.out:
         Path(args.out).write_text(json.dumps(t, indent=2, default=str) if args.out.endswith(".json") else text)
@@ -178,6 +185,8 @@ def main(argv: list[str] | None = None) -> int:
     a.add_argument("--classify-quantum-safe", action="store_true",
                    help="also classify hybrid/PQC flows (skipped by default)")
     a.add_argument("--members", action="store_true", help="per-member breakdown in each record")
+    a.add_argument("--no-decision-bias", action="store_true",
+                   help="plain argmax: ignore configs/decision_bias.yaml (E1's per-class biases)")
     a.add_argument("--redact", action="store_true", help="drop IPs, SNI and file paths")
     a.add_argument("--store", help="deployed-experts directory (default countdown/models_store)")
     a.add_argument("--allow-unverified", action="store_true",

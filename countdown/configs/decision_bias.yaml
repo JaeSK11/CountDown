@@ -1,0 +1,20 @@
+# Per-class decision biases (countdown/ensemble/decision.py, Phase 7 task 7.3).
+# Written by scripts/fit_decision_bias.py from out-of-fold predictions; the label is
+# argmax(log p + bias). Plain numbers, so the hash-pinned model zoo is unchanged.
+version: 1
+experts:
+  E1:
+    bias:
+      browsing: -1.1562
+      email: 0.0938
+      chat: 0.3438
+      audio_streaming: -0.9062
+      video_streaming: 0.3438
+      file_transfer: 0.5938
+      voip: 0.5938
+      p2p: 0.0938
+    fit_on: out-of-fold predictions of the train split (52605 flows)
+    objective: macro-F1 (flows), coordinate ascent, grid -3..3 step 0.25
+    test_macro_f1:
+    - 0.6654
+    - 0.6747

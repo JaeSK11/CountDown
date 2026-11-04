@@ -99,13 +99,17 @@ def table_fidelity(tr: dict) -> str:
     rows = []
     for name, f in tr["fidelity"].items():
         cm = f["class_mix"]
+        cb = f.get("class_mix_bytes", {}).get("total_variation")
         tier = f.get("tier_mix", {}).get("total_variation")
+        tb = f.get("tier_mix_bytes", {}).get("total_variation")
+        pair = lambda a, b: "—" if a is None else (f"{a:.3f}" if b is None else f"{a:.3f} / {b:.3f}")  # noqa: E731
         rows.append(f"{name} & {f['exposed_test_flows']:,} & {f['accuracy_on_exposed']:.3f} & "
-                    f"{cm['total_variation']:.3f} & {cm['worst_class'].replace('_', '\\_')} "
-                    f"({100 * cm['worst_gap']:+.1f} pts) & {'—' if tier is None else f'{tier:.3f}'} \\\\")
+                    f"{pair(cm['total_variation'], cb)} & {cm['worst_class'].replace('_', '\\_')} "
+                    f"({100 * cm['worst_gap']:+.1f} pts) & {pair(tier, tb)} \\\\")
     return _tabular(
         "Fidelity of the predicted breakdown of exposed traffic (total-variation distance "
-        "between predicted and true class mix on held-out flows).", "tab:fidelity", "lrrrlr",
+        "between predicted and true class mix on held-out flows, by flows / by bytes).",
+        "tab:fidelity", "lrrrlr",
         "Expert & Exposed flows & Accuracy & Class-mix TV & Worst class & Tier-mix TV", rows)
 
 

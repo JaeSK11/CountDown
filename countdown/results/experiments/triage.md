@@ -7,8 +7,8 @@
 | verdict | flows | share | bytes share |
 | --- | --- | --- | --- |
 | not_observable | 13,588 | 84.4% | 61.7% |
-| at_risk | 1,554 | 9.7% | 28.2% |
-| at_risk_ceiling | 952 | 5.9% | 10.1% |
+| at_risk | 2,343 | 14.6% | 29.3% |
+| at_risk_ceiling | 163 | 1.0% | 9.0% |
 
 Exposed flows by traffic_type (top 8):
 
@@ -37,8 +37,8 @@ Exposed flows by readiness tier:
 | verdict | flows | share | bytes share |
 | --- | --- | --- | --- |
 | not_observable | 48,581 | 89.3% | 90.1% |
-| at_risk | 3,699 | 6.8% | 3.9% |
-| at_risk_ceiling | 2,149 | 4.0% | 6.0% |
+| at_risk | 5,474 | 10.1% | 9.9% |
+| at_risk_ceiling | 374 | 0.7% | 0.0% |
 
 Exposed flows by traffic_type (top 8):
 
@@ -90,9 +90,9 @@ Exposed flows by app (top 8):
 
 | verdict | flows | share | bytes share |
 | --- | --- | --- | --- |
-| at_risk | 10,443 | 66.3% | 79.4% |
+| at_risk | 12,997 | 82.5% | 86.4% |
 | not_observable | 2,741 | 17.4% | 13.6% |
-| at_risk_ceiling | 2,575 | 16.3% | 7.0% |
+| at_risk_ceiling | 21 | 0.1% | 0.0% |
 
 Exposed flows by app (top 8):
 
@@ -118,7 +118,11 @@ Exposed flows by app (top 8):
 
 ### Fidelity of the predicted breakdown (exposed test flows)
 
-| expert | exposed test flows | accuracy | class-mix TV | worst class (gap) | tier-mix TV |
+TV = total-variation distance between predicted and true mix, by flows / by bytes. Deployed decision rule (E1 with its per-class decision bias).
+
+| expert | exposed test flows | accuracy | class-mix TV (flows / bytes) | worst class by flows (gap) | tier-mix TV (flows / bytes) |
 | --- | --- | --- | --- | --- | --- |
-| E1 | 1,468 | 0.706 | 0.127 | file_transfer (-0.080) | 0.109 |
-| E2 | 9,316 | 0.915 | 0.028 | nvidia.com (-0.003) | — |
+| E1 | 1,468 | 0.718 | 0.120 / 0.091 | voip (+0.102) | 0.116 / 0.017 |
+| E2 | 9,316 | 0.915 | 0.028 / 0.056 | nvidia.com (-0.003) | — |
+
+E1 without its decision bias: accuracy 0.706, class-mix TV 0.127 / 0.127, worst file_transfer (-0.080), tier-mix TV 0.109 / 0.051.

@@ -6,6 +6,20 @@ member composition **and its own output class set**.
 
 ## The ensembles
 
+> **As built (Phase 5–7).** The table below is the design. What is deployed
+> (`countdown/experts/__init__.py`, `deploy=`; `phases/PHASE-5.md` §10):
+>
+> | expert | deployed members | combiner | why |
+> | --- | --- | --- | --- |
+> | E1 | `flow_gbdt` only (+ per-class decision bias, Phase 7.3) | — | no subset beat the GBDT (0.665) |
+> | E2 | `flow_gbdt` + `graph_gnn` (GIN) | calibrated soft vote | 0.890 vs 0.868; `byte_net` has no flow-aligned input yet |
+> | E3 | `flow_gbdt` + `seq_cnn` + `flow_image_cnn` | calibrated soft vote | 0.513 vs 0.441 (92 test flows) |
+>
+> Routing: capture context (e.g. `mobile` → E3) wins; otherwise the Stage-1 hint (`tls`/`quic` → E2,
+> everything else → E1); a flow the hint sent to E2 whose calibrated confidence is below E2's
+> threshold is **re-classified by E1** (`route_reason = fallback`), because E2 confidently labels
+> non-CSTNET TLS as one of its 120 sites (`PHASE-5.md` §10.5).
+
 | # | Ensemble (= a Phase-4 expert) | Routes on | Member combo that fits | Output classes |
 | --- | --- | --- | --- | --- |
 | **—** | **Crypto verdict** *(not ML — Phase 2)* | any flow w/ visible handshake | rule-based KEM lookup | **5:** classical · hybrid · pqc · not_observable · unknown |
@@ -42,6 +56,8 @@ flow ─▶ S0 crypto verdict ─┬─ pqc/hybrid ─▶ mark quantum-safe, sto
                         └──────────┴──────────────┴────────► per-flow verdict record + HNDL score
 ```
 The router (Phase 5) is the dispatcher; a flow gets **one** applicable ensemble, not all three.
+As built, an E2 flow below E2's confidence threshold falls back to E1, keeping E2's guess in the
+record. The crypto branch stops classification for negotiated hybrid/PQC flows.
 
 ## Not an ensemble (deliberately)
 - **PostQuantumTLS `app`** (1/class) → Phase-2 KEM ground truth.

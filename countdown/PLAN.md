@@ -78,6 +78,11 @@ traffic (VPN/Tor) gets verdict = "crypto not observable" and routes straight to 
 - `ensemble/combiner.py` — **calibrate each model (temperature/Platt) → stack with a LightGBM
   meta-learner** over `predict_proba` (beats naive soft-voting).
 - **Exit:** ensemble > best single model on held-out data; ablation table.
+- **Outcome** (`phases/PHASE-5.md` §10): the stacking premise did not hold. The **calibrated soft
+  vote** beat logistic and LightGBM stacking on every expert (the 120-class LightGBM meta-learner
+  collapsed on E2), so it is the deployed combiner. Exit met on E2 (GBDT + GIN 0.890 vs GIN 0.868)
+  and E3 (0.513 vs 0.441, 92 test flows); not on E1, which ships the GBDT alone. The router
+  routes by Stage-1 hint with a capture-context override and an **E2 → E1 confidence fallback**.
 
 ## Phase 6 — End-to-end pipeline + eval framework + live capture
 **Deliverable:** paper-ready results + working prototype
@@ -86,6 +91,12 @@ traffic (VPN/Tor) gets verdict = "crypto not observable" and routes straight to 
 - `eval/experiments.py` — cross-dataset experiments, reproducible tables, PQC-triage statistics.
 - `sources/live.py` — real-time capture (scapy/pyshark).
 - **Exit:** one command runs the whole pipeline; experiment tables reproduce.
+- **Outcome** (`phases/PHASE-6.md` §9–15): built as `pipeline/pipeline.py` + `cli.py`
+  (`countdown analyze | triage | live | models | experiments`). Live capture is a raw `AF_PACKET`
+  socket (no scapy/pyshark) with idle-wire heartbeats, run in the container. Models ship as the
+  hash-verified release `models-v1`. Findings: no public dataset contains a post-quantum
+  handshake; the traffic-type model does not transfer across capture setups (~0.11 vs ~0.58
+  macro-F1).
 
 ## Phase 7 — Certificates, HNDL risk, E1 `file_transfer`, PQC census  → Stages 2–4 + reporting
 **Deliverable:** the Phase-6 follow-ups (`phases/PHASE-7.md`)

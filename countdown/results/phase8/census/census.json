@@ -1,0 +1,445 @@
+{
+  "meta": {
+    "sites": 1000,
+    "tranco_list": "746WX",
+    "date": "2026-11-09",
+    "openssl": "3.5.7",
+    "records_captured": 2952,
+    "profiles": [
+      "tls13",
+      "tls12",
+      "quic"
+    ],
+    "capture_kernel_drops": 0,
+    "capture_kernel_frames": 43789
+  },
+  "profiles": {
+    "tls13": {
+      "probed": 1000,
+      "handshake_ok": 760,
+      "captured": 760,
+      "verdicts": {
+        "hybrid": 461,
+        "classical": 299
+      },
+      "quantum_safe": 461,
+      "quantum_safe_share": 0.6066,
+      "kem_groups": {
+        "X25519MLKEM768": 461,
+        "x25519": 214,
+        "secp256r1": 59,
+        "null": 13,
+        "secp521r1": 8,
+        "secp384r1": 5
+      },
+      "protocols": {
+        "1.3": 641,
+        "1.2": 119
+      },
+      "passive_group_vs_client": {
+        "match": 747,
+        "curve_not_captured": 5,
+        "server_reply_not_read": 0,
+        "wrong": 0,
+        "n": 752
+      }
+    },
+    "tls12": {
+      "probed": 1000,
+      "handshake_ok": 761,
+      "captured": 761,
+      "verdicts": {
+        "classical": 761
+      },
+      "quantum_safe": 0,
+      "quantum_safe_share": 0.0,
+      "kem_groups": {
+        "x25519": 627,
+        "secp256r1": 86,
+        "null": 31,
+        "secp521r1": 10,
+        "secp384r1": 7
+      },
+      "protocols": {
+        "1.2": 761
+      },
+      "passive_group_vs_client": {
+        "match": 730,
+        "curve_not_captured": 24,
+        "server_reply_not_read": 0,
+        "wrong": 0,
+        "n": 754
+      },
+      "auth_verdicts": {
+        "classical": 761
+      },
+      "cert_keys": {
+        "RSA-2048": 463,
+        "secp256r1": 266,
+        "RSA-4096": 14,
+        "secp384r1": 9,
+        "RSA-3072": 3
+      },
+      "passive_cert_key_matches_client": [
+        755,
+        755
+      ],
+      "rsa_key_transport": 7,
+      "completed_only_without_pq_client_hello": [
+        "aliyuncs.com",
+        "manulife-sinochem.com",
+        "netcraze.io",
+        "netease.com"
+      ]
+    },
+    "quic": {
+      "probed": 1000,
+      "handshake_ok": 306,
+      "captured": 306,
+      "verdicts": {
+        "hybrid": 294,
+        "classical": 12
+      },
+      "quantum_safe": 294,
+      "quantum_safe_share": 0.9608,
+      "kem_groups": {
+        "X25519MLKEM768": 294,
+        "x25519": 12
+      },
+      "protocols": {
+        "1.3": 306
+      },
+      "passive_group_vs_client": {
+        "match": 306,
+        "curve_not_captured": 0,
+        "server_reply_not_read": 0,
+        "wrong": 0,
+        "n": 306
+      }
+    }
+  },
+  "quic_vs_tcp": {
+    "tcp_ok": 760,
+    "quic_ok": 306,
+    "quic_only": [],
+    "both_captured": 306,
+    "safe_tcp_and_quic": 250,
+    "safe_tcp_only": 0,
+    "safe_quic_only": 44,
+    "safe_neither": 12,
+    "quic_share_of_tcp_sites": 0.4026,
+    "quantum_safe_share_tcp_on_common": 0.817,
+    "quantum_safe_share_quic_on_common": 0.9608,
+    "quantum_safe_share_tcp_all": 0.6066,
+    "group_differs": [
+      {
+        "site": "aliexpress.com",
+        "tcp": "x25519",
+        "quic": "X25519MLKEM768",
+        "tcp_client": "x25519",
+        "quic_client": "X25519MLKEM768"
+      },
+      {
+        "site": "amazon.ca",
+        "tcp": "x25519",
+        "quic": "X25519MLKEM768",
+        "tcp_client": "x25519",
+        "quic_client": "X25519MLKEM768"
+      },
+      {
+        "site": "amazon.co.jp",
+        "tcp": "x25519",
+        "quic": "X25519MLKEM768",
+        "tcp_client": "x25519",
+        "quic_client": "X25519MLKEM768"
+      },
+      {
+        "site": "amazon.co.uk",
+        "tcp": "x25519",
+        "quic": "X25519MLKEM768",
+        "tcp_client": "x25519",
+        "quic_client": "X25519MLKEM768"
+      },
+      {
+        "site": "amazon.co.za",
+        "tcp": "x25519",
+        "quic": "X25519MLKEM768",
+        "tcp_client": "x25519",
+        "quic_client": "X25519MLKEM768"
+      },
+      {
+        "site": "amazon.com",
+        "tcp": "x25519",
+        "quic": "X25519MLKEM768",
+        "tcp_client": "x25519",
+        "quic_client": "X25519MLKEM768"
+      },
+      {
+        "site": "amazon.com.au",
+        "tcp": "x25519",
+        "quic": "X25519MLKEM768",
+        "tcp_client": "x25519",
+        "quic_client": "X25519MLKEM768"
+      },
+      {
+        "site": "amazon.com.br",
+        "tcp": "x25519",
+        "quic": "X25519MLKEM768",
+        "tcp_client": "x25519",
+        "quic_client": "X25519MLKEM768"
+      },
+      {
+        "site": "amazon.de",
+        "tcp": "x25519",
+        "quic": "X25519MLKEM768",
+        "tcp_client": "x25519",
+        "quic_client": "X25519MLKEM768"
+      },
+      {
+        "site": "amazon.es",
+        "tcp": "x25519",
+        "quic": "X25519MLKEM768",
+        "tcp_client": "x25519",
+        "quic_client": "X25519MLKEM768"
+      },
+      {
+        "site": "amazon.fr",
+        "tcp": "x25519",
+        "quic": "X25519MLKEM768",
+        "tcp_client": "x25519",
+        "quic_client": "X25519MLKEM768"
+      },
+      {
+        "site": "amazon.in",
+        "tcp": "x25519",
+        "quic": "X25519MLKEM768",
+        "tcp_client": "x25519",
+        "quic_client": "X25519MLKEM768"
+      },
+      {
+        "site": "amazon.it",
+        "tcp": "x25519",
+        "quic": "X25519MLKEM768",
+        "tcp_client": "x25519",
+        "quic_client": "X25519MLKEM768"
+      },
+      {
+        "site": "aol.com",
+        "tcp": "x25519",
+        "quic": "X25519MLKEM768",
+        "tcp_client": "x25519",
+        "quic_client": "X25519MLKEM768"
+      },
+      {
+        "site": "appsflyer.com",
+        "tcp": "secp256r1",
+        "quic": "X25519MLKEM768",
+        "tcp_client": "secp256r1",
+        "quic_client": "X25519MLKEM768"
+      },
+      {
+        "site": "autodesk.com",
+        "tcp": "x25519",
+        "quic": "X25519MLKEM768",
+        "tcp_client": "x25519",
+        "quic_client": "X25519MLKEM768"
+      },
+      {
+        "site": "bing.com",
+        "tcp": "secp521r1",
+        "quic": "X25519MLKEM768",
+        "tcp_client": "secp521r1",
+        "quic_client": "X25519MLKEM768"
+      },
+      {
+        "site": "britannica.com",
+        "tcp": "secp256r1",
+        "quic": "X25519MLKEM768",
+        "tcp_client": "secp256r1",
+        "quic_client": "X25519MLKEM768"
+      },
+      {
+        "site": "cpanel.net",
+        "tcp": "x25519",
+        "quic": "X25519MLKEM768",
+        "tcp_client": "x25519",
+        "quic_client": "X25519MLKEM768"
+      },
+      {
+        "site": "dailymotion.com",
+        "tcp": "secp256r1",
+        "quic": "X25519MLKEM768",
+        "tcp_client": "secp256r1",
+        "quic_client": "X25519MLKEM768"
+      },
+      {
+        "site": "dell.com",
+        "tcp": "secp256r1",
+        "quic": "X25519MLKEM768",
+        "tcp_client": "secp256r1",
+        "quic_client": "X25519MLKEM768"
+      },
+      {
+        "site": "discogs.com",
+        "tcp": "secp256r1",
+        "quic": "X25519MLKEM768",
+        "tcp_client": "secp256r1",
+        "quic_client": "X25519MLKEM768"
+      },
+      {
+        "site": "dotomi.com",
+        "tcp": null,
+        "quic": "X25519MLKEM768",
+        "tcp_client": null,
+        "quic_client": "X25519MLKEM768"
+      },
+      {
+        "site": "dropbox.com",
+        "tcp": "x25519",
+        "quic": "X25519MLKEM768",
+        "tcp_client": "x25519",
+        "quic_client": "X25519MLKEM768"
+      },
+      {
+        "site": "epicgames.com",
+        "tcp": "x25519",
+        "quic": "X25519MLKEM768",
+        "tcp_client": "x25519",
+        "quic_client": "X25519MLKEM768"
+      },
+      {
+        "site": "etsy.com",
+        "tcp": "x25519",
+        "quic": "X25519MLKEM768",
+        "tcp_client": "x25519",
+        "quic_client": "X25519MLKEM768"
+      },
+      {
+        "site": "forbes.com",
+        "tcp": "x25519",
+        "quic": "X25519MLKEM768",
+        "tcp_client": "x25519",
+        "quic_client": "X25519MLKEM768"
+      },
+      {
+        "site": "fwmrm.net",
+        "tcp": "x25519",
+        "quic": "X25519MLKEM768",
+        "tcp_client": "x25519",
+        "quic_client": "X25519MLKEM768"
+      },
+      {
+        "site": "go.com",
+        "tcp": null,
+        "quic": "X25519MLKEM768",
+        "tcp_client": "secp256r1",
+        "quic_client": "X25519MLKEM768"
+      },
+      {
+        "site": "imdb.com",
+        "tcp": "x25519",
+        "quic": "X25519MLKEM768",
+        "tcp_client": "x25519",
+        "quic_client": "X25519MLKEM768"
+      },
+      {
+        "site": "independent.co.uk",
+        "tcp": "x25519",
+        "quic": "X25519MLKEM768",
+        "tcp_client": "x25519",
+        "quic_client": "X25519MLKEM768"
+      },
+      {
+        "site": "intel.com",
+        "tcp": "x25519",
+        "quic": "X25519MLKEM768",
+        "tcp_client": "x25519",
+        "quic_client": "X25519MLKEM768"
+      },
+      {
+        "site": "life360.com",
+        "tcp": "secp256r1",
+        "quic": "X25519MLKEM768",
+        "tcp_client": "secp256r1",
+        "quic_client": "X25519MLKEM768"
+      },
+      {
+        "site": "mediatek.com",
+        "tcp": "secp256r1",
+        "quic": "X25519MLKEM768",
+        "tcp_client": "secp256r1",
+        "quic_client": "X25519MLKEM768"
+      },
+      {
+        "site": "moloco.com",
+        "tcp": "secp256r1",
+        "quic": "X25519MLKEM768",
+        "tcp_client": "secp256r1",
+        "quic_client": "X25519MLKEM768"
+      },
+      {
+        "site": "nikkei.com",
+        "tcp": "x25519",
+        "quic": "X25519MLKEM768",
+        "tcp_client": "x25519",
+        "quic_client": "X25519MLKEM768"
+      },
+      {
+        "site": "nintendo.com",
+        "tcp": "secp256r1",
+        "quic": "X25519MLKEM768",
+        "tcp_client": "secp256r1",
+        "quic_client": "X25519MLKEM768"
+      },
+      {
+        "site": "samsung.com",
+        "tcp": "secp256r1",
+        "quic": "X25519MLKEM768",
+        "tcp_client": "secp256r1",
+        "quic_client": "X25519MLKEM768"
+      },
+      {
+        "site": "spamhaus.org",
+        "tcp": "x25519",
+        "quic": "X25519MLKEM768",
+        "tcp_client": "x25519",
+        "quic_client": "X25519MLKEM768"
+      },
+      {
+        "site": "teamviewer.com",
+        "tcp": "x25519",
+        "quic": "X25519MLKEM768",
+        "tcp_client": "x25519",
+        "quic_client": "X25519MLKEM768"
+      },
+      {
+        "site": "triplinkintl.com",
+        "tcp": "x25519",
+        "quic": "X25519MLKEM768",
+        "tcp_client": "x25519",
+        "quic_client": "X25519MLKEM768"
+      },
+      {
+        "site": "usda.gov",
+        "tcp": "secp256r1",
+        "quic": "X25519MLKEM768",
+        "tcp_client": "secp256r1",
+        "quic_client": "X25519MLKEM768"
+      },
+      {
+        "site": "wired.com",
+        "tcp": "x25519",
+        "quic": "X25519MLKEM768",
+        "tcp_client": "x25519",
+        "quic_client": "X25519MLKEM768"
+      },
+      {
+        "site": "wix.com",
+        "tcp": "x25519",
+        "quic": "X25519MLKEM768",
+        "tcp_client": "x25519",
+        "quic_client": "X25519MLKEM768"
+      }
+    ]
+  }
+}

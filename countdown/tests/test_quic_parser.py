@@ -235,3 +235,92 @@ def test_garbage_never_raises():
         hs = parse_quic_handshake(buf, buf)
         assert not hs.parse_ok
         assert hs.transport == "quic"
+
+
+def test_short_header_datagram_before_an_initial_does_not_end_the_walk():
+    """A 1-RTT datagram that overtook an Initial (seen live: Google's two-packet ML-KEM
+    ServerHello) has no length field; the walk must resynchronise past it, not stop."""
+    one_rtt = b"\x45" + bytes(range(60))
+    hs = parse_quic_handshake(rfc9001_client_initial(), one_rtt + rfc9001_server_initial())
+    assert hs.side == "both"
+    assert hs.negotiated_group_name == "x25519"
+    hs = parse_quic_handshake(rfc9001_client_initial() + one_rtt + b"\x00" * 30,
+                              one_rtt + rfc9001_server_initial() + one_rtt)
+    assert hs.side == "both" and hs.sni == "example.com"
+
+
+def test_resync_false_match_in_ciphertext_is_harmless():
+    """Version bytes inside 1-RTT ciphertext look like a header; AEAD rejects it."""
+    fake = b"\x45" + b"\xaa" * 10 + b"\xc3\x00\x00\x00\x01\x08" + b"\x11" * 8 + b"\x00\x00\x41\x00" + b"\x22" * 300
+    hs = parse_quic_handshake(rfc9001_client_initial(), fake + rfc9001_server_initial())
+    assert hs.side == "both"
+
+
+# -- Retry (RFC 9001 s5.2, A.4) --------------------------------------------------------------
+
+RFC9001_RETRY_SCID = bytes.fromhex("f067a5502a4262b5")
+
+
+def _plaintext(packet: bytes, is_server: bool) -> bytes:
+    from countdown.crypto.quic_parser import _decrypt_payload, _remove_header_protection
+
+    keys = derive_initial_keys(QUIC_V1, RFC9001_DCID, is_server=is_server)
+    pkt = _parse_long_header(packet, 0)
+    header, pn, pn_len = _remove_header_protection(packet, pkt, keys)
+    return _decrypt_payload(packet, pkt, keys, header, pn, pn_len)
+
+
+def _seal(plaintext: bytes, root: bytes, is_server: bool, dcid: bytes, scid: bytes,
+          token: bytes = b"", pn: int = 1) -> bytes:
+    """Protect an Initial under keys rooted at ``root`` (the inverse of the parser).  Used
+    only to re-key RFC plaintexts after a Retry; the key schedule itself is pinned above."""
+    from cryptography.hazmat.primitives.ciphers import Cipher, algorithms, modes
+    from cryptography.hazmat.primitives.ciphers.aead import AESGCM
+
+    keys = derive_initial_keys(QUIC_V1, root, is_server=is_server)
+    head = (bytes([0xC1]) + QUIC_V1.to_bytes(4, "big") + bytes([len(dcid)]) + dcid
+            + bytes([len(scid)]) + scid + bytes([len(token)]) + token)
+    length = 2 + len(plaintext) + 16
+    header = head + (0x4000 | length).to_bytes(2, "big") + pn.to_bytes(2, "big")
+    nonce = bytes(a ^ b for a, b in zip(keys.iv, pn.to_bytes(len(keys.iv), "big")))
+    out = bytearray(header + AESGCM(keys.key).encrypt(nonce, plaintext, header))
+    pn_off = len(head) + 2
+    enc = Cipher(algorithms.AES(keys.hp), modes.ECB()).encryptor()
+    mask = enc.update(bytes(out[pn_off + 4:pn_off + 20])) + enc.finalize()
+    out[0] ^= mask[0] & 0x0F
+    out[pn_off] ^= mask[1]
+    out[pn_off + 1] ^= mask[2]
+    return bytes(out)
+
+
+def _retry_flow():
+    client_pt = _plaintext(rfc9001_client_initial(), is_server=False)
+    server_pt = _plaintext(rfc9001_server_initial(), is_server=True)
+    client_scid = bytes.fromhex("c0ffee00")
+    client = rfc9001_client_initial() + _seal(
+        client_pt, RFC9001_RETRY_SCID, False, RFC9001_RETRY_SCID, client_scid, token=b"token")
+    server_after = _seal(server_pt, RFC9001_RETRY_SCID, True, client_scid, b"\x5e\x5e\x5e\x5e")
+    return client, server_after
+
+
+def test_retry_vector_parses_as_retry():
+    pkt = _parse_long_header(_golden("rfc9001_a4_retry.hex"), 0)
+    assert pkt is not None and pkt.is_retry and pkt.scid == RFC9001_RETRY_SCID
+
+
+def test_initial_keys_follow_a_retry():
+    """Seen live (yandex.ru, wordpress.org): after a Retry both directions' Initials are
+    keyed from the Retry's SCID.  Rooting them at the original DCID loses the ServerHello."""
+    client, server_after = _retry_flow()
+    hs = parse_quic_handshake(client, _golden("rfc9001_a4_retry.hex") + server_after)
+    assert hs.side == "both"
+    assert hs.sni == "example.com"
+    assert hs.negotiated_group_name == "x25519"
+    assert any("Retry" in n for n in hs.errors)
+
+
+def test_without_the_retry_the_rerooted_server_initial_stays_unread():
+    client, server_after = _retry_flow()
+    hs = parse_quic_handshake(client, server_after)
+    assert hs.side == "client"
+    assert hs.negotiated_group is None

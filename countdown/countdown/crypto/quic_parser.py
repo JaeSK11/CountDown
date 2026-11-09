@@ -53,6 +53,7 @@ _VERSIONS: dict[int, tuple[bytes, bytes]] = {
 #: Long-header packet-type bits (byte0 >> 4 & 0x3) for an Initial packet.  v2 renumbered
 #: the types, so decoding a v2 Initial as v1 would silently pick the wrong packet.
 _INITIAL_TYPE = {QUIC_V1: 0, QUIC_V2: 1}
+_RETRY_TYPE = {QUIC_V1: 3, QUIC_V2: 0}
 
 _SAMPLE_LEN = 16
 _AEAD_TAG_LEN = 16
@@ -144,6 +145,7 @@ class LongHeaderPacket:
     dcid: bytes
     scid: bytes
     is_initial: bool
+    is_retry: bool
     pn_offset: int          # start of the (protected) packet number
     payload_end: int        # end of this packet within the buffer
     packet_end: int         # where the next coalesced packet starts
@@ -183,6 +185,11 @@ def _parse_long_header(buf: bytes, pos: int) -> LongHeaderPacket | None:
 
     ptype = (first >> 4) & 0x03
     is_initial = _INITIAL_TYPE.get(version) == ptype
+    if _RETRY_TYPE.get(version) == ptype:
+        # A Retry has no Length field: token + integrity tag run to the end of its datagram.
+        return LongHeaderPacket(version=version, dcid=dcid, scid=scid, is_initial=False,
+                                is_retry=True, pn_offset=pos, payload_end=pos,
+                                packet_end=pos, header_start=start)
 
     if is_initial:
         try:
@@ -203,7 +210,7 @@ def _parse_long_header(buf: bytes, pos: int) -> LongHeaderPacket | None:
     pn_offset = pos
     packet_end = pn_offset + length
     return LongHeaderPacket(
-        version=version, dcid=dcid, scid=scid, is_initial=is_initial,
+        version=version, dcid=dcid, scid=scid, is_initial=is_initial, is_retry=False,
         pn_offset=pn_offset, payload_end=min(packet_end, len(buf)),
         packet_end=packet_end, header_start=start,
     )
@@ -338,15 +345,51 @@ def _reassemble(chunks: dict[int, bytes]) -> bytes:
 
 # -- direction decode -----------------------------------------------------------------------
 
+_VERSION_BYTES = tuple(v.to_bytes(4, "big") for v in _VERSIONS)
+
+
+def _resync(buf: bytes, pos: int) -> LongHeaderPacket | None:
+    """The next structurally valid v1/v2 long header strictly after ``pos``, or None.
+
+    A direction's head is its datagrams concatenated, and a short-header (1-RTT) packet has
+    no length field: it runs to the end of its datagram, a boundary the concatenation no
+    longer records.  So after one, scan for the next ``0b11xxxxxx`` + known version.  A
+    false match inside 1-RTT ciphertext is harmless: it is either not a parseable Initial
+    or it fails AEAD authentication, and the walk moves on.
+    """
+    start = pos + 1
+    while start < len(buf):
+        hits = [i for i in (buf.find(vb, start + 1) for vb in _VERSION_BYTES) if i > 0]
+        if not hits:
+            return None
+        cand = min(hits) - 1
+        if buf[cand] & 0xC0 == 0xC0:
+            pkt = _parse_long_header(buf, cand)
+            if pkt is not None:
+                return pkt
+        start = cand + 1
+    return None
+
+
 def _walk_initials(buf: bytes, keys_for: "callable", hs: Handshake) -> dict[int, bytes]:
-    """Walk coalesced/consecutive QUIC packets, decrypting every Initial we can."""
+    """Walk coalesced/consecutive QUIC packets, decrypting every Initial we can.
+
+    Datagrams arrive in any order, so a 1-RTT datagram can sit between two Initials that
+    carry one ServerHello (an ML-KEM key share makes it ~1.2 kB, i.e. two packets): on a
+    short header the walk resynchronises on the next long header instead of stopping.
+    """
     chunks: dict[int, bytes] = {}
     pos, guard = 0, 0
     while pos < len(buf) and guard < 64:
         guard += 1
         pkt = _parse_long_header(buf, pos)
-        if pkt is None:
-            break
+        if pkt is None or pkt.is_retry:
+            pkt = _resync(buf, pos)
+            if pkt is None:
+                break
+            pos = pkt.header_start
+            if pkt.is_retry:
+                continue
         if not pkt.is_initial:
             # Handshake/0-RTT packets use keys derived from the TLS secrets, which a
             # passive observer genuinely cannot compute.  Skip past and keep looking.
@@ -355,21 +398,31 @@ def _walk_initials(buf: bytes, keys_for: "callable", hs: Handshake) -> dict[int,
             pos = pkt.packet_end
             continue
 
-        keys = keys_for(pkt.version, pkt.dcid)
-        if keys is None:
+        candidates = [k for k in keys_for(pkt.version, pkt.dcid) if k is not None]
+        if not candidates:
             hs.note(f"unsupported QUIC version 0x{pkt.version:08X}; Initial not decrypted")
             if pkt.packet_end <= pos:
                 break
             pos = pkt.packet_end
             continue
 
-        unprotected = _remove_header_protection(buf, pkt, keys)
-        if unprotected is None:
+        # One candidate per key root (the original DCID, then each Retry's SCID); header
+        # protection under the wrong keys yields a garbage packet number, and the AEAD tag
+        # then fails, so authentication picks the right root.
+        plaintext, short = None, False
+        for keys in candidates:
+            unprotected = _remove_header_protection(buf, pkt, keys)
+            if unprotected is None:
+                short = True
+                break
+            header, packet_number, pn_len = unprotected
+            plaintext = _decrypt_payload(buf, pkt, keys, header, packet_number, pn_len)
+            if plaintext is not None:
+                break
+        if short:
             hs.truncated = True
             hs.note("QUIC Initial too short to remove header protection")
             break
-        header, packet_number, pn_len = unprotected
-        plaintext = _decrypt_payload(buf, pkt, keys, header, packet_number, pn_len)
         if plaintext is None:
             hs.note("QUIC Initial AEAD authentication failed "
                     "(window truncated, or a Retry changed the connection ID)")
@@ -383,6 +436,24 @@ def _walk_initials(buf: bytes, keys_for: "callable", hs: Handshake) -> dict[int,
             break
         pos = pkt.packet_end
     return chunks
+
+
+def _retry_scids(buf: bytes) -> list[bytes]:
+    """Source connection IDs of every Retry packet in a server head, in order.
+
+    After a Retry the client re-sends its Initial to the Retry's SCID, and **both**
+    directions' Initial keys are derived from that ID from then on (RFC 9001 s5.2).
+    """
+    out: list[bytes] = []
+    pos = 0
+    pkt = _parse_long_header(buf, 0)
+    while True:
+        if pkt is not None and pkt.is_retry and pkt.scid and pkt.scid not in out:
+            out.append(pkt.scid)
+        pkt = _resync(buf, pos)
+        if pkt is None:
+            return out
+        pos = pkt.header_start
 
 
 def _original_dcid(buf: bytes) -> tuple[int, bytes] | None:
@@ -415,12 +486,16 @@ def parse_quic_handshake(client_bytes: bytes | None, server_bytes: bytes | None)
         hs.parse_ok = False
         return hs
 
-    client_chunks = _walk_initials(
-        client, lambda v, _d: derive_initial_keys(v, odcid, is_server=False), hs)
     # The server's Initial carries a different DCID (the client's SCID) but its keys are
-    # still derived from the client's ORIGINAL DCID -- so pass odcid, not the packet's own.
+    # still derived from the client's ORIGINAL DCID -- or, after a Retry, from the Retry's
+    # SCID.  So every packet is tried against those roots, never against its own DCID.
+    roots = [odcid] + [c for c in _retry_scids(server) if c != odcid]
+    if len(roots) > 1:
+        hs.note(f"QUIC Retry seen: Initial keys re-rooted ({len(roots) - 1} Retry)")
+    client_chunks = _walk_initials(
+        client, lambda v, _d: [derive_initial_keys(v, r, is_server=False) for r in roots], hs)
     server_chunks = _walk_initials(
-        server, lambda v, _d: derive_initial_keys(v, odcid, is_server=True), hs)
+        server, lambda v, _d: [derive_initial_keys(v, r, is_server=True) for r in roots], hs)
 
     got_client = got_server = False
     client_stream = _reassemble(client_chunks)

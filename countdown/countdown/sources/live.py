@@ -34,6 +34,7 @@ PACKET_OUTGOING = 4
 SOL_PACKET = 263
 PACKET_ADD_MEMBERSHIP = 1
 PACKET_MR_PROMISC = 1
+PACKET_STATISTICS = 6
 
 
 def _ports(frame: bytes) -> tuple[int, int] | None:
@@ -107,6 +108,11 @@ class LiveSource(Source):
         self.max_packets = max_packets
         self.stop = stop
         self.packets = 0
+        #: Frames the kernel dropped because this socket's receive buffer was full (read
+        #: from ``PACKET_STATISTICS`` at close).  A non-zero count means the capture missed
+        #: traffic -- report it next to any result built from the capture.
+        self.kernel_drops = 0
+        self.kernel_seen = 0
         self._sock: socket.socket | None = None
 
     def _open(self) -> socket.socket:
@@ -155,8 +161,19 @@ class LiveSource(Source):
         finally:
             self.close()
 
+    def _read_stats(self) -> None:
+        """Accumulate the kernel's (packets, drops) counters; reading them resets them."""
+        try:
+            raw = self._sock.getsockopt(SOL_PACKET, PACKET_STATISTICS, 8)
+        except (OSError, AttributeError):        # not an AF_PACKET socket (tests)
+            return
+        seen, drops = struct.unpack("II", raw)
+        self.kernel_seen += seen
+        self.kernel_drops += drops
+
     def close(self) -> None:
         if self._sock is not None:
+            self._read_stats()
             self._sock.close()
             self._sock = None
 

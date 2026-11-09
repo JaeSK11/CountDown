@@ -90,9 +90,9 @@ Exposed flows by app (top 8):
 
 | verdict | flows | share | bytes share |
 | --- | --- | --- | --- |
-| at_risk | 12,997 | 82.5% | 86.4% |
+| at_risk | 12,999 | 82.5% | 86.4% |
 | not_observable | 2,741 | 17.4% | 13.6% |
-| at_risk_ceiling | 21 | 0.1% | 0.0% |
+| at_risk_ceiling | 19 | 0.1% | 0.0% |
 
 Exposed flows by app (top 8):
 

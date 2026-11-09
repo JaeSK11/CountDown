@@ -2037,7 +2037,7 @@
         "secp256r1": 1801,
         "secp384r1": 31,
         "secp521r1": 1,
-        "x25519": 9856
+        "x25519": 9858
       },
       "label_field": "app",
       "observable_share": 0.8261,
@@ -2047,12 +2047,12 @@
       },
       "verdict_by_bytes": {
         "at_risk": {
-          "n": 4042314959,
-          "share": 0.8639
+          "n": 4042848123,
+          "share": 0.864
         },
         "at_risk_ceiling": {
-          "n": 556960,
-          "share": 0.0001
+          "n": 23796,
+          "share": 0.0
         },
         "not_observable": {
           "n": 636272335,
@@ -2061,12 +2061,12 @@
       },
       "verdict_by_flows": {
         "at_risk": {
-          "n": 12997,
-          "share": 0.8247
+          "n": 12999,
+          "share": 0.8249
         },
         "at_risk_ceiling": {
-          "n": 21,
-          "share": 0.0013
+          "n": 19,
+          "share": 0.0012
         },
         "not_observable": {
           "n": 2741,
@@ -2074,8 +2074,8 @@
         }
       },
       "verdict_detail": {
-        "classical/negotiated": 12997,
-        "classical/offered": 21,
+        "classical/negotiated": 12999,
+        "classical/offered": 19,
         "not_observable/none": 2741
       }
     }

@@ -241,6 +241,6 @@ Suite **608 / 608** in Docker (575 before).
 
 **Next candidates:**
 - repeat the census over time or from other networks, plus a QUIC/HTTP3 profile (the census is
-  TCP-only);
+  TCP-only) — the QUIC profile is done in `PHASE-8.md`;
 - flow-level relabelling of the ISCX file-transfer captures;
 - ECH handling, and streaming/eBPF prefiltering (Phase 6 §7).

@@ -106,6 +106,15 @@ traffic (VPN/Tor) gets verdict = "crypto not observable" and routes straight to 
 - `scripts/pqc_census.py` — passive census of the Tranco top 1,000, checked against the client.
 - **Exit:** new fields in every record; census statistic with passive-vs-client agreement; tables regenerated.
 
+## Phase 8 — QUIC/HTTP3 census  → Stages 2–3 + reporting
+**Deliverable:** a QUIC profile for the census, same-day TCP comparison (`phases/PHASE-8.md`)
+- `scripts/pqc_census.py --profiles tls13,tls12,quic` — `s_client -quic`, ground truth from `-trace`.
+- `crypto/quic_parser.py` — Initial keys follow a Retry; the walk resyncs past short-header packets.
+- **Exit:** QUIC verdicts checked against the client with 0 wrong; QUIC-vs-TCP table per site.
+- **Outcome (2026-11-09):** 306 of 760 TLS sites answer HTTP/3; 96.1 % of them are quantum-safe
+  over QUIC vs 81.7 % over TCP (44 sites PQ on QUIC only, none the reverse); with h3 where
+  offered, 66.4 % of sites vs 60.7 % TCP-only. 0 wrong passive verdicts on 1,812 handshakes.
+
 ---
 
 ## Dataset → stage map

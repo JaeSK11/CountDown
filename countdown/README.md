@@ -17,7 +17,7 @@ See [`PLAN.md`](PLAN.md) for the full roadmap and [`phases/`](phases/) for per-p
 
 ---
 
-## Status: Phases 0–7 complete (Phase 7: `phases/PHASE-7.md`)
+## Status: Phases 0–8 complete (latest: `phases/PHASE-8.md`)
 
 Phase 0 delivers the data layer: **any dataset → `(X, y)`**.
 
@@ -178,6 +178,11 @@ Wikipedia negotiate X25519MLKEM768 today (`PHASE-6.md` §13).
 - A passive census of the Tranco top 1,000 (`scripts/pqc_census.py`) found **60 % of responding
   sites negotiate X25519MLKEM768**, with no wrong passive verdicts against the client's own
   report.
+
+**Phase 8** (`phases/PHASE-8.md`): the census gained a QUIC/HTTP3 profile. 306 of the 760
+sites that answer TLS also answer HTTP/3, and **96 % of those negotiate X25519MLKEM768 over QUIC
+against 82 % over TCP**: 44 sites (Amazon, Bing, Dropbox, …) are post-quantum on QUIC only, none
+the other way. Two QUIC parser fixes came with it (Retry key re-rooting, resync past 1-RTT packets).
 
 ## Install
 

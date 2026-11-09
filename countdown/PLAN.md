@@ -115,6 +115,12 @@ traffic (VPN/Tor) gets verdict = "crypto not observable" and routes straight to 
   over QUIC vs 81.7 % over TCP (44 sites PQ on QUIC only, none the reverse); with h3 where
   offered, 66.4 % of sites vs 60.7 % TCP-only. 0 wrong passive verdicts on 1,812 handshakes.
 
+## Phase 9 — Scheduled census + adoption trend  → reporting
+**Deliverable:** the census as a time series (`phases/PHASE-9.md`)
+- `scripts/census_scheduler.py` + compose service `census` — weekly TCP + QUIC run, fixed Tranco panel.
+- `scripts/census_trend.py` — `results/census/trend.{json,md,pdf,png}`: shares over time, per-site churn.
+- **Exit:** the daemon survives reboots; each run lands in `results/census/runs/<date>/`; trend rebuilt.
+
 ---
 
 ## Dataset → stage map

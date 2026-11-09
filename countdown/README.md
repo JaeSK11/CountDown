@@ -17,7 +17,7 @@ See [`PLAN.md`](PLAN.md) for the full roadmap and [`phases/`](phases/) for per-p
 
 ---
 
-## Status: Phases 0–8 complete (latest: `phases/PHASE-8.md`)
+## Status: Phases 0–9 complete (latest: `phases/PHASE-9.md`)
 
 Phase 0 delivers the data layer: **any dataset → `(X, y)`**.
 
@@ -183,6 +183,10 @@ Wikipedia negotiate X25519MLKEM768 today (`PHASE-6.md` §13).
 sites that answer TLS also answer HTTP/3, and **96 % of those negotiate X25519MLKEM768 over QUIC
 against 82 % over TCP**: 44 sites (Amazon, Bing, Dropbox, …) are post-quantum on QUIC only, none
 the other way. Two QUIC parser fixes came with it (Retry key re-rooting, resync past 1-RTT packets).
+
+**Phase 9** (`phases/PHASE-9.md`): the census now runs weekly in its own container
+(`docker compose -f docker/compose.yaml up -d census`) and `results/census/trend.md` tracks
+adoption over time, per transport, with the sites that changed.
 
 ## Install
 

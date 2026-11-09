@@ -10,6 +10,7 @@ taking ~1.5 h of GIN folds with it.
 | `requirements.lock` | `pip freeze` of `.venv`, minus the editable project and the unused CUDA-12 wheels the torch upgrade left behind. |
 | `compose.yaml` | `gpu-queue` (the queue daemon) and `job` (one-off commands). Both bind-mount `/home/counterbitio/CountDown` at the same path, run as uid 1000, see all GPUs, and get a 32 GB `/dev/shm` for DataLoader workers. |
 | `gpu-queue-runner.sh` | The queue: one job at a time from `runs/gpu-queue/pending/`, lowest number first. |
+| `census` service | the weekly PQC census daemon (below); no GPU. |
 | (in the image) `python-netraw` | interpreter copy with `cap_net_raw` for `countdown live` only (below). |
 
 ## Use
@@ -59,6 +60,22 @@ docker compose -f docker/compose.yaml run --rm live countdown live eth0 --port 4
 `--mode fast` (the default) uses only each expert's GBDT; `--mode full` adds E2's graph member,
 fed by a streaming byte collector. Filtering is by port in Python; kernel BPF is not supported
 (it needs libpcap, which the image does not carry).
+
+## Weekly PQC census
+
+```bash
+docker compose -f docker/compose.yaml up -d census       # start (restarts itself after a reboot)
+docker compose -f docker/compose.yaml stop census        # stop
+docker compose -f docker/compose.yaml run --rm census python scripts/census_scheduler.py --status
+tail runs/census/scheduler.log                           # START / DONE / FAIL / TREND per run
+```
+
+`countdown-census` runs `scripts/census_scheduler.py`: every 7 days at 03:00 UTC
+(`CENSUS_EVERY_DAYS`, `CENSUS_HOUR_UTC` in `compose.yaml`) it runs the TCP + QUIC census on the
+fixed Tranco list into `results/census/runs/<date>/` and rebuilds `results/census/trend.*`. It
+uses the default bridge network (its capture sees only its own probes) and no GPU, so it runs
+alongside the GPU queue. A run counts only once it finishes (`<date>.partial` until then); a
+failed run is retried after 6 h. **It commits nothing**: review and commit the new run yourself.
 
 ## Rebuilding the lock
 

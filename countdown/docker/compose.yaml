@@ -2,7 +2,7 @@
 # docker compose -f countdown/docker/compose.yaml run --rm job <cmd> # one-off command
 name: countdown
 
-x-common: &common
+x-base: &base
   image: countdown:cu130
   build:
     context: .
@@ -11,6 +11,9 @@ x-common: &common
   volumes:
     - /home/counterbitio/CountDown:/home/counterbitio/CountDown
   working_dir: /home/counterbitio/CountDown/countdown
+
+x-common: &common
+  <<: *base
   shm_size: "32gb"                     # PyTorch DataLoader workers pass batches through /dev/shm
   deploy:
     resources:
@@ -31,6 +34,21 @@ services:
       QUEUE_DAEMON: "1"
       IN_CONTAINER: "1"
       PY: python
+    restart: unless-stopped
+    init: true
+
+  # The weekly PQC census (scripts/census_scheduler.py): runs all three profiles on the fixed
+  # Tranco list into results/census/runs/<date>/ and rebuilds results/census/trend.*.  Default
+  # bridge network, so its capture sees only its own probes.  No GPU.  Commits nothing.
+  census:
+    <<: *base
+    container_name: countdown-census
+    command: ["python", "scripts/census_scheduler.py"]
+    environment:
+      IN_CONTAINER: "1"
+      CENSUS_PY: python-netraw
+      CENSUS_EVERY_DAYS: "7"
+      CENSUS_HOUR_UTC: "3"
     restart: unless-stopped
     init: true
 

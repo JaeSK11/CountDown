@@ -78,11 +78,14 @@ Capture: 43,789 frames, **0 dropped by the kernel**.
    a browser gets on a first visit.
 4. **The 12 QUIC servers that stayed classical** (x25519) are Yandex (3 domains), Alibaba/
    Taobao, Tencent, Shopee (2), Slack, Box, Xiaohongshu, adgrx.com.
-5. **TCP, five days after Phase 7** (2026-11-04 → 11-09, same list): 455 → 461 quantum-safe,
-   8 sites up (Netflix's `netflix.net`, Airbnb, CNBC, LA Times, LiveJournal, aliyun.com,
-   InMobi, visa.cn), 2 down (clarity.ms, comcast.com). The two full runs on 11-09 (before and
-   after the Retry fix, which does not touch TCP) differed by 1 site on `tls13`, so a site moving either way can be a different backend answering, not
-   a rollout; with two dated points it is not yet a trend.
+5. **TCP, five days after Phase 7** (2026-11-04 → 11-09, same list): 455 → 461 quantum-safe.
+   Of the 755 sites captured both times, 6 became quantum-safe (airbnb.com, aliyun.com,
+   cnbc.com, inmobi.com, latimes.com, netflix.net) and 2 went back to classical (clarity.ms,
+   comcast.com); livejournal.com and visa.cn are quantum-safe now but did not complete a
+   handshake in Phase 7. The two full runs on 11-09 (before and after the Retry fix, which does
+   not touch TCP) differed by 1 site on `tls13`, so a site moving either way can be a different
+   backend answering, not a rollout; with two dated points it is not yet a trend
+   (`results/census/trend.md` tracks it from here).
 6. **Large-ClientHello intolerance, again:** 4 sites completed the TLS 1.2 handshake but not
    the default ML-KEM one (aliyuncs.com, manulife-sinochem.com, netcraze.io, netease.com). Only
    visa.cn overlaps the Phase-7 list of 6, and visa.cn is now quantum-safe, so this looks
@@ -142,6 +145,6 @@ re-renders. `PHASE-7.md` §6.3 keeps its numbers as they were at the end of that
 
 Tests: 623 passed.
 
-**Next candidates** (carried from Phase 7): repeat the census on a schedule or from other
-networks so the dated points become a trend; flow-level relabelling of the ISCX file-transfer
+**Next candidates** (carried from Phase 7): repeat the census on a schedule (done in
+`PHASE-9.md`) or from other networks so the dated points become a trend; flow-level relabelling of the ISCX file-transfer
 captures; ECH, and streaming/eBPF prefiltering.

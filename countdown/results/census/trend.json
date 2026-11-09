@@ -1,0 +1,75 @@
+{
+  "tranco_list": "746WX",
+  "points": [
+    {
+      "date": "2026-11-04",
+      "tranco_list": "746WX",
+      "sites": 1000,
+      "path": "results/phase7/census",
+      "profiles": [
+        "tls12",
+        "tls13"
+      ],
+      "kernel_drops": null,
+      "tcp": {
+        "ok": 759,
+        "captured": 758,
+        "safe": 455,
+        "share": 0.6003
+      },
+      "quic": null,
+      "wrong": 0,
+      "either": null
+    },
+    {
+      "date": "2026-11-09",
+      "tranco_list": "746WX",
+      "sites": 1000,
+      "path": "results/phase8/census",
+      "profiles": [
+        "quic",
+        "tls12",
+        "tls13"
+      ],
+      "kernel_drops": 0,
+      "tcp": {
+        "ok": 760,
+        "captured": 760,
+        "safe": 461,
+        "share": 0.6066
+      },
+      "quic": {
+        "ok": 306,
+        "captured": 306,
+        "safe": 294,
+        "share": 0.9608
+      },
+      "wrong": 0,
+      "either": {
+        "sites": 760,
+        "safe": 505,
+        "share": 0.664474
+      }
+    }
+  ],
+  "churn": [
+    {
+      "from": "2026-11-04",
+      "to": "2026-11-09",
+      "profile": "tls13",
+      "common": 755,
+      "became_safe": [
+        "airbnb.com",
+        "aliyun.com",
+        "cnbc.com",
+        "inmobi.com",
+        "latimes.com",
+        "netflix.net"
+      ],
+      "became_classical": [
+        "clarity.ms",
+        "comcast.com"
+      ]
+    }
+  ]
+}

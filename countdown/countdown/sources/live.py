@@ -9,8 +9,10 @@ handled here or in the reassembler:
   source yields a **heartbeat** -- a ``RawPacket`` with empty ``data`` at the current time --
   every ``timeout_ms`` without traffic, and the reassembler sweeps on it.
 * **Privilege.** A raw ``AF_PACKET`` socket needs ``CAP_NET_RAW`` (root, or the capability).
-  The supported way to grant it is the container, not the host Python: see ``docker/README.md``
-  (``docker compose run --rm --cap-add NET_RAW job countdown live eth0``).
+  The supported way to grant it is the container, not the host Python: the image's
+  ``python-netraw`` interpreter carries ``cap_net_raw`` as a file capability (the container runs
+  as uid 1000, so ``--cap-add`` alone does not reach it).  See ``docker/README.md``
+  (``docker compose run --rm job countdown live eth0``).
 
 Backed by a Linux ``AF_PACKET`` socket -- no libpcap, no new dependency.  Frames arrive as
 Ethernet (DLT 1), loopback included.  Filtering is by port in Python (``ports``), not kernel
@@ -113,7 +115,7 @@ class LiveSource(Source):
         except PermissionError as exc:
             raise PermissionError(
                 f"live capture on {self.iface!r} needs CAP_NET_RAW. Run it in the container: "
-                f"`docker compose -f docker/compose.yaml run --rm --cap-add NET_RAW job "
+                f"`docker compose -f docker/compose.yaml run --rm job "
                 f"countdown live {self.iface}` (see docker/README.md)") from exc
         s.bind((self.iface, 0))
         if self.promiscuous:

@@ -136,7 +136,7 @@ the grouped test split, with the combiner chosen by cross-validation inside trai
 | expert | best single member | ensemble | |
 | --- | --- | --- | --- |
 | E2 app-ID (CSTNET, 120) | `graph_gnn` 0.868 | GBDT + GIN, calibrated soft vote **0.890** | ✓ |
-| E3 activity (MobileApp, 92) | `flow_gbdt` 0.441 | 3-member vote 0.513 | ✓ weak: 92 test rows |
+| E3 activity (MobileApp, 92) | `flow_gbdt` 0.441 | 3-member vote 0.513 | ✓ holds over 10 seeds: +0.080, 10/10 wins |
 | E1 traffic type (`iscx_pooled`, 8) | `flow_gbdt` 0.665 | 3-member vote 0.665 | ✗ tie — ship the GBDT |
 
 The soft vote beat logistic and LightGBM stacking on every expert. Long jobs run in Docker

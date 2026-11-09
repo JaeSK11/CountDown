@@ -1,0 +1,186 @@
+{
+  "n_seeds": 10,
+  "per_seed": [
+    {
+      "seed": 1,
+      "run": "runs/ensemble/E3/20261109-030237",
+      "n_test": 92,
+      "gbdt": 0.4464,
+      "best_single": 0.4464,
+      "best_single_member": "flow_gbdt",
+      "deployed": 0.5145,
+      "selected": 0.5145,
+      "selected_combiner": "vote/temperature"
+    },
+    {
+      "seed": 2,
+      "run": "runs/ensemble/E3/20261109-030836",
+      "n_test": 92,
+      "gbdt": 0.4312,
+      "best_single": 0.4312,
+      "best_single_member": "flow_gbdt",
+      "deployed": 0.4819,
+      "selected": 0.4819,
+      "selected_combiner": "vote/temperature"
+    },
+    {
+      "seed": 3,
+      "run": "runs/ensemble/E3/20261109-031442",
+      "n_test": 92,
+      "gbdt": 0.4609,
+      "best_single": 0.4815,
+      "best_single_member": "flow_image_cnn",
+      "deployed": 0.6047,
+      "selected": 0.6047,
+      "selected_combiner": "vote/temperature"
+    },
+    {
+      "seed": 4,
+      "run": "runs/ensemble/E3/20261109-032130",
+      "n_test": 92,
+      "gbdt": 0.4899,
+      "best_single": 0.4899,
+      "best_single_member": "flow_gbdt",
+      "deployed": 0.537,
+      "selected": 0.5543,
+      "selected_combiner": "vote/none"
+    },
+    {
+      "seed": 5,
+      "run": "runs/ensemble/E3/20261109-032753",
+      "n_test": 92,
+      "gbdt": 0.3967,
+      "best_single": 0.3967,
+      "best_single_member": "flow_gbdt",
+      "deployed": 0.5181,
+      "selected": 0.5181,
+      "selected_combiner": "vote/temperature"
+    },
+    {
+      "seed": 6,
+      "run": "runs/ensemble/E3/20261109-033409",
+      "n_test": 92,
+      "gbdt": 0.438,
+      "best_single": 0.4388,
+      "best_single_member": "flow_image_cnn",
+      "deployed": 0.5786,
+      "selected": 0.5786,
+      "selected_combiner": "vote/temperature"
+    },
+    {
+      "seed": 7,
+      "run": "runs/ensemble/E3/20261109-034020",
+      "n_test": 92,
+      "gbdt": 0.4275,
+      "best_single": 0.4275,
+      "best_single_member": "flow_gbdt",
+      "deployed": 0.5362,
+      "selected": 0.5308,
+      "selected_combiner": "vote/none"
+    },
+    {
+      "seed": 8,
+      "run": "runs/ensemble/E3/20261109-034642",
+      "n_test": 92,
+      "gbdt": 0.4786,
+      "best_single": 0.4786,
+      "best_single_member": "flow_gbdt",
+      "deployed": 0.5116,
+      "selected": 0.5141,
+      "selected_combiner": "vote/none"
+    },
+    {
+      "seed": 9,
+      "run": "runs/ensemble/E3/20261109-035314",
+      "n_test": 92,
+      "gbdt": 0.5194,
+      "best_single": 0.5194,
+      "best_single_member": "flow_gbdt",
+      "deployed": 0.5558,
+      "selected": 0.5761,
+      "selected_combiner": "vote/none"
+    },
+    {
+      "seed": 42,
+      "run": "runs/ensemble/E3/20261008-181041",
+      "n_test": 92,
+      "gbdt": 0.4409,
+      "best_single": 0.4409,
+      "best_single_member": "flow_gbdt",
+      "deployed": 0.5134,
+      "selected": 0.5134,
+      "selected_combiner": "vote/temperature"
+    }
+  ],
+  "stats": {
+    "gbdt": {
+      "mean": 0.453,
+      "sd": 0.0353,
+      "min": 0.3967,
+      "max": 0.5194
+    },
+    "best_single": {
+      "mean": 0.4551,
+      "sd": 0.0363,
+      "min": 0.3967,
+      "max": 0.5194
+    },
+    "deployed": {
+      "mean": 0.5352,
+      "sd": 0.0361,
+      "min": 0.4819,
+      "max": 0.6047
+    },
+    "selected": {
+      "mean": 0.5387,
+      "sd": 0.0382,
+      "min": 0.4819,
+      "max": 0.6047
+    }
+  },
+  "deployed_minus_gbdt": {
+    "n": 10,
+    "mean": 0.0822,
+    "sd": 0.0428,
+    "ci95": [
+      0.0516,
+      0.1128
+    ],
+    "wins": 10,
+    "ties": 0,
+    "losses": 0,
+    "sign_test_p": 0.002
+  },
+  "deployed_minus_best_single": {
+    "n": 10,
+    "mean": 0.0801,
+    "sd": 0.0398,
+    "ci95": [
+      0.0516,
+      0.1085
+    ],
+    "wins": 10,
+    "ties": 0,
+    "losses": 0,
+    "sign_test_p": 0.002
+  },
+  "selected_minus_best_single": {
+    "n": 10,
+    "mean": 0.0836,
+    "sd": 0.0356,
+    "ci95": [
+      0.0581,
+      0.109
+    ],
+    "wins": 10,
+    "ties": 0,
+    "losses": 0,
+    "sign_test_p": 0.002
+  },
+  "expert": "E3",
+  "deploy": [
+    "flow_gbdt",
+    "seq_cnn",
+    "flow_image_cnn"
+  ]
+}

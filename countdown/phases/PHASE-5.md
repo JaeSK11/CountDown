@@ -228,6 +228,7 @@ Phase 6: the calibrated soft vote** is the default combiner; stacking stays in t
 - **E3's gain is weak evidence.** The test set is one capture per class (92 rows), so a class's F1
   is all or nothing and +0.073 is ~7 captures. The direction agrees with the CV score (0.4675 vs
   0.4305), but it needs seeds or a leave-one-capture-out protocol before it is a result.
+  **Resolved (2026-11-09, §10.7):** across 10 seeds the vote wins every time, +0.080 mean.
 
 ### 10.4 Calibration
 
@@ -302,9 +303,37 @@ pipeline decision.
 
 ### 10.6 Left for Phase 5 / carried to Phase 6
 
-- Seeds (and, for E3, leave-one-capture-out) before quoting E2/E3 gains as stable.
+- Seeds (and, for E3, leave-one-capture-out) before quoting E2/E3 gains as stable. **E3 done
+  (§10.7)**; E1 and E2 still single-seed.
 - A temperature on the combined output (§10.4).
 - `byte_net` in E2 once flow-aligned byte input exists.
 - The ISCX-TLS routing decision (§10.5): recommended confidence fallback, to implement in the
   Phase-6 pipeline.
 - Latency of the ensembles (E2 = GBDT + a 44M-parameter GNN with on-the-fly graph building).
+
+### 10.7 E3 across seeds (2026-11-09)
+
+`scripts/ensemble_seeds.py` → `results/ensemble_seeds/E3.{json,md}`. Seeds 1–9 were run with
+`run_ensemble.py --expert E3 --seed N` (same protocol as seed 42; ~6 min each on the GPU queue).
+A seed re-draws the grouped split — each class still has one test capture, 92 test flows — and
+the members' initialisation.
+
+| test macro-F1 (10 seeds) | mean | sd | range |
+| --- | --- | --- | --- |
+| `flow_gbdt` | 0.453 | 0.035 | 0.397–0.519 |
+| best single, picked **on test** | 0.455 | 0.036 | 0.397–0.519 |
+| **deployed** (vote, temperature) | **0.535** | 0.036 | 0.482–0.605 |
+| CV-selected | 0.539 | 0.038 | 0.482–0.605 |
+
+- **Deployed − best single: +0.080, 95 % t-interval [+0.052, +0.108]; 10 wins, 0 losses
+  (sign test p = 0.002).** Picking the single member on test favours the single side, so this
+  is a lower bound on the gap. The GBDT is the best single member on 8 seeds.
+- **Seed 42 was not lucky:** its 0.513 is below the 10-seed mean.
+- **CV still picks the vote every time;** on 4 seeds it drops the temperature (vote/none), within
+  ±0.02 of the deployed variant. The deployed configuration stays as it is.
+- **Caveat:** with 4 captures per class the 10 test sets overlap, so the seeds are not
+  independent samples and the interval is somewhat narrow. Leave-one-capture-out is still the
+  stricter protocol; the 10/0 sign is what makes the result robust.
+
+**Decision: E3 keeps the three-member vote.** E1 (one-seed tie) and E2 (one-seed +0.022) have
+not been re-run across seeds.

@@ -49,12 +49,20 @@ def group_split(
     test_size: float = 0.2,
     seed: int = 42,
     allow_vacuous: bool = False,
+    fold: int = 0,
 ) -> tuple[np.ndarray, np.ndarray]:
     """Split into ``(train_idx, test_idx)`` with no group on both sides.
 
     Uses ``StratifiedGroupKFold`` so the class balance is held as close as the grouping
     permits -- with whole captures moving at once, it cannot be exact.  ``X`` is accepted
     for signature symmetry with sklearn and is not otherwise used.
+
+    ``fold`` picks which of the ``round(1 / test_size)`` folds is the test set (default 0,
+    the split every phase has used).  Different folds of one seed are disjoint test sets.
+    Note that ``seed`` only reorders groups whose class mix ties: sklearn shuffles, then
+    stable-sorts groups by the spread of their class counts.  Single-class captures tie, so
+    E1/E3 splits move with the seed; CSTNET's many-class days rarely do, so E2's split does
+    not move at all -- use ``fold`` to get a different test set there.
     """
     from sklearn.model_selection import StratifiedGroupKFold
 
@@ -68,8 +76,12 @@ def group_split(
         raise ValueError(f"test_size must be in (0, 1), got {test_size}")
     n_splits = max(2, int(round(1.0 / test_size)))
 
+    if not 0 <= fold < n_splits:
+        raise ValueError(f"fold must be in [0, {n_splits}), got {fold}")
     splitter = StratifiedGroupKFold(n_splits=n_splits, shuffle=True, random_state=seed)
-    train_idx, test_idx = next(splitter.split(np.zeros(len(y)), y, groups=groups))
+    splits = splitter.split(np.zeros(len(y)), y, groups=groups)
+    for _ in range(fold + 1):
+        train_idx, test_idx = next(splits)
     train_idx, test_idx = np.sort(train_idx), np.sort(test_idx)
 
     leaked = set(groups[train_idx].tolist()) & set(groups[test_idx].tolist())

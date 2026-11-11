@@ -1,12 +1,16 @@
 #!/usr/bin/env python
 """Does an expert's ensemble beat its best single member across seeds, not just on one?
 
-    python scripts/ensemble_seeds.py --expert E3      # -> results/ensemble_seeds/E3.{json,md}
+    python scripts/ensemble_seeds.py --expert E3              # -> results/ensemble_seeds/E3.{json,md}
+    python scripts/ensemble_seeds.py --expert E2 --by fold    # -> E2-folds.{json,md}
 
 Reads every finished ``runs/ensemble/<expert>/<run_id>/`` (``ensemble.json`` + ``ablation.json``)
-written by ``scripts/run_ensemble.py``; the latest run per ``--seed`` counts.  A seed changes
-both the grouped train/test split and the members' initialisation, so the spread across seeds
-is the uncertainty the single-seed Phase-5 number did not show.
+written by ``scripts/run_ensemble.py``; the latest run per unit counts.
+
+* ``--by seed`` (default): outer fold 0 runs, one per ``--seed``.  A seed changes the members'
+  initialisation and -- where the class mix of groups ties -- the grouped split (see
+  ``countdown.eval.splits.group_split``: E2's split does not move with the seed).
+* ``--by fold``: seed-42 runs, one per ``--outer-fold``.  Folds are disjoint test sets.
 
 Per seed, test macro-F1 of:
 
@@ -43,8 +47,9 @@ def _row(rows: list[dict], members: list[str], combiner: str, calibration: str) 
     return None
 
 
-def collect(expert: str, runs_dir: Path, deploy: list[str]) -> list[dict]:
-    by_seed: dict[int, dict] = {}
+def collect(expert: str, runs_dir: Path, deploy: list[str], by: str = "seed",
+            seed: int = 42) -> list[dict]:
+    by_unit: dict[int, dict] = {}
     for d in sorted((runs_dir / expert).glob("*/ablation.json")):
         run = d.parent
         ens_path = run / "ensemble.json"
@@ -60,9 +65,12 @@ def collect(expert: str, runs_dir: Path, deploy: list[str]) -> list[dict]:
         gbdt = _row(rows, ["flow_gbdt"], "-", "none")
         dep = (_row(rows, deploy, "vote", "temperature") if len(deploy) > 1
                else _row(rows, deploy, "-", "temperature"))
-        seed = int(args.get("seed", 42))
-        by_seed[seed] = {                  # sorted by run id = time: the latest run wins
-            "seed": seed, "run": str(run.relative_to(ROOT)),
+        run_seed, fold = int(args.get("seed", 42)), int(args.get("outer_fold") or 0)
+        if by == "seed" and fold != 0 or by == "fold" and run_seed != seed:
+            continue
+        unit = run_seed if by == "seed" else fold
+        by_unit[unit] = {                  # sorted by run id = time: the latest run wins
+            "unit": unit, "seed": run_seed, "outer_fold": fold, "run": str(run.relative_to(ROOT)),
             "n_test": ens.get("data", {}).get("n_test"),
             "gbdt": gbdt["macro_f1"] if gbdt else None,
             "best_single": ab["best_single"]["macro_f1"],
@@ -71,7 +79,7 @@ def collect(expert: str, runs_dir: Path, deploy: list[str]) -> list[dict]:
             "selected": ab["selected"]["macro_f1"],
             "selected_combiner": f"{ab['selected']['combiner']}/{ab['selected']['calibration']}",
         }
-    return [by_seed[s] for s in sorted(by_seed)]
+    return [by_unit[u] for u in sorted(by_unit)]
 
 
 def _t975(df: int) -> float:
@@ -110,22 +118,31 @@ def summarise(seeds: list[dict]) -> dict:
     stats = {k: {"mean": round(float(np.mean(col(k))), 4), "sd": round(float(np.std(col(k), ddof=1)), 4)
                  if len(ok) > 1 else 0.0, "min": min(col(k)), "max": max(col(k))}
              for k in ("gbdt", "best_single", "deployed", "selected")} if ok else {}
-    return {"n_seeds": len(ok), "per_seed": seeds, "stats": stats,
+    return {"n_seeds": len(ok), "n_units": len(ok), "per_seed": seeds, "stats": stats,
             "deployed_minus_gbdt": paired(col("deployed"), col("gbdt")),
             "deployed_minus_best_single": paired(col("deployed"), col("best_single")),
             "selected_minus_best_single": paired(col("selected"), col("best_single"))}
 
 
-def markdown(expert: str, deploy: list[str], res: dict) -> str:
-    md = [f"# {expert}: ensemble vs single members across seeds", "",
-          f"{res['n_seeds']} seeds; each seed re-draws the grouped train/test split and the members' "
-          f"initialisation. Test macro-F1. Deployed = soft vote over {' + '.join(deploy)}, temperature-"
-          "calibrated. Best single is picked **on test** (favours the single side).", "",
-          "| seed | n test | flow_gbdt | best single | deployed | CV-selected |",
+def markdown(expert: str, deploy: list[str], res: dict, by: str = "seed") -> str:
+    dep = (f"soft vote over {' + '.join(deploy)}, temperature-calibrated" if len(deploy) > 1
+           else f"{deploy[0]} alone, temperature-calibrated")
+    if by == "seed":
+        head = (f"# {expert}: ensemble vs single members across seeds",
+                f"{res['n_units']} seeds on outer fold 0; a seed re-draws the members' initialisation "
+                "and, where groups' class mixes tie, the grouped split.")
+    else:
+        head = (f"# {expert}: ensemble vs single members across outer folds",
+                f"{res['n_units']} outer folds at seed {res['per_seed'][0]['seed'] if res['per_seed'] else 42}; "
+                "the folds' test sets share no group.")
+    md = [head[0], "", head[1] + f" Test macro-F1. Deployed = {dep}. CV-selected = the combiner "
+          "chosen on out-of-fold predictions. Best single is picked **on test** (favours the "
+          "single side).", "",
+          f"| {by if by == 'seed' else 'outer fold'} | n test | flow_gbdt | best single | deployed | CV-selected |",
           "| --- | --- | --- | --- | --- | --- |"]
     for s in res["per_seed"]:
         f = lambda v: "—" if v is None else f"{v:.3f}"
-        md.append(f"| {s['seed']} | {s['n_test']} | {f(s['gbdt'])} | {f(s['best_single'])} "
+        md.append(f"| {s['unit']} | {s['n_test']} | {f(s['gbdt'])} | {f(s['best_single'])} "
                   f"({s['best_single_member']}) | {f(s['deployed'])} | {f(s['selected'])} "
                   f"({s['selected_combiner']}) |")
     if res["stats"]:
@@ -151,18 +168,21 @@ def main() -> int:
     ap.add_argument("--expert", default="E3", choices=("E1", "E2", "E3"))
     ap.add_argument("--runs-dir", default=str(ROOT / "runs/ensemble"))
     ap.add_argument("--out", default=str(ROOT / "results/ensemble_seeds"))
+    ap.add_argument("--by", choices=("seed", "fold"), default="seed")
+    ap.add_argument("--seed", type=int, default=42, help="the seed of the --by fold runs")
     args = ap.parse_args()
 
     from countdown.experts import get_expert
 
     deploy = list(get_expert(args.expert).deployed_members)
-    res = summarise(collect(args.expert, Path(args.runs_dir), deploy))
-    res.update(expert=args.expert, deploy=deploy)
+    res = summarise(collect(args.expert, Path(args.runs_dir), deploy, by=args.by, seed=args.seed))
+    res.update(expert=args.expert, deploy=deploy, by=args.by)
     out = Path(args.out)
     out.mkdir(parents=True, exist_ok=True)
-    (out / f"{args.expert}.json").write_text(json.dumps(res, indent=2) + "\n")
-    md = markdown(args.expert, deploy, res)
-    (out / f"{args.expert}.md").write_text(md)
+    stem = args.expert + ("-folds" if args.by == "fold" else "")
+    (out / f"{stem}.json").write_text(json.dumps(res, indent=2) + "\n")
+    md = markdown(args.expert, deploy, res, by=args.by)
+    (out / f"{stem}.md").write_text(md)
     print(md)
     return 0
 

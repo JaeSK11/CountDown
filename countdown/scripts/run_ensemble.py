@@ -4,10 +4,11 @@
     python -m scripts.run_ensemble --expert E1
     python scripts/run_ensemble.py --expert E2 --members flow_gbdt graph_gnn
     python scripts/run_ensemble.py --expert E1 --max-flows 3000 --n-folds 3   # smoke run
+    python scripts/run_ensemble.py --expert E2 --outer-fold 2   # another disjoint test set
 
 Per member: K-fold out-of-fold predictions over the outer train rows, then a refit on all of
 train that scores test.  Predictions and the refit model are cached under
-``runs/ensemble/<expert>/preds-s<seed>/`` and reused when the split matches, so a re-run
+``runs/ensemble/<expert>/preds-s<seed>[-f<fold>]/`` and reused when the split matches, so a re-run
 (or a run that lost the GPU half-way) only pays for the members it has not finished.
 
 Output: ``runs/ensemble/<expert>/<run_id>/`` with ``ablation.json``, ``ablation.md``,
@@ -47,6 +48,8 @@ def main() -> int:
     ap.add_argument("--members", nargs="*", default=None)
     ap.add_argument("--n-folds", type=int, default=5)
     ap.add_argument("--seed", type=int, default=42)
+    ap.add_argument("--outer-fold", type=int, default=0,
+                    help="which fold of the outer split is test (0 = the Phase-5 split)")
     ap.add_argument("--max-flows", type=int, default=None, help="subsample (smoke runs)")
     ap.add_argument("--runs-dir", default="runs/ensemble")
     ap.add_argument("--no-subsets", action="store_true", help="ablate the full member set only")
@@ -55,11 +58,13 @@ def main() -> int:
     t0 = time.time()
     expert = get_expert(args.expert)
     data = build_expert_data(expert, members=args.members, seed=args.seed,
-                             overrides=OVERRIDES[args.expert], max_flows=args.max_flows)
+                             overrides=OVERRIDES[args.expert], max_flows=args.max_flows,
+                             outer_fold=args.outer_fold)
     print(json.dumps(data.describe(), indent=2, default=str))
 
     root = Path(args.runs_dir) / args.expert
-    tag = f"preds-s{args.seed}" + (f"-n{args.max_flows}" if args.max_flows else "")
+    tag = (f"preds-s{args.seed}" + (f"-f{args.outer_fold}" if args.outer_fold else "")
+           + (f"-n{args.max_flows}" if args.max_flows else ""))
     ens = Ensemble(data, combiner="stack_logreg", calibrate="temperature",
                    n_folds=args.n_folds, seed=args.seed).fit(cache_dir=root / tag)
 

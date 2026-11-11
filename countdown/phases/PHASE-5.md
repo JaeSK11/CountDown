@@ -303,20 +303,31 @@ pipeline decision.
 
 ### 10.6 Left for Phase 5 / carried to Phase 6
 
-- Seeds (and, for E3, leave-one-capture-out) before quoting E2/E3 gains as stable. **E3 done
-  (§10.7)**; E1 and E2 still single-seed.
+- Seeds (and, for E3, leave-one-capture-out) before quoting E2/E3 gains as stable. **Done for all
+  three (§10.7)**; E2 across outer folds queued.
 - A temperature on the combined output (§10.4).
 - `byte_net` in E2 once flow-aligned byte input exists.
 - The ISCX-TLS routing decision (§10.5): recommended confidence fallback, to implement in the
   Phase-6 pipeline.
 - Latency of the ensembles (E2 = GBDT + a 44M-parameter GNN with on-the-fly graph building).
 
-### 10.7 E3 across seeds (2026-11-09)
+### 10.7 Every expert across seeds (2026-11-09 – 11)
 
-`scripts/ensemble_seeds.py` → `results/ensemble_seeds/E3.{json,md}`. Seeds 1–9 were run with
-`run_ensemble.py --expert E3 --seed N` (same protocol as seed 42; ~6 min each on the GPU queue).
-A seed re-draws the grouped split — each class still has one test capture, 92 test flows — and
-the members' initialisation.
+`scripts/ensemble_seeds.py` → `results/ensemble_seeds/<E>.{json,md}`, from
+`run_ensemble.py --expert <E> --seed N` (same protocol as seed 42, on the GPU queue).
+
+**What a seed changes.** Always the members' initialisation. The grouped split moves only as
+far as sklearn lets it: `StratifiedGroupKFold(shuffle=True)` shuffles the groups, then
+stable-sorts them by the spread of their class counts, so the seed only reorders groups that
+tie. Single-class captures all tie: **E3**'s split moves fully, **E1**'s partly (seeds 1–3 share
+63–65 of 75 test captures with seed 42). CSTNET days hold many classes and never tie: **E2's
+split is identical on every seed** (same fold digests). For a different E2 test set,
+`run_ensemble.py --outer-fold k` takes the k-th of the five outer folds as test (default 0, the
+split every phase used); folds are disjoint test sets.
+
+#### E3 (10 seeds, ~6 min each)
+
+Each class keeps one test capture, 92 test flows.
 
 | test macro-F1 (10 seeds) | mean | sd | range |
 | --- | --- | --- | --- |
@@ -335,5 +346,29 @@ the members' initialisation.
   independent samples and the interval is somewhat narrow. Leave-one-capture-out is still the
   stricter protocol; the 10/0 sign is what makes the result robust.
 
-**Decision: E3 keeps the three-member vote.** E1 (one-seed tie) and E2 (one-seed +0.022) have
-not been re-run across seeds.
+**Decision: E3 keeps the three-member vote.**
+
+#### E1 (10 seeds, ~9–30 min each)
+
+| test macro-F1 (10 seeds) | mean | sd | range |
+| --- | --- | --- | --- |
+| `flow_gbdt` (deployed, alone) | 0.672 | 0.006 | 0.664–0.682 |
+| CV-selected | 0.674 | 0.006 | 0.665–0.683 |
+
+The GBDT is the best single member on every seed. **CV-selected − GBDT: +0.002, 95 % interval
+[−0.002, +0.005]; 5 wins, 2 ties, 3 losses (p = 0.73)** — no gain. **Decision: E1 stays the
+GBDT alone.** The spread is small partly because the test sets overlap (above).
+
+#### E2 (5 seeds, ~2 h each; one test split)
+
+| test macro-F1 (5 seeds) | mean | sd | range |
+| --- | --- | --- | --- |
+| `flow_gbdt` | 0.832 | 0.002 | 0.829–0.834 |
+| best single (`graph_gnn` every seed) | 0.868 | 0.002 | 0.864–0.870 |
+| **deployed** (GBDT + GIN vote, temperature) | **0.892** | 0.001 | 0.890–0.894 |
+
+**Deployed − best single: +0.024, [+0.020, +0.028]; 5 wins, 0 losses** (p = 0.062, the floor
+for five). Because the split never moved, this shows the gain survives initialisation noise,
+not that it survives other test days. **Outer folds 1–4** (seed 42, disjoint test days;
+`results/ensemble_seeds/E2-folds.md`) were queued on 2026-11-11 to test that; until they land,
+E2 keeps the vote on this evidence.

@@ -44,6 +44,36 @@ def test_split_is_deterministic_for_a_seed():
     assert not np.array_equal(a[1], c[1])
 
 
+def test_outer_folds_are_disjoint_test_sets_and_fold_0_is_the_default():
+    X, y, g = _dataset()
+    folds = [group_split(X, y, g, test_size=0.2, seed=42, fold=k) for k in range(5)]
+    assert np.array_equal(folds[0][1], group_split(X, y, g, test_size=0.2, seed=42)[1])
+    tests = [set(g[te]) for _, te in folds]
+    assert all(a.isdisjoint(b) for i, a in enumerate(tests) for b in tests[i + 1:])
+    assert set().union(*tests) == set(g)
+    for tr, te in folds:
+        assert set(g[tr]).isdisjoint(set(g[te]))
+    with pytest.raises(ValueError, match="fold"):
+        group_split(X, y, g, test_size=0.2, fold=5)
+
+
+def test_seed_does_not_move_a_split_whose_groups_never_tie():
+    """Many-class groups with distinct class spreads (CSTNET days): sklearn's shuffle only
+    breaks ties, so the seed leaves the split where it is -- the reason ``fold`` exists."""
+    rng = np.random.default_rng(0)
+    y, groups = [], []
+    for d in range(20):
+        counts = rng.integers(1, 40, size=6)
+        for c, n in enumerate(counts):
+            y.extend([c] * int(n))
+            groups.extend([f"day{d}"] * int(n))
+    y, g = np.asarray(y), np.asarray(groups, dtype=object)
+    a = group_split(None, y, g, test_size=0.2, seed=1)[1]
+    b = group_split(None, y, g, test_size=0.2, seed=2)[1]
+    assert np.array_equal(a, b)
+    assert not np.array_equal(a, group_split(None, y, g, test_size=0.2, seed=1, fold=1)[1])
+
+
 def test_every_class_reaches_both_sides_when_groups_allow():
     X, y, g = _dataset(n_groups=40, per_group=10, n_classes=4)
     tr, te = group_split(X, y, g, test_size=0.25, seed=42)

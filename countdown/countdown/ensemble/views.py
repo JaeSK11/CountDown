@@ -177,12 +177,13 @@ def _cache_key(source_file: Any) -> str:
 def build_expert_data(expert: Any, members: list[str] | None = None, seed: int = 42,
                       graph_cache: str | Path = "cache/tfegnn/cstnet",
                       overrides: dict[str, dict[str, Any]] | None = None,
-                      max_flows: int | None = None) -> ExpertData:
+                      max_flows: int | None = None, outer_fold: int = 0) -> ExpertData:
     """Load the expert's dataset, align every member to one flow table, draw the outer split.
 
     ``overrides`` maps a member name to ``{"params": ..., "feature_params": ...,
     "windows": ...}`` replacements -- the image member's 224-px default is far too large to
     materialise per flow, for instance.  ``max_flows`` subsamples whole groups (tests).
+    ``outer_fold`` picks which fold of the outer split is test (``group_split(fold=)``).
     """
     from countdown.config import default_config
     from countdown.data import load
@@ -217,7 +218,8 @@ def build_expert_data(expert: Any, members: list[str] | None = None, seed: int =
     keys = np.array([f.flow_id for f in flows], dtype=object)
     hints = np.array([f.l7_hint for f in flows], dtype=object)
     tr, te = group_split(None, y, groups, test_size=expert.test_size, seed=seed,
-                         allow_vacuous=config.allows_vacuous_groups(expert.dataset))
+                         allow_vacuous=config.allows_vacuous_groups(expert.dataset),
+                         fold=outer_fold)
     data = ExpertData(expert=expert.name, dataset=ds.name, space=space, y=y, groups=groups,
                       group_key=group_key, keys=keys, l7_hint=hints, train_rows=tr,
                       test_rows=te, skipped=skipped)

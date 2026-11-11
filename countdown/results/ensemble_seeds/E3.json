@@ -1,8 +1,11 @@
 {
   "n_seeds": 10,
+  "n_units": 10,
   "per_seed": [
     {
+      "unit": 1,
       "seed": 1,
+      "outer_fold": 0,
       "run": "runs/ensemble/E3/20261109-030237",
       "n_test": 92,
       "gbdt": 0.4464,
@@ -13,7 +16,9 @@
       "selected_combiner": "vote/temperature"
     },
     {
+      "unit": 2,
       "seed": 2,
+      "outer_fold": 0,
       "run": "runs/ensemble/E3/20261109-030836",
       "n_test": 92,
       "gbdt": 0.4312,
@@ -24,7 +29,9 @@
       "selected_combiner": "vote/temperature"
     },
     {
+      "unit": 3,
       "seed": 3,
+      "outer_fold": 0,
       "run": "runs/ensemble/E3/20261109-031442",
       "n_test": 92,
       "gbdt": 0.4609,
@@ -35,7 +42,9 @@
       "selected_combiner": "vote/temperature"
     },
     {
+      "unit": 4,
       "seed": 4,
+      "outer_fold": 0,
       "run": "runs/ensemble/E3/20261109-032130",
       "n_test": 92,
       "gbdt": 0.4899,
@@ -46,7 +55,9 @@
       "selected_combiner": "vote/none"
     },
     {
+      "unit": 5,
       "seed": 5,
+      "outer_fold": 0,
       "run": "runs/ensemble/E3/20261109-032753",
       "n_test": 92,
       "gbdt": 0.3967,
@@ -57,7 +68,9 @@
       "selected_combiner": "vote/temperature"
     },
     {
+      "unit": 6,
       "seed": 6,
+      "outer_fold": 0,
       "run": "runs/ensemble/E3/20261109-033409",
       "n_test": 92,
       "gbdt": 0.438,
@@ -68,7 +81,9 @@
       "selected_combiner": "vote/temperature"
     },
     {
+      "unit": 7,
       "seed": 7,
+      "outer_fold": 0,
       "run": "runs/ensemble/E3/20261109-034020",
       "n_test": 92,
       "gbdt": 0.4275,
@@ -79,7 +94,9 @@
       "selected_combiner": "vote/none"
     },
     {
+      "unit": 8,
       "seed": 8,
+      "outer_fold": 0,
       "run": "runs/ensemble/E3/20261109-034642",
       "n_test": 92,
       "gbdt": 0.4786,
@@ -90,7 +107,9 @@
       "selected_combiner": "vote/none"
     },
     {
+      "unit": 9,
       "seed": 9,
+      "outer_fold": 0,
       "run": "runs/ensemble/E3/20261109-035314",
       "n_test": 92,
       "gbdt": 0.5194,
@@ -101,7 +120,9 @@
       "selected_combiner": "vote/none"
     },
     {
+      "unit": 42,
       "seed": 42,
+      "outer_fold": 0,
       "run": "runs/ensemble/E3/20261008-181041",
       "n_test": 92,
       "gbdt": 0.4409,
@@ -182,5 +203,6 @@
     "flow_gbdt",
     "seq_cnn",
     "flow_image_cnn"
-  ]
+  ],
+  "by": "seed"
 }

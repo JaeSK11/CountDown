@@ -66,3 +66,20 @@ def test_summary_and_markdown(root):
     assert res["deployed_minus_gbdt"]["wins"] == 3 and res["stats"]["deployed"]["max"] == 0.55
     md = es.markdown("E3", DEPLOY, res)
     assert "| deployed − flow_gbdt | +0.073 |" in md and "3 / 0 / 0" in md
+
+
+def test_by_fold_keeps_one_seed_and_keys_by_fold(root):
+    _run(root, "20260101-000000", 42, 0.40, 0.45)                    # fold 0
+    _run(root, "20260102-000000", 42, 0.41, 0.46, outer_fold=1)
+    _run(root, "20260103-000000", 1, 0.90, 0.10, outer_fold=1)       # other seed: not a fold unit
+    folds = es.collect("E3", root, DEPLOY, by="fold")
+    assert [(s["unit"], s["seed"]) for s in folds] == [(0, 42), (1, 42)]
+    seeds = es.collect("E3", root, DEPLOY)                           # by seed: fold 0 only
+    assert [s["unit"] for s in seeds] == [42]
+    md = es.markdown("E3", DEPLOY, es.summarise(folds), by="fold")
+    assert "across outer folds" in md and "| outer fold |" in md
+
+
+def test_single_member_deploy_is_not_called_a_vote():
+    md = es.markdown("E1", ["flow_gbdt"], es.summarise([]))
+    assert "flow_gbdt alone" in md and "soft vote" not in md

@@ -81,8 +81,9 @@ traffic (VPN/Tor) gets verdict = "crypto not observable" and routes straight to 
 - **Outcome** (`phases/PHASE-5.md` §10): the stacking premise did not hold. The **calibrated soft
   vote** beat logistic and LightGBM stacking on every expert (the 120-class LightGBM meta-learner
   collapsed on E2), so it is the deployed combiner. Exit met on E2 (GBDT + GIN 0.890 vs GIN 0.868)
-  and E3 (0.513 vs 0.441, 92 test flows; across 10 seeds +0.080, 10/10 wins, §10.7); not on E1,
-  which ships the GBDT alone. The router
+  and E3 (0.513 vs 0.441, 92 test flows); not on E1, which ships the GBDT alone. Across seeds
+  (§10.7): E3 +0.080 (10/10 wins), E2 +0.024 (5/5, one split; outer folds queued), E1 +0.002
+  (no gain). The router
   routes by Stage-1 hint with a capture-context override and an **E2 → E1 confidence fallback**.
 
 ## Phase 6 — End-to-end pipeline + eval framework + live capture

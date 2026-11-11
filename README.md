@@ -51,6 +51,14 @@ it came from, so you can fetch them yourself.
 
 ## Licence
 
-The code in this repository is released under [CC0 1.0](LICENSE). That covers this code
-only — datasets, papers and pretrained models referenced above remain under the terms set
-by their respective authors.
+Copyright (C) 2026 JaeSK11.
+
+The code in this repository is free software: you can redistribute it and/or modify it under
+the terms of the [GNU General Public License, version 3](LICENSE) (GPL-3.0-only). It is
+distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the
+implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the licence for
+details.
+
+That covers this code only — datasets, papers and pretrained models referenced above remain
+under the terms set by their respective authors. Models trained on those datasets (the
+`models-v1` release) may carry the datasets' terms as well.

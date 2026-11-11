@@ -7,6 +7,7 @@ name = "countdown"
 version = "0.1.0"
 description = "Encrypted-traffic crypto detection, PQC verdict, and ML traffic classification"
 requires-python = ">=3.10"
+classifiers = ["License :: OSI Approved :: GNU General Public License v3 (GPLv3)"]
 dependencies = [
     "dpkt>=1.9.8",
     "numpy>=1.24",

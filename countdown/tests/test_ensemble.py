@@ -101,3 +101,18 @@ def test_a_one_member_ensemble_is_its_calibrated_member():
     ens = Ensemble(data, members=["a"], n_folds=3).fit()
     expected = ens.calibrators["a"].transform(ens.preds["a"].test)
     np.testing.assert_allclose(ens.test_proba(), expected)
+
+
+def test_refit_on_all_rows_has_no_test_and_scores_new_rows(tmp_path):
+    """models-v2: every row in train, none held out; OOF still covers every row, the refit
+    still predicts new rows, and the cache resumes."""
+    data = _toy(n=300, seed=5)
+    data.train_rows = np.arange(len(data.y))
+    data.test_rows = np.array([], dtype=np.int64)
+    ens = Ensemble(data, members=["a", "b"], combiner="vote", n_folds=3).fit(cache_dir=tmp_path)
+    assert ens.preds["a"].test.shape == (0, 3)
+    assert ens.preds["a"].oof.shape == (300, 3) and not np.isnan(ens.preds["a"].oof).any()
+    p = ens.combine(ens.predict_rows(np.arange(10)))
+    assert p.shape == (10, 3) and np.allclose(p.sum(1), 1)
+    again = Ensemble(data, members=["a", "b"], combiner="vote", n_folds=3).fit(cache_dir=tmp_path)
+    np.testing.assert_array_equal(again.preds["a"].oof, ens.preds["a"].oof)

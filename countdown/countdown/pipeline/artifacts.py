@@ -6,9 +6,13 @@ confidence threshold for the E2 -> E1 fallback (``PHASE-5.md`` section 10.5).  I
 from a finished Phase-5 run (``scripts/export_models.py``) -- no retraining -- and written to
 ``models_store/<expert>.joblib`` (gitignored: the E2 file carries a 44M-parameter GNN).
 
-Provenance, stated: the members are the Phase-5 **refit-on-train** models, i.e. trained on the
-outer train split of the evaluation protocol, not on all labelled data.  That keeps the
-reported test numbers valid for exactly these artifacts; a refit on everything is a later step.
+Provenance, stated in each artifact:
+
+* ``models-v1`` -- the Phase-5 **refit-on-train** members, trained on the outer train split, so
+  the reported test numbers hold for exactly those files;
+* ``models-v2`` (``all_rows=True``, Phase 10) -- the same deployed configuration refit on
+  **every** labelled row.  Nothing is held out, so the artifact carries its out-of-fold score
+  and points to the seed/fold checks (``results/ensemble_seeds/``) for the held-out estimate.
 """
 
 from __future__ import annotations
@@ -126,9 +130,11 @@ def load_store(store: str | Path | None = None, allow_unverified: bool = False
     return out
 
 
-def export_expert(name: str, run_dir: str | Path, keep: float = 0.90, seed: int = 42,
-                  n_folds: int = 5) -> DeployedExpert:
-    """Build ``name``'s deployed expert from a finished Phase-5 run's cached predictions.
+def export_expert(name: str, run_dir: str | Path | None = None, keep: float = 0.90,
+                  seed: int = 42, n_folds: int = 5, all_rows: bool = False,
+                  cache_dir: str | Path | None = None) -> DeployedExpert:
+    """Build ``name``'s deployed expert from a finished Phase-5 run's cached predictions,
+    or -- ``all_rows`` -- train it on every labelled row (``cache_dir`` resumes that fit).
 
     Uses the expert's ``deploy`` members and the calibrated soft vote (the CV-selected
     combiner on every expert).  ``keep`` sets the fallback threshold: the confidence quantile
@@ -141,13 +147,21 @@ def export_expert(name: str, run_dir: str | Path, keep: float = 0.90, seed: int 
     from countdown.experts import get_expert
 
     spec = get_expert(name)
-    run_dir = Path(run_dir)
-    run_cfg = json.loads((run_dir / "ensemble.json").read_text())
     overrides = _overrides_used(name)
+    if all_rows:
+        run_cfg: dict[str, Any] = {}
+        if cache_dir is None:
+            raise ValueError("all_rows needs a cache_dir (the fit is hours on E2)")
+    else:
+        if run_dir is None:
+            raise ValueError("export from a run needs run_dir")
+        run_dir = Path(run_dir)
+        run_cfg = json.loads((run_dir / "ensemble.json").read_text())
+        cache_dir = run_dir.parent / f"preds-s{seed}"
     ens = Ensemble.build(name, members=list(spec.deployed_members), combiner="vote",
                          calibrate="temperature", seed=seed, n_folds=n_folds,
-                         overrides=overrides)
-    ens.fit(cache_dir=run_dir.parent / f"preds-s{seed}")
+                         overrides=overrides, all_rows=all_rows)
+    ens.fit(cache_dir=cache_dir)
 
     recipes = {}
     for m in ens.members:
@@ -165,19 +179,33 @@ def export_expert(name: str, run_dir: str | Path, keep: float = 0.90, seed: int 
         conf = vote.predict_proba([ens._blocks("oof")[ens.members.index(m)] for m in names]).max(1)
         thresholds[mode] = float(np.quantile(conf, 1.0 - keep))
 
-    test = ens.test_proba()
-    y_te = ens.data.y[ens.data.test_rows]
     from countdown.eval.metrics import compute_metrics
 
-    test_f1 = compute_metrics(y_te, test.argmax(1), len(ens.data.space))["macro_f1"]
+    n_cls = len(ens.data.space)
+    oof = ens.combiner.predict_proba(ens._blocks("oof"))
+    ok = ~np.isnan(oof).any(axis=1)
+    oof_f1 = compute_metrics(y_oof[ok], oof[ok].argmax(1), n_cls)["macro_f1"]
+    if all_rows:
+        test_f1 = None
+        trained_on = "all labelled rows (refit-on-all)"
+    else:
+        test = ens.test_proba()
+        test_f1 = round(float(compute_metrics(ens.data.y[ens.data.test_rows], test.argmax(1),
+                                              n_cls)["macro_f1"]), 4)
+        trained_on = "outer train split (refit-on-train)"
     return DeployedExpert(
         name=name, target=spec.target, label_space=ens.data.space,
         members=dict(ens.models), recipes=recipes, calibrators=dict(ens.calibrators),
         combiner=ens.combiner, fallback_threshold=thresholds,
         provenance={
-            "exported": time.strftime("%Y-%m-%d %H:%M:%S"), "from_run": str(run_dir),
-            "dataset": spec.dataset, "trained_on": "outer train split (refit-on-train)",
-            "n_train": int(len(ens.data.train_rows)), "test_macro_f1": round(float(test_f1), 4),
+            "exported": time.strftime("%Y-%m-%d %H:%M:%S"),
+            "from_run": None if all_rows else str(run_dir),
+            "dataset": spec.dataset, "trained_on": trained_on,
+            "n_train": int(len(ens.data.train_rows)), "test_macro_f1": test_f1,
+            # Out-of-fold over the training rows; the vote's weights were fit on the same
+            # rows, so it is slightly optimistic.  Held-out estimates: results/ensemble_seeds/.
+            "oof_macro_f1": round(float(oof_f1), 4), "n_oof_folds": int(ens.preds[ens.members[0]].fold.max() + 1),
+            "held_out_estimate": f"results/ensemble_seeds/{name}.md",
             "combiner": "calibrated soft vote", "keep_for_threshold": keep,
             "run_args": run_cfg.get("args"),
         })

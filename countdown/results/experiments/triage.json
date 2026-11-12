@@ -2172,7 +2172,7 @@
           "pqc_basis": "negotiated",
           "pqc_verdict": "classical",
           "quantum_safe": false,
-          "route_reason": "fallback"
+          "route_reason": "handshake_only"
         }
       ],
       "downgrade_offered_pqc.pcap": [
@@ -2181,7 +2181,7 @@
           "pqc_basis": "negotiated",
           "pqc_verdict": "classical",
           "quantum_safe": false,
-          "route_reason": "fallback"
+          "route_reason": "handshake_only"
         }
       ],
       "hybrid_x25519mlkem768.pcap": [
@@ -2190,53 +2190,14 @@
           "pqc_basis": "negotiated",
           "pqc_verdict": "hybrid",
           "quantum_safe": true,
-          "route_reason": "skipped:quantum_safe"
+          "route_reason": "handshake_only"
         }
       ]
     },
     "triage": {
       "at_risk_classes_by_bytes": {},
       "at_risk_classes_by_flows": {},
-      "at_risk_classes_by_target": {
-        "traffic_type": {
-          "at_risk_classes_by_bytes": {
-            "chat": {
-              "n": 7102,
-              "share": 0.671
-            },
-            "voip": {
-              "n": 3482,
-              "share": 0.329
-            }
-          },
-          "at_risk_classes_by_flows": {
-            "chat": {
-              "n": 1,
-              "share": 0.5
-            },
-            "voip": {
-              "n": 1,
-              "share": 0.5
-            }
-          },
-          "at_risk_tiers_by_bytes": {
-            "migrate_next": {
-              "n": 10584,
-              "share": 1.0
-            }
-          },
-          "at_risk_tiers_by_flows": {
-            "migrate_next": {
-              "n": 2,
-              "share": 1.0
-            }
-          },
-          "bytes": 10584,
-          "exposed_share_bytes": 1.0,
-          "exposed_share_flows": 1.0,
-          "flows": 2
-        }
-      },
+      "at_risk_classes_by_target": {},
       "bytes": 16393,
       "exposed_share_bytes": 0.6456,
       "exposed_share_flows": 0.6667,

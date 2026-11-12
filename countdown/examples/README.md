@@ -22,6 +22,8 @@ the plain argmax) -- `tests/test_examples.py` checks it. Since Phase 7 each reco
 `auth_verdict` / `cert_key` (not observable here: TLS 1.3 encrypts the certificate) and a
 harvest-now-decrypt-later score with mitigation codes: the downgrade capture gets
 `enable_hybrid_kem` (the client already offers ML-KEM, so the fix is server-side), the
-classical one `enable_hybrid_kem_both`. The class labels of the two exposed flows come from the
-traffic-type expert after the E2 -> E1 fallback; a synthetic single handshake is not traffic
-any expert was trained on, so read them as a demonstration of the routing, not as a result.
+classical one `enable_hybrid_kem_both`. Since Phase 10 all three are `traffic_class: "handshake_only"`
+(`route_reason: "handshake_only"`, no expert consulted): each is a handshake with no
+application data after it, which no traffic expert was trained on -- before, E1 named the two
+exposed ones `voip` and `chat` at 0.40 and 0.65 confidence. The PQC verdicts and risk scores
+are unchanged.

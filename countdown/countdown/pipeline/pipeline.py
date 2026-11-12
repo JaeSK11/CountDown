@@ -34,6 +34,8 @@ from typing import Any
 
 import numpy as np
 
+from countdown.crypto.handshake_only import is_handshake_only
+from countdown.flows.short_flows import ShortFlowTally
 from countdown.config import default_config, get_logger
 from countdown.ensemble.decision import apply_bias, bias_for
 from countdown.ensemble.router import Router
@@ -75,6 +77,9 @@ class Pipeline:
     router: Router = field(default_factory=Router)
     _tier_of: dict[str, str] | None = field(default=None, init=False, repr=False)
     _biases: dict[str, np.ndarray | None] = field(default_factory=dict, init=False, repr=False)
+    #: Flows dropped before classification (shorter than ``min_packets``), by shape, over
+    #: everything this pipeline has read -- scans live here (``flows/short_flows.py``).
+    short_flows: ShortFlowTally = field(default_factory=ShortFlowTally, init=False, repr=False)
 
     def __post_init__(self) -> None:
         if self.config.mode not in ("full", "fast"):
@@ -91,19 +96,24 @@ class Pipeline:
         reasm = Reassembler.from_config(default_config())
         with PcapSource(path) as src:
             flows = list(reasm.run(src, meta={"source_file": str(path)}))
+        self.short_flows.merge(reasm.short_flows)
         log.info("[pipeline] %s: %d flows", path.name, len(flows))
         byte_rows = None
         if self._needs_bytes():
             byte_rows = byte_matrix_for_flows(path, flows)
         return self.analyze_flows(flows, byte_rows=byte_rows)
 
-    def analyze_stream(self, source: Any, on_records: Any, batch_seconds: float = 2.0) -> int:
+    def analyze_stream(self, source: Any, on_records: Any, batch_seconds: float = 2.0,
+                       on_status: Any = None, status_seconds: float = 60.0) -> int:
         """Live mode (task 6.4): classify flows as the reassembler closes them.
 
         Closed flows are batched and handed to ``on_records`` at most every ``batch_seconds``;
         the flush is checked on every frame *and heartbeat* the source yields, so a quiet
         wire still delivers its last flows.  In ``full`` mode a :class:`ByteCollector` keeps
         each 5-tuple's first payload packets for the graph member.  Returns flows classified.
+        ``on_status()`` is called at most every ``status_seconds`` (frames and heartbeats
+        both count), so the dropped-short-flow tally shows up even when a scan is all there
+        is on the wire and nothing gets classified.
         """
         import time
 
@@ -113,7 +123,7 @@ class Pipeline:
         collector = ByteCollector() if self._needs_bytes() else None
         batch: list = []
         rows: list[np.ndarray] = []
-        state = {"last": time.monotonic(), "n": 0}
+        state = {"last": time.monotonic(), "n": 0, "status": time.monotonic()}
 
         def flush() -> None:
             if batch:
@@ -130,9 +140,13 @@ class Pipeline:
                     collector.add(raw.linktype, raw.data)
                 if batch and time.monotonic() - state["last"] >= batch_seconds:
                     flush()
+                if on_status is not None and time.monotonic() - state["status"] >= status_seconds:
+                    on_status()
+                    state["status"] = time.monotonic()
                 yield raw
 
         reasm = Reassembler.from_config(default_config())
+        reasm.short_flows = self.short_flows          # live: tally in place, readable mid-run
         name = getattr(source, "iface", None) or "live"
         for flow in reasm.run(tee(), meta={"source_file": f"live:{name}"}):
             batch.append(flow)
@@ -150,8 +164,15 @@ class Pipeline:
         verdicts = [enrich_flow(f) for f in flows]
         records: list[dict[str, Any]] = [self._base_record(f, v) for f, v in zip(flows, verdicts)]
 
+        # Phase 10 (2b): a handshake and nothing after it has a PQC verdict but no traffic
+        # to classify -- scanners, our own census included (crypto/handshake_only.py).
+        for f, rec in zip(flows, records):
+            if is_handshake_only(f):
+                rec.update(handshake_only=True, traffic_class="handshake_only",
+                           route_reason="handshake_only")
         todo = [i for i, v in enumerate(verdicts)
-                if self.config.classify_quantum_safe or not v.is_quantum_resistant]
+                if not records[i]["handshake_only"]
+                and (self.config.classify_quantum_safe or not v.is_quantum_resistant)]
         routed: dict[str, list[int]] = {}
         for i in todo:
             exp = self.router.route(flows[i].l7_hint, self.config.context)
@@ -305,6 +326,7 @@ class Pipeline:
             "cert_key": crypto.get("auth", {}).get("leaf_key"),
             "expert": None, "route_reason": "skipped:quantum_safe" if v.is_quantum_resistant else None,
             "target": None, "traffic_class": None, "confidence": None,
+            "handshake_only": False,
         }
         return rec
 

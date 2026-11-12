@@ -37,6 +37,7 @@ from typing import Any, Iterable, Iterator
 import numpy as np
 
 from countdown.config import get_logger
+from countdown.flows.short_flows import ShortFlowTally, shape_of
 from countdown.flows.decode import DecodedPacket, ParseStats, decode
 from countdown.flows.handshake import (
     DEFAULT_WINDOW,
@@ -103,6 +104,9 @@ class _FlowState:
     fin_a: bool = False
     fin_b: bool = False
     saw_rst: bool = False
+    saw_syn: bool = False        # any SYN (with or without ACK)
+    saw_synack: bool = False
+    payload_pkts: int = 0        # packets with L4 payload (short-flow shape, Phase 10)
     closing_at: float | None = None
     expiry_reason: str | None = None
 
@@ -180,6 +184,9 @@ class Reassembler:
         **_ignored: Any,
     ) -> None:
         self.idle_timeout = float(idle_timeout if idle_timeout is not None else flow_timeout)
+        #: What ``min_packets`` dropped, by shape (``flows/short_flows.py``); accumulates
+        #: over every ``run`` of this instance.
+        self.short_flows = ShortFlowTally()
         self.min_packets = int(min_packets)
         self.max_flows_per_pcap = int(max_flows_per_pcap)
         self.handshake_window = int(handshake_window)
@@ -362,6 +369,15 @@ class Reassembler:
 
         if st.syn_client is None and pkt.is_pure_syn:
             st.syn_client = pkt.src
+        if pkt.proto == "tcp":
+            if pkt.is_pure_syn:
+                st.saw_syn = True
+            elif pkt.is_syn:
+                st.saw_synack = True
+            if pkt.is_rst:
+                st.saw_rst = True
+        if pkt.payload:
+            st.payload_pkts += 1
 
         st.ts.append(pkt.ts)
         st.sizes.append(pkt.size)
@@ -422,6 +438,11 @@ class Reassembler:
     ) -> Flow | None:
         if len(st.ts) < self.min_packets:
             stats.flows_dropped_short += 1
+            a, b = st.endpoints()
+            client = st.client()
+            server = b if client == a else a
+            self.short_flows.add(shape_of(st.key[4], st.saw_syn, st.saw_synack, st.saw_rst,
+                                          st.payload_pkts), client[0], server[0], server[1])
             return None
 
         endpoint_a, endpoint_b = st.endpoints()

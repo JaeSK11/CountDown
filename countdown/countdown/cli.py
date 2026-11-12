@@ -49,15 +49,18 @@ def _write(records: list[dict[str, Any]], out: str | None, fmt: str | None) -> N
             stream.close()
 
 
-def _summary(records: list[dict[str, Any]]) -> str:
+def _summary(records: list[dict[str, Any]], short: Any = None) -> str:
     n = len(records)
     lines = [f"{n} flows"]
     for key in ("pqc_verdict", "route_reason", "expert"):
         c = Counter(str(r.get(key)) for r in records)
         lines.append(f"  {key:13s} " + ", ".join(f"{k} {v}" for k, v in c.most_common()))
-    c = Counter(f"{r['target']}={r['traffic_class']}" for r in records if r.get("traffic_class"))
+    c = Counter(f"{r['target']}={r['traffic_class']}" if r.get("target") else r["traffic_class"]
+                for r in records if r.get("traffic_class"))
     if c:
         lines.append("  top classes   " + ", ".join(f"{k} {v}" for k, v in c.most_common(6)))
+    if short is not None:
+        lines.append("  " + short.summary_line())
     return "\n".join(lines)
 
 
@@ -78,7 +81,7 @@ def cmd_analyze(args: argparse.Namespace) -> int:
             r["source"] = None if args.redact else str(p)
         records.extend(recs)
     _write(records, args.out, args.format)
-    print(_summary(records), file=sys.stderr)
+    print(_summary(records, pipe.short_flows), file=sys.stderr)
     return 0
 
 
@@ -95,7 +98,15 @@ def cmd_triage(args: argparse.Namespace) -> int:
 
     t = triage_records(records, tiers=load_tiers())
     t["hndl"] = summarise(records)
-    md = [to_markdown(f"{len(args.pcap)} capture(s)", t), summary_markdown(t["hndl"])]
+    t["short_flows"] = pipe.short_flows.as_dict()
+    hs = [r for r in records if r.get("handshake_only")]
+    t["handshake_only"] = {"flows": len(hs), "quantum_safe": sum(bool(r["quantum_safe"]) for r in hs)}
+    md = [to_markdown(f"{len(args.pcap)} capture(s)", t), summary_markdown(t["hndl"]),
+          _short_markdown(t["short_flows"]),
+          f"**Handshake-only flows:** {len(hs)} (a TLS handshake and no application data -- "
+          f"scanners and probes; not classified), {t['handshake_only']['quantum_safe']} of them "
+          "quantum-safe. Their PQC verdicts are in the tables above; they are left out of the "
+          "class mixes below.\n"]
     for target, sub in t["at_risk_classes_by_target"].items():
         md.append(classes_markdown(f"Exposed flows classified as {target} (predicted)", sub))
     md.append("_Class mixes are model predictions. Measured error of the mix on held-out data "
@@ -129,7 +140,10 @@ def cmd_live(args: argparse.Namespace) -> int:
 
     print(f"capturing on {args.iface} ({args.mode} mode); Ctrl-C to stop", file=sys.stderr)
     try:
-        pipe.analyze_stream(src, emit, batch_seconds=args.batch_seconds)
+        pipe.analyze_stream(src, emit, batch_seconds=args.batch_seconds,
+                            on_status=lambda: print(f"[{len(seen)} flows classified] "
+                                                    + pipe.short_flows.summary_line(),
+                                                    file=sys.stderr, flush=True))
     except KeyboardInterrupt:
         pass
     except PermissionError as exc:
@@ -138,8 +152,25 @@ def cmd_live(args: argparse.Namespace) -> int:
     finally:
         if args.out:
             out.close()
-    print(_summary(seen), file=sys.stderr)
+    print(_summary(seen, pipe.short_flows), file=sys.stderr)
     return 0
+
+
+def _short_markdown(d: dict[str, Any]) -> str:
+    s = d["by_shape"]
+    md = ["### Flows dropped before classification", "",
+          f"{d['dropped_short']} flows had fewer packets than the reassembler's minimum and were "
+          f"not classified; {d['scan_like']} look like scan probes.", "",
+          "| shape | flows |", "| --- | --- |",
+          f"| SYN only, no reply | {s['syn_only']} |", f"| SYN answered by RST | {s['syn_rst']} |",
+          f"| half-open (SYN, SYN-ACK, no data) | {s['half_open']} |",
+          f"| short TCP with payload | {s['tcp_payload']} |", f"| other TCP (no SYN, no data) | {s['tcp_other']} |",
+          f"| UDP | {s['udp']} |"]
+    if d["scan_like"]:
+        ports = ", ".join(f"{p} ({n})" for p, n in d["scan_top_ports"])
+        md += ["", f"Scan-like flows: {d['scan_initiators']} initiator(s), {d['scan_targets']} "
+               f"target(s), {d['scan_ports_distinct']} destination port(s); most probed: {ports}."]
+    return "\n".join(md) + "\n"
 
 
 def cmd_models(args: argparse.Namespace) -> int:

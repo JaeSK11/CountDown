@@ -88,7 +88,8 @@ def member_predictions(data: ExpertData, name: str, n_folds: int = 5, seed: int 
     oof = oof_predict(fit_predict, tr, data.y[tr], data.groups[tr], len(data.space),
                       n_folds, seed)
     model = view.fit(tr)
-    test = view.predict(model, data.test_rows)
+    test = (view.predict(model, data.test_rows) if len(data.test_rows)
+            else np.zeros((0, len(data.space))))       # refit-on-all: nothing held out
     preds = MemberPreds(name, oof.proba, oof.fold, test, time.time() - t0)
     if npz is not None:
         npz.parent.mkdir(parents=True, exist_ok=True)

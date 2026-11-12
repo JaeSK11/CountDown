@@ -1,7 +1,7 @@
-# Phase 10 — models-v2, scan-aware pipeline, census etiquette (planned)
+# Phase 10 — models-v2, scan-aware pipeline, census etiquette
 
-**Pipeline:** stage 1 + stage 4 + reporting · **Status:** planned, not started (written
-2026-11-11). Picks up the Phase-5 seed checks (`PHASE-5.md` §10.7) and three points raised by
+**Pipeline:** stage 1 + stage 4 + reporting · **Status:** in progress (planned 2026-11-11,
+started 2026-11-12); §5 tracks it. Picks up the Phase-5 seed checks (`PHASE-5.md` §10.7) and three points raised by
 K. Webster, *There is no such thing as a benign internet scanner* (2025-01-29,
 kenwebster.com): scanners are 35–70 % of connection attempts on an exposed host; no scanner
 should be assumed benign; scan traffic is recognisable from its TCP signature.
@@ -64,3 +64,56 @@ is added.
 ## 4. Order
 
 1 → 2a → 2b → 3 before any public census result.
+
+---
+
+## 5. Status
+
+| § | task | state |
+| --- | --- | --- |
+| 1 | `models-v2` trained (`runs/models-v2/`) | E3 ✅, E1 ✅, E2 running |
+| 1 | published + manifest | after E2 |
+| 2a | short-flow tally | ✅ (§6) |
+| 2b | handshake-only flows | ✅ (§7) |
+| 3 | census etiquette | not started |
+
+## 6. Built: the short-flow tally (2a)
+
+`countdown/flows/short_flows.py`. The reassembler now also records, per flow, whether it saw a
+SYN, a SYN-ACK, an RST and how many packets carried payload; every flow it drops for being
+under `min_packets` is tallied by shape — `syn_only`, `syn_rst`, `half_open` (the three
+*scan-like* shapes), `tcp_payload`, `tcp_other`, `udp` — with the number of distinct scan
+initiators, targets and destination ports. Only counts leave the tally, never an address.
+
+- `countdown analyze` / `live`: a `short flows` line in the stderr summary; `live` also prints
+  it every 60 s, so a capture that is nothing but a scan still reports something.
+- `countdown triage`: a "Flows dropped before classification" table, and `short_flows` in the
+  JSON.
+- Checked on a synthetic scan (4 filtered, 3 closed, 3 open ports + one real connection): 10
+  scan-like, 1 stray ACK, the real connection classified — `tests/test_short_flows.py`.
+- Emitted flows are unchanged: the tally only looks at what was already dropped.
+
+## 7. Built: handshake-only flows (2b)
+
+`countdown/crypto/handshake_only.py`. A TCP TLS flow is `handshake_only` when the whole
+client stream is in the reassembled head (`handshake_bytes_seen` = head length) and, ignoring
+19-byte records, the client sent no content-type-23 record beyond its TLS 1.3 Finished (none
+at all on TLS 1.2). The pipeline then sets `traffic_class = "handshake_only"`,
+`route_reason = "handshake_only"`, consults no expert and keeps the PQC verdict; `triage`
+counts them separately and leaves them out of the class mixes.
+
+**Measured, not assumed** (golden capture `tests/golden/handshake_only/`, this machine,
+2026-11-12): `openssl s_client` over TLS 1.3 sends ClientHello, CCS, Finished (69 B) and an
+encrypted close_notify (**19 B**); over TLS 1.2 no type-23 record at all; a real HTTPS GET adds
+its request (73–80 B) after the Finished. All five probes are flagged, the session is not.
+
+**Effect on existing results:**
+- The labelled datasets' cached flows carry no `handshake_bytes_seen`, so nothing in them is
+  flagged: training data, experiment tables and the paper are unchanged.
+- `examples/` and the synthetic PQC captures in `results/experiments/triage.json` are bare
+  handshakes: all three are now `handshake_only`. Before, E1 had named the two exposed ones
+  `voip` (0.40) and `chat` (0.65). Verdicts, HNDL scores and mitigation codes are unchanged.
+- The census's own flows are handshake-only too, as intended.
+
+**Limits:** TCP only — QUIC encrypts everything after the Initial, so a QUIC probe still gets a
+class. A server-first protocol whose client never speaks would also be flagged.

@@ -304,7 +304,7 @@ pipeline decision.
 ### 10.6 Left for Phase 5 / carried to Phase 6
 
 - Seeds (and, for E3, leave-one-capture-out) before quoting E2/E3 gains as stable. **Done for all
-  three (§10.7)**; E2 across outer folds queued.
+  three (§10.7)**, and E2 across five disjoint outer folds.
 - A temperature on the combined output (§10.4).
 - `byte_net` in E2 once flow-aligned byte input exists.
 - The ISCX-TLS routing decision (§10.5): recommended confidence fallback, to implement in the
@@ -369,6 +369,24 @@ GBDT alone.** The spread is small partly because the test sets overlap (above).
 
 **Deployed − best single: +0.024, [+0.020, +0.028]; 5 wins, 0 losses** (p = 0.062, the floor
 for five). Because the split never moved, this shows the gain survives initialisation noise,
-not that it survives other test days. **Outer folds 1–4** (seed 42, disjoint test days;
-`results/ensemble_seeds/E2-folds.md`) were queued on 2026-11-11 to test that; until they land,
-E2 keeps the vote on this evidence.
+not that it survives other test days.
+
+#### E2 across outer folds (5 folds, seed 42, 2026-11-11)
+
+`run_ensemble.py --expert E2 --outer-fold k`, k = 1–4, plus the seed-42 run as fold 0
+(`results/ensemble_seeds/E2-folds.md`). The five test sets share no capture day; together they
+cover every day once. ~2 h per fold.
+
+| test macro-F1 (5 folds) | mean | sd | range |
+| --- | --- | --- | --- |
+| `flow_gbdt` | 0.824 | 0.013 | 0.805–0.838 |
+| best single (`graph_gnn` every fold) | 0.866 | 0.012 | 0.850–0.883 |
+| **deployed** (GBDT + GIN vote, temperature) | **0.887** | 0.013 | 0.869–0.902 |
+
+**Deployed − best single: +0.021, [+0.019, +0.022]; 5 wins, 0 losses**; CV picks the
+temperature-calibrated vote on every fold. The level moves with the test days (0.869–0.902,
+sd 0.013 — ten times the seed spread), the gain barely does. Fold 0 sits mid-pack, so the
+Phase-5 number was representative.
+
+**Decision: E2 keeps the GBDT + GIN vote.** All three experts' deployed configurations now
+hold across seeds or folds — the input to `models-v2` (`PHASE-10.md` §1).

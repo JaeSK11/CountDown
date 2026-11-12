@@ -82,7 +82,7 @@ traffic (VPN/Tor) gets verdict = "crypto not observable" and routes straight to 
   vote** beat logistic and LightGBM stacking on every expert (the 120-class LightGBM meta-learner
   collapsed on E2), so it is the deployed combiner. Exit met on E2 (GBDT + GIN 0.890 vs GIN 0.868)
   and E3 (0.513 vs 0.441, 92 test flows); not on E1, which ships the GBDT alone. Across seeds
-  (§10.7): E3 +0.080 (10/10 wins), E2 +0.024 (5/5, one split; outer folds queued), E1 +0.002
+  (§10.7): E3 +0.080 (10/10 wins), E2 +0.024 (5/5 seeds) and +0.021 over 5 disjoint outer folds (5/5), E1 +0.002
   (no gain). The router
   routes by Stage-1 hint with a capture-context override and an **E2 → E1 confidence fallback**.
 
@@ -122,6 +122,14 @@ traffic (VPN/Tor) gets verdict = "crypto not observable" and routes straight to 
 - `scripts/census_scheduler.py` + compose service `census` — weekly TCP + QUIC run, fixed Tranco panel.
 - `scripts/census_trend.py` — `results/census/trend.{json,md,pdf,png}`: shares over time, per-site churn.
 - **Exit:** the daemon survives reboots; each run lands in `results/census/runs/<date>/`; trend rebuilt.
+
+## Phase 10 — models-v2, scan-aware pipeline, census etiquette  → Stages 1, 4 + reporting (planned)
+**Deliverable:** `phases/PHASE-10.md`
+- `models-v2`: each expert's deployed configuration refit on all rows (all three confirmed, §10.7).
+- Stage 1: count short flows dropped by `min_packets` (SYN scans); flag handshake-only flows
+  instead of giving them a traffic class.
+- Census: probe-description page, reverse DNS, exclusion list — our census is a scanner too.
+- **Exit:** v2 hash-pinned; a SYN scan is counted, not classified; census honours exclusions.
 
 ---
 

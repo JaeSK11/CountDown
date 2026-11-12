@@ -135,7 +135,7 @@ the grouped test split, with the combiner chosen by cross-validation inside trai
 
 | expert | best single member | ensemble | |
 | --- | --- | --- | --- |
-| E2 app-ID (CSTNET, 120) | `graph_gnn` 0.868 | GBDT + GIN, calibrated soft vote **0.890** | ✓ 5/5 seeds: +0.024 |
+| E2 app-ID (CSTNET, 120) | `graph_gnn` 0.868 | GBDT + GIN, calibrated soft vote **0.890** | ✓ 5/5 seeds +0.024; 5/5 disjoint folds +0.021 |
 | E3 activity (MobileApp, 92) | `flow_gbdt` 0.441 | 3-member vote 0.513 | ✓ holds over 10 seeds: +0.080, 10/10 wins |
 | E1 traffic type (`iscx_pooled`, 8) | `flow_gbdt` 0.665 | 3-member vote 0.665 | ✗ tie, also over 10 seeds — ship the GBDT |
 
